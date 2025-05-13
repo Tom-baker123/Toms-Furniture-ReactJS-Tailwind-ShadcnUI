@@ -6,7 +6,7 @@ const NavItem1 = () => {
         <>
             {/* Shop By Categories */}
             <li className="inline-flex items-center">
-                <details className="group" open>
+                <details className="group lg:pb-4" open>
                     <summary className="list-none appearance-none px-4 marker:hidden">
                         <span className="inline-block w-full py-1">
                             <p className="group underline-hover-text flex flex-wrap items-center gap-2">
@@ -31,7 +31,7 @@ const NavItem1 = () => {
                         </span>
                     </summary>
 
-                    <div className="fixed left-0 z-10 mt-[17px] hidden w-full bg-white shadow-2xl group-hover:block">
+                    <div className="fixed left-0 z-10 mt-[17px] bg-white hidden w-full shadow-2xl group-hover:block">
                         <div className="custom-scrollbar z-50 mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
                             <div className="flex flex-wrap">
                                 <div className="nav-custom-grid flex-1">
