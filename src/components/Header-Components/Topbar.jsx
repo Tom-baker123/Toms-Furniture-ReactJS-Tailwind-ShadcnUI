@@ -14,40 +14,40 @@ const Topbar = () => {
 
                 <ul className="hidden lg:flex lg:flex-wrap lg:items-center lg:justify-end lg:gap-4">
                     <li className="w-4">
-                        <span>
+                        <a href="/">
                             <img
                                 className="invert"
-                                src="../src/assets/social-logo/facebook.png"
+                                src="/img/social-logo/facebook.png"
                                 alt=""
                             />
-                        </span>
+                        </a>
                     </li>
                     <li className="w-4">
-                        <span>
+                        <a href="/">
                             <img
                                 className="invert"
-                                src="../src/assets/social-logo/twitter.png"
+                                src="/img/social-logo/twitter.png"
                                 alt=""
                             />
-                        </span>
+                        </a>
                     </li>
                     <li className="w-4">
-                        <span>
+                        <a href="/">
                             <img
                                 className="invert"
-                                src="../src/assets/social-logo/instagram.png"
+                                src="/img/social-logo/instagram.png"
                                 alt=""
                             />
-                        </span>
+                        </a>
                     </li>
                     <li className="w-4">
-                        <span>
+                        <a href="/">
                             <img
                                 className="invert"
-                                src="../src/assets/social-logo/tik-tok.png"
+                                src="/img/social-logo/tik-tok.png"
                                 alt=""
                             />
-                        </span>
+                        </a>
                     </li>
                 </ul>
             </div>
