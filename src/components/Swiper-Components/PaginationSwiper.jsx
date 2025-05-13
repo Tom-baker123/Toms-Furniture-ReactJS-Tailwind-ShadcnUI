@@ -26,7 +26,7 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                     <div key={index}>
                         <img
                             className={cn(`w-full rounded-md`, image.info?.length > 0 ? "aspect-square" : "h-full")}
-                            src={`src/assets/NewArrivals/${image.ImageURL}`}
+                            src={`/img/NewArrivals/${image.ImageURL}`}
                             alt="asdsa"
                         />
                         {/* pt-[12px] cho box title */}
@@ -89,7 +89,7 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                         <div className="flex h-full flex-col">
                             <img
                                 className={cn(`w-full rounded-md object-cover`, t.info?.length > 0 ? "aspect-square" : "h-full")}
-                                src={`src/assets/NewArrivals/${t.ImageURL}`}
+                                src={`/img/NewArrivals/${t.ImageURL}`}
                                 alt="asdsa"
                             />
                             {Array.isArray(t.info) && t.info.length > 0 && (

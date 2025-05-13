@@ -149,7 +149,7 @@ const Footer = () => {
                     <div className="flex flex-col gap-2">
                         <div className="block">All The Payment</div>
                         <div className="block">
-                            <ul className="flex">
+                            <ul className="flex gap-x-2">
                                 {FooterPaymentIcon.map((t, index) => (
                                     <li key={index}>
                                         <div dangerouslySetInnerHTML={{ __html: t.svgHTML }} />

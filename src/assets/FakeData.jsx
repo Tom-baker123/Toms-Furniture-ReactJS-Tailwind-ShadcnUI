@@ -2,18 +2,18 @@ import PaginationSwiper from "@/components/Swiper-Components/PaginationSwiper";
 
 // [2. CATEGORY LIST]----------------------------------------------------------------------------------------------------------
 export const categoryList = [
-    { id: 0, name: "Sale Items", url: "src/assets/category-menu/collection-sales.png" },
-    { id: 1, name: "Press Tables", url: "src/assets/category-menu/Turn-Table-Mono.png" },
-    { id: 2, name: "Lighting", url: "src/assets/category-menu/Pendantlamp-1.png" },
-    { id: 3, name: "Spoke Sofa", url: "src/assets/category-menu/Spoke-Sofa-Basic.png" },
-    { id: 4, name: "Storage", url: "src/assets/category-menu/Curve-Coat-Rack-Shelf.png" },
-    { id: 5, name: "Turn Chairs", url: "src/assets/category-menu/Arc-Chair-dark.png" },
-    { id: 6, name: "Longe Chairs", url: "src/assets/category-menu/Turn-chair-Warm.png" },
-    { id: 7, name: "Curve Coat", url: "src/assets/category-menu/Curve-Coat-Rack.png" },
-    { id: 8, name: "Bend Chairs", url: "src/assets/category-menu/Turn-chair-colorful.png" },
-    { id: 9, name: "Accessories", url: "src/assets/category-menu/bottlegrinder.png" },
-    { id: 10, name: "Cross Tables", url: "src/assets/category-menu/Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png" },
-    { id: 11, name: "Bar Chairs", url: "src/assets/category-menu/Arc-Chair-dark.png" },
+    { id: 0, name: "Sale Items", url: "collection-sales.png" },
+    { id: 1, name: "Press Tables", url: "Turn-Table-Mono.png" },
+    { id: 2, name: "Lighting", url: "Pendantlamp-1.png" },
+    { id: 3, name: "Spoke Sofa", url: "Spoke-Sofa-Basic.png" },
+    { id: 4, name: "Storage", url: "Curve-Coat-Rack-Shelf.png" },
+    { id: 5, name: "Turn Chairs", url: "Arc-Chair-dark.png" },
+    { id: 6, name: "Longe Chairs", url: "Turn-chair-Warm.png" },
+    { id: 7, name: "Curve Coat", url: "Curve-Coat-Rack.png" },
+    { id: 8, name: "Bend Chairs", url: "Turn-chair-colorful.png" },
+    { id: 9, name: "Accessories", url: "bottlegrinder.png" },
+    { id: 10, name: "Cross Tables", url: "Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png" },
+    { id: 11, name: "Bar Chairs", url: "Arc-Chair-dark.png" },
 ];
 // [2. CATEGORY LIST - END]----------------------------------------------------------------------------------------------------
 
@@ -23,15 +23,15 @@ export const HeroList = [
         id: 0,
         txt1: "Cotton Made",
         txt2: "New Season July",
-        url_desk: "src/assets/hero-swiper/slideshow-1.png",
-        url_mobile: "src/assets/hero-swiper/slideshow-1--mb.png",
+        url_desk: "slideshow-1.png",
+        url_mobile: "slideshow-1--mb.png",
     },
     {
         id: 1,
         txt1: "Modern Elegance",
         txt2: "Spoke Sofa",
-        url_desk: "src/assets/hero-swiper/slideshow-2.png",
-        url_mobile: "src/assets/hero-swiper/slideshow-2--mb.png",
+        url_desk: "slideshow-2.png",
+        url_mobile: "slideshow-2--mb.png",
     },
 ];
 // [3. HERO LIST - END]-------------------------------------------------------------------------------------------------------
@@ -41,49 +41,49 @@ export const AlbumSwiperData = [
     {
         id: 0,
         title: "Welcome Home",
-        url: "src/assets/GetInspiredbySpaces/lookbook-slider-1.png",
+        url: "lookbook-slider-1.png",
         description:
-            "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+            "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 1,
         title: "Welcome Home",
-        url: "src/assets/GetInspiredbySpaces/lookbook-slider-1.png",
+        url: "lookbook-slider-1.png",
         description:
-            "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+            "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 2,
         title: "Welcome Home",
-        url: "src/assets/GetInspiredbySpaces/lookbook-slider-1.png",
+        url: "lookbook-slider-1.png",
         description:
-            "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+            "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 3,
         title: "Welcome Home",
-        url: "src/assets/GetInspiredbySpaces/lookbook-slider-1.png",
+        url: "lookbook-slider-1.png",
         description:
-            "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+            "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 4,
         title: "Welcome Home",
-        url: "src/assets/GetInspiredbySpaces/lookbook-slider-1.png",
+        url: "lookbook-slider-1.png",
         description:
-            "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+            "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 5,
         title: "Welcome Home",
-        url: "src/assets/GetInspiredbySpaces/lookbook-slider-1.png",
+        url: "lookbook-slider-1.png",
         description:
-            "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
+            "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
 ];
@@ -95,25 +95,25 @@ export const FeatureSectionData = [
         id: 0,
         title: "Comfortable",
         description: "Bow Chair is available in Natural or Black-stained Oak with full EU Ecolabel certification.",
-        url: "src/assets/FeatureSection/multicolumn-1.png",
+        url: "multicolumn-1.png",
     },
     {
         id: 1,
         title: "Price transparency",
         description: "Fair pricing ensures you know exactly what you’re paying for, with no hidden costs or markups.",
-        url: "src/assets/FeatureSection/multicolumn-2.png",
+        url: "multicolumn-2.png",
     },
     {
         id: 2,
         title: "All eco-certified",
         description: "All products consider a more holistic environmental impact and are designed for a longer lifetime in a way.",
-        url: "src/assets/FeatureSection/multicolumn-3.png",
+        url: "multicolumn-3.png",
     },
     {
         id: 3,
         title: "Sustainability",
         description: "Committed to sustainable practices, ethical sourcing, and reducing environmental impact.",
-        url: "src/assets/FeatureSection/multicolumn-4.png",
+        url: "multicolumn-4.png",
     },
 ];
 // [5. FEATURE SECTION - END]-------------------------------------------------------------------------------------------------

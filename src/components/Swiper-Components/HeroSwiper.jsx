@@ -55,8 +55,8 @@ const HeroSwiper = ({transitionTime}) => {
                             {/* IMG */}
                             <div className="h-full w-full relative rounded-md overflow-hidden">
                                 <div>
-                                    <img className='w-full hidden min-md:block zoom-in-slow' src={t.url_desk} alt={t.id} />
-                                    <img className='block min-md:hidden w-full zoom-in-slow' src={t.url_mobile} alt={t.id} />
+                                    <img className='w-full hidden min-md:block zoom-in-slow' src={`/img/hero-swiper/${t.url_desk}`} alt={t.id} />
+                                    <img className='block min-md:hidden w-full zoom-in-slow' src={`/img/hero-swiper/${t.url_mobile}`} alt={t.id} />
                                 </div>
                                 <div className="absolute bg-black/25 inset-0"></div>
                             </div>
