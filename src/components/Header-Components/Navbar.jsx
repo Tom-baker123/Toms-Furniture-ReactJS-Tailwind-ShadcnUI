@@ -13,7 +13,7 @@ const Navbar = () => {
 
     return (
         <nav className='hidden
-            lg:flex mx-auto relative lg:pt-2 lg:pb-4 2xl:max-w-7xl
+            lg:flex mx-auto relative lg:pt-2 2xl:max-w-7xl
         '>
             <ul className='flex flex-wrap font-bold text-[15px]'>
                 {/* Shop By Categories */}
