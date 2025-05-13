@@ -14,21 +14,21 @@ const NavItem7 = () => {
                             <span className="animate-fade-in-scale-delay-1 absolute top-1 left-0">
                                 <img
                                     className="filter-red w-3"
-                                    src="./src/assets/sub-icon/sparkle.png"
+                                    src="/img/sub-icon/sparkle.png"
                                     alt=""
                                 />
                             </span>
                             <span className="animate-fade-in-scale-delay-2 absolute top-0 right-1">
                                 <img
                                     className="filter-red w-3"
-                                    src="./src/assets/sub-icon/sparkle.png"
+                                    src="/img/sub-icon/sparkle.png"
                                     alt=""
                                 />
                             </span>
                             <span className="animate-fade-in-scale-delay-3 absolute top-5 right-2">
                                 <img
                                     className="filter-red w-3"
-                                    src="./src/assets/sub-icon/sparkle.png"
+                                    src="/img/sub-icon/sparkle.png"
                                     alt=""
                                 />
                             </span>
