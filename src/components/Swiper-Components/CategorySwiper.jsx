@@ -55,7 +55,7 @@ const CategorySwiper = () => {
                                 <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-transparent select-none max-md:w-12">
                                     <img
                                         className="mx-auto block rounded-full object-cover max-sm:w-9"
-                                        src={t.url}
+                                        src={`/img/category-menu/${t.url}`}
                                         alt=""
                                         width={800}
                                         height={800}

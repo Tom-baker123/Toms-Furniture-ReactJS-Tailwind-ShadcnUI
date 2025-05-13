@@ -50,7 +50,7 @@ const NavbarAdmin = ({ collapsed, setCollapsed }) => {
                 >
                     <img
                         className="size-7"
-                        src="src\assets\sub-icon\3d-house.png"
+                        src="\img\sub-icon\3d-house.png"
                         alt="3D house icon representing HomeDirection"
                     />
                     <span className={cn("hidden md:block", !collapsed && "md:hidden lg:block")}>Home Page</span>

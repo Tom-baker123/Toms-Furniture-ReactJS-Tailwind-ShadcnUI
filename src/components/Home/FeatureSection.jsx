@@ -60,7 +60,7 @@ const FeatureSection = () => {
                             <div className="mb-4">
                                 <img
                                     className="rounded-md"
-                                    src={t.url}
+                                    src={`/img/FeatureSection/${t.url}`}
                                     alt={t.title}
                                     style={{ aspectRatio: "1/1" }}
                                 />

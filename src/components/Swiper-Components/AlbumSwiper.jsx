@@ -56,7 +56,7 @@ const AlbumSwiper = () => {
                                 {/* 1. Ảnh Slide */}
                                 <img
                                     className="album-swiper-img"
-                                    src={slide.url}
+                                    src={`/img/GetInspiredbySpaces/${slide.url}`}
                                     alt={slide.title}
                                 />
                                 {/* 2. Tiêu đề */}
