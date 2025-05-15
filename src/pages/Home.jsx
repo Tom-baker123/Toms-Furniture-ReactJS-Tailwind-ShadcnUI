@@ -1,11 +1,10 @@
 import FeatureSection from "@/components/Home/FeatureSection";
+import GetAPI from "@/components/Home/GetAPI";
 import AlbumSwiper from "@/components/Swiper-Components/AlbumSwiper";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
 import HeroSwiper from "@/components/Swiper-Components/HeroSwiper";
 import NewArrivalsSwiper from "@/components/Swiper-Components/NewArrivalsSwiper";
-import Test from "@/components/Swiper-Components/test";
 import React from "react";
-
 
 const Home = () => {
     return (
@@ -15,11 +14,12 @@ const Home = () => {
             {/* 2. Swiper Banner Hero */}
             <HeroSwiper />
             {/* 3. New Arrivals Swiper */}
-            <NewArrivalsSwiper/>
+            <NewArrivalsSwiper />
             {/* 4. Album Swiper */}
             <AlbumSwiper />
             {/* 5. FeatureSection */}
             <FeatureSection />
+            <GetAPI />
         </main>
     );
 };
