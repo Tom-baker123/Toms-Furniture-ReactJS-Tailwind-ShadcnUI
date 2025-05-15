@@ -339,6 +339,11 @@
     /* Đảm bảo tất cả slide có chiều cao bằng nhau */
   }
 
+  /* Khung fill của progress bar */
+  .NewArrivalsSwiper .swiper-pagination-progressbar-fill {
+    @apply !bg-black;
+  }
+
   /* -[Swiper New Arrivals Custom - End]------------------------------------------------------ */
 
 
