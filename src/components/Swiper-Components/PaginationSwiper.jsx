@@ -93,6 +93,7 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
 
                         swiper.pagination.destroy(); // Reset pagination cũ
                         swiper.pagination.init(); // Khởi tạo lại pagination
+                        swiper.pagination.render(); // Render xong mới update cần lưu ý
                         swiper.pagination.update(); // Update state mới
                     });
                 }}
