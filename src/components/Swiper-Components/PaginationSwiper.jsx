@@ -56,7 +56,7 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
 
     // Hiển thị trên tablet & desktop
     return (
-        <div className="NewArrivalsSwiper">
+        <div className="NewArrivalsSwiper relative">
             <Swiper
                 modules={[Navigation, Pagination, Mousewheel]}
                 slidesPerView={3} // 👈 Slide tự động co giãn theo kích thước
@@ -75,16 +75,25 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                     prevEl: prevRef.current,
                     nextEl: nextRef.current,
                 }}
-                pagination={{ el: "", type: "progressbar" }}
+                pagination={{
+                    el: paginationRef.current,
+                    type: "progressbar",
+                }}
                 onSwiper={(swiper) => {
                     // 👈 Khi swiper khởi tạo
                     setTimeout(() => {
                         // Delay để refs kịp gán
                         swiper.params.navigation.prevEl = prevRef.current;
                         swiper.params.navigation.nextEl = nextRef.current;
+                        swiper.params.pagination.el = paginationRef.current;
+
                         swiper.navigation.destroy(); // Reset navigation cũ
                         swiper.navigation.init(); // Khởi tạo lại navigation
                         swiper.navigation.update(); // Update state mới
+
+                        swiper.pagination.destroy(); // Reset pagination cũ
+                        swiper.pagination.init(); // Khởi tạo lại pagination
+                        swiper.pagination.update(); // Update state mới
                     });
                 }}
                 className="!h-auto"
@@ -119,20 +128,27 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                     </SwiperSlide>
                 ))}
 
-                {/* Nút Prev (Trái) */}
-                <button
-                    ref={prevRef}
-                    className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-full border border-gray-200 bg-white p-2 transition select-none"
-                >
-                    <ChevronLeft className="h-3 w-3 text-black" /> {/* Icon trái màu trắng */}
-                </button>
-                {/* Nút Next (Phải) */}
-                <button
-                    ref={nextRef}
-                    className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-full border border-gray-200 bg-white p-2 transition select-none"
-                >
-                    <ChevronRight className="h-3 w-3 text-black" /> {/* Icon phải màu trắng */}
-                </button>
+                {/* Thanh Progressbar + Nút Prev/Next bên phải */}
+                <div className="mt-4 flex items-center justify-between">
+                    <div
+                        ref={paginationRef}
+                        className="swiper-pagination !static !h-[3px] w-full flex-1 overflow-hidden rounded-sm !bg-gray-200"
+                    ></div>
+                    <div className="ml-4 flex items-center gap-2">
+                        <button
+                            ref={prevRef}
+                            className="overflow-hidden rounded-full border border-gray-200 bg-white p-2 transition select-none"
+                        >
+                            <ChevronLeft className="z-20 h-4 w-4 text-black" />
+                        </button>
+                        <button
+                            ref={nextRef}
+                            className="overflow-hidden rounded-full border border-gray-200 bg-white p-2 transition select-none"
+                        >
+                            <ChevronRight className="h-4 w-4 text-black" />
+                        </button>
+                    </div>
+                </div>
             </Swiper>
         </div>
     );
