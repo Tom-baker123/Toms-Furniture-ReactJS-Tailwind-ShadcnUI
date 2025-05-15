@@ -30,19 +30,24 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                             alt="asdsa"
                         />
                         {/* pt-[12px] cho box title */}
-                        {Array.isArray(image.info) &&
-                            image.info.length > 0 &&
-                            image.info.map((info, idx) => (
-                                <div
-                                    key={idx}
-                                    className="pt-3"
-                                >
-                                    <p>{info.type}</p>
-                                    <p>{info.proName}</p>
-                                    <p>{info.price}</p>
-                                    <div className="h-5 w-5 bg-gray-900"></div>
-                                </div>
-                            ))}
+                        {Array.isArray(image.info) && image.info.length > 0 && (
+                            <div className="flex-1 pt-3">
+                                {image.info.map((info, idx) => (
+                                    <div
+                                        className="flex h-full w-full flex-col justify-between"
+                                        key={idx}
+                                    >
+                                        <p className="text-sm font-semibold text-gray-700">{info.type}</p>
+                                        <h3 className="text-[20px] font-bold">{info.proName}</h3>
+                                        <p className="font-bold">{info.price}</p>
+                                        <div className="flex gap-x-2">
+                                            <div className="mt-1 h-5 w-5 bg-gray-600 md:mt-2"></div>
+                                            <div className="mt-1 h-5 w-5 bg-gray-300 md:mt-2"></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
