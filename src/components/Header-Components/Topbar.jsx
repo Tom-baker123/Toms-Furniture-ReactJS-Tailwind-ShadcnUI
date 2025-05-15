@@ -2,7 +2,7 @@ import React from "react";
 
 const Topbar = () => {
     return (
-        <div className="bg-[#1D349A]">
+        <div className="bg-[#1D349A] z-40">
             <div className="mx-auto px-4 py-[9px] text-[1rem] text-white lg:grid lg:grid-cols-3 lg:gap-3 2xl:max-w-7xl">
                 <ul className="hidden lg:flex lg:flex-wrap lg:gap-5">
                     <li>Help Center</li>
