@@ -2,6 +2,7 @@ import { FooterContact, FooterList, FooterPaymentIcon, FooterSocial } from "@/as
 import React from "react";
 import ButtonHovCustom from "./tailwind-custom/ButtonHovCustom";
 import { useDesktopBreakpoint } from "@/hooks/useDesktopBreakpoint";
+import ButtonHovCT from "./tailwind-custom/ButtonHovCT";
 
 const Footer = () => {
     // 1. Xử lý details đóng mở responsive footer
@@ -87,12 +88,15 @@ const Footer = () => {
                                     required=""
                                 />
                             </div>
-                            <ButtonHovCustom
-                                colorSelect={"black_white"}
-                                colorHoverSelect={"white_black"}
+                            <ButtonHovCT
+                                className={"!border-black"}
+                                bgColor="bg-black"
+                                hoverBgColor=" bg-white" // lớp trượt màu đen
+                                textColor="text-white"
+                                hoverTextColor="text-black"
                             >
                                 Sign Up
-                            </ButtonHovCustom>
+                            </ButtonHovCT>
                         </div>
                     </form>
 
