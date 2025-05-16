@@ -19,7 +19,7 @@ const Home = () => {
             <AlbumSwiper />
             {/* 5. FeatureSection */}
             <FeatureSection />
-            <GetAPI />
+            {/* <GetAPI /> */}
         </main>
     );
 };

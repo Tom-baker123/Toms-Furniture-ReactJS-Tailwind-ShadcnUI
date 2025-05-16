@@ -14,7 +14,7 @@ const FeatureSection = () => {
             </div>
 
             {/* 2. Buttom Feature (Not Responsive)*/}
-            <div className="flex justify-center overflow-hidden text-[12px] md:text-xs lg:text-lg">
+            <div className="flex gap-y-2 flex-wrap justify-center overflow-hidden text-[12px] md:text-xs lg:text-lg">
                 {ButtonFeature.map((t, index) => (
                     <div
                         key={index}
