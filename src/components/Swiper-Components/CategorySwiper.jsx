@@ -23,6 +23,12 @@ const CategorySwiper = () => {
                 centeredSlides={false} // 👈 Không cần căn giữa slide
                 slideToClickedSlide={true} // 👈 Click vào slide sẽ tự lướt tới nó
                 // pagination={{ type: 'progressbar' }}// 👈 Thanh progressbar dưới swiper
+                breakpoints={{
+                    0: { slidesPerView: 3 }, // 👈 Dưới 768px hiển thị 5 card
+                    768: { slidesPerView: 6 }, // 👈 Từ 768px trở lên dùng auto
+                    1024: { slidesPerView: 8 }, // 👈 Từ 768px trở lên dùng auto
+                    1280: { slidesPerView: 10 }, // 👈 Từ 768px trở lên dùng auto
+                }}
                 navigation={{
                     // 👈 Gán button điều hướng custom
                     prevEl: prevRef.current,
@@ -43,8 +49,9 @@ const CategorySwiper = () => {
                 {categoryList.map((t, index) => (
                     <SwiperSlide
                         key={index}
-                        className="!flex-basis-auto !flex-shrink-0 !flex-grow-0 max-md:!mr-0 max-md:!h-24 max-md:!w-1/4 max-md:!flex-col"
-                        style={{ width: "8rem" }} // 👈 Phải đặt min-width để slidesPerView="auto" hoạt động đẹp
+                        className="flex"
+                        // className="!flex-basis-auto !flex-shrink-0 !flex-grow-0 max-md:!mr-0 max-md:!h-24 max-md:!w-1/4 max-md:!flex-col"
+                        // style={{ width: "8rem" }} // 👈 Phải đặt min-width để slidesPerView="auto" hoạt động đẹp
                     >
                         <span className="flex h-full w-full shrink-0 items-start justify-center">
                             <a
@@ -52,9 +59,9 @@ const CategorySwiper = () => {
                                 className="relative flex flex-col items-center justify-start text-center decoration-0"
                             >
                                 {/* Logo Category */}
-                                <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-transparent select-none max-md:w-12">
+                                <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-transparent select-none max-md:w-15">
                                     <img
-                                        className="mx-auto block rounded-full object-cover max-sm:w-9"
+                                        className="mx-auto block rounded-full object-cover max-sm:w-20"
                                         src={`/img/category-menu/${t.url}`}
                                         alt=""
                                         width={800}
@@ -65,7 +72,7 @@ const CategorySwiper = () => {
                                 <div className="pointer-events-none w-full pt-3">
                                     <h3 className="relative inline-block flex-1 px-4 text-base text-[15px]">
                                         <span>
-                                            {t.name}
+                                            <span className="whitespace-nowrap">{t.name}</span>
                                             <svg
                                                 className="icon-custom icon-caret-right rtl-flip-x icon--medium icon--thick hidden md:block"
                                                 viewBox="0 0 20 20"
