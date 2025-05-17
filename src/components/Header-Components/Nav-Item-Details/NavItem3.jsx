@@ -52,18 +52,17 @@ const NavItem3 = () => {
                             </p>
                         </span>
                     </summary>
-                    {/* // Trong component NavItem1: */}
+                    {/* // Trong component NavItem3: */}
                     {isHovered &&
                         createPortal(
-                            <div
-                                className="fixed top-11 inset-0 z-40 bg-black/50 opacity-100 transition-all duration-300"
-                                onMouseLeave={handleMouseLeave}
-                            ></div>,
+                            <div className="fixed inset-0 top-11 z-40 bg-black/50 opacity-100 transition-all duration-300"></div>,
                             document.body,
                         )}
                     <div
                         className={`fixed left-0 z-10 mt-[17px] w-full bg-white shadow-2xl transition-all duration-300 ${
-                            isHovered ? "visible translate-y-0 opacity-100" : "invisible -translate-y-4 opacity-0"
+                            isHovered
+                                ? "pointer-events-auto visible translate-y-0 opacity-100"
+                                : "pointer-events-none invisible -translate-y-4 opacity-0"
                         }`}
                         onMouseEnter={() => setIsHovered(true)} // Giữ dropdown khi chuột vào
                         onMouseLeave={handleMouseLeave} // Ẩn dropdown khi chuột rời
