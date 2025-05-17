@@ -93,7 +93,6 @@ const Footer = () => {
                                 bgColor="bg-black"
                                 hoverBgColor=" bg-white" // lớp trượt màu đen
                                 textColor="text-white"
-                                hoverTextColor="text-black"
                             >
                                 Sign Up
                             </ButtonHovCT>
