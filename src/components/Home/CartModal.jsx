@@ -57,7 +57,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
 
                 {/* Danh sách cart */}
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
-                    <h2 className="drawer__heading h4">
+                    <h2 className="">
                         <span>Your cart ({(ItemCount = 0)}) </span>
                     </h2>
                     {/* Nút đóng */}
@@ -66,7 +66,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                         onClick={onClose}
                         aria-label="Close"
                     >
-                        <X className="stroke-3" />
+                        <X className="h-7 w-7 stroke-3" />
                     </button>
                 </div>
 

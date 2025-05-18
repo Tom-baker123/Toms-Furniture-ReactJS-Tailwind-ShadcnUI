@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import showHeader from "../hooks/showHeader";
 import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
-import Modal from "./Home/CartModal";
+import { useModal } from "@/context/ModalContext";
 
 const Header = ({ onOpenCartModal }) => {
+    // Trạng thái đăng nhập
+    const [isLogin, setIsLogin] = useState(true);
+
+    // [1.] Xử lý hiệu ứng ẩn hiện navbar khi cuộn theo chiều dọc
     const showHead = showHeader();
+
+    // [2.] Xử lý modal cho Authentication Button
+    const { openModal } = useModal();
+
+    const handleLoginRegister = () => {
+        openModal();
+    };
 
     return (
         <>
