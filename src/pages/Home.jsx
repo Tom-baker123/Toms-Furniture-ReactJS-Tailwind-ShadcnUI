@@ -4,7 +4,7 @@ import AlbumSwiper from "@/components/Swiper-Components/AlbumSwiper";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
 import HeroSwiper from "@/components/Swiper-Components/HeroSwiper";
 import NewArrivalsSwiper from "@/components/Swiper-Components/NewArrivalsSwiper";
-import React from "react";
+import React, { useState } from "react";
 
 const Home = () => {
     return (

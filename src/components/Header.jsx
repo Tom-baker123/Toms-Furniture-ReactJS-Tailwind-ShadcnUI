@@ -3,8 +3,9 @@ import showHeader from "../hooks/showHeader";
 import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
+import Modal from "./Home/CartModal";
 
-const Header = () => {
+const Header = ({ onOpenCartModal }) => {
     const showHead = showHeader();
 
     return (
@@ -34,7 +35,7 @@ const Header = () => {
                         {/* Main Logo CÓ RESPONSIVE */}
                         <a
                             href="/"
-                            className="relative w-full flex items-center gap-2 whitespace-nowrap"
+                            className="relative flex w-full items-center gap-2 whitespace-nowrap"
                         >
                             <img
                                 className="flex w-5 sm:w-5 lg:w-12 xl:w-9"
@@ -53,10 +54,7 @@ const Header = () => {
                     {/* Thanh Nav gồm: giỏ hàng, Login/ Register, Find a store*/}
                     <div className="w-full">
                         <div className="flex h-full items-center justify-end gap-4 sm:gap-6">
-                            <a
-                                href=""
-                                className="flex"
-                            >
+                            <button className="flex cursor-pointer">
                                 <svg
                                     className="icon icon-location icon--large icon--thick shrink-0"
                                     aria-hidden="true"
@@ -84,11 +82,9 @@ const Header = () => {
                                 </svg>
 
                                 <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Find a store</p>
-                            </a>
-                            <a
-                                href=""
-                                className="flex"
-                            >
+                            </button>
+
+                            <button className="flex cursor-pointer">
                                 <svg
                                     className="icon icon-account icon--large icon--thick shrink-0"
                                     viewBox="0 0 24 24"
@@ -114,10 +110,12 @@ const Header = () => {
                                 </svg>
 
                                 <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Sign in/ Register</p>
-                            </a>
-                            <a
-                                href=""
-                                className="sm:rounded-full sm:bg-gray-200 sm:p-3"
+                            </button>
+
+                            {/* Cart Icon */}
+                            <button
+                                onClick={onOpenCartModal}
+                                className="cursor-pointer sm:rounded-full sm:bg-gray-200 sm:p-3"
                             >
                                 <svg
                                     viewBox="0 0 20 20"
@@ -142,7 +140,7 @@ const Header = () => {
                                         strokeLinejoin="round"
                                     ></path>
                                 </svg>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
