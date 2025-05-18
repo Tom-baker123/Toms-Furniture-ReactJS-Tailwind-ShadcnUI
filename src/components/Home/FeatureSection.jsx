@@ -14,14 +14,15 @@ const FeatureSection = () => {
             </div>
 
             {/* 2. Buttom Feature (Not Responsive)*/}
-            <div className="flex flex-wrap justify-center gap-y-2 overflow-hidden text-[12px] md:text-xs lg:text-lg">
+            <div className="flex w-full justify-center gap-y-2 overflow-hidden text-[12px] max-md:gap-2 max-md:grid max-md:grid-cols-2 md:text-xs lg:text-lg">
                 {ButtonFeature.map((t, index) => (
                     <div
                         key={index}
-                        className="pr-3"
+                        className="md:mr-3"
                     >
                         {/* bgColor={"bg-amber-200"} textColor={"text-black"} textHov={"text-amber-200"} */}
                         <ButtonHovCustom
+                            classNameCT={"!w-full"}
                             colorSelect={"amber_black"}
                             colorHoverSelect={"black_amber"}
                         >
