@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { NewArrivalsPicture } from "@/assets/FakeData";
 import { cn } from "@/lib/utils";
+import ButtonHov from "../tailwind-custom/ButtonHov";
 
 const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
     // Tạo ref cho nút prev và next
@@ -24,11 +25,32 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
             <div className="grid grid-cols-2 gap-5">
                 {Picture.map((image, index) => (
                     <div key={index}>
-                        <img
-                            className={cn(`w-full rounded-md`, image.info?.length > 0 ? "aspect-square" : "h-full")}
-                            src={`/img/NewArrivals/${image.ImageURL}`}
-                            alt="asdsa"
-                        />
+                        {image.info?.length > 0 ? (
+                                <img
+                                    className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
+                                    src={`/img/NewArrivals/${image.ImageURL}`}
+                                    alt="asdsa"
+                                />
+                            ) : (
+                                <div className="relative grid grid-cols-[1fr] overflow-hidden h-full">
+                                    <div className="block h-full w-full overflow-hidden">
+                                        <img
+                                            className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
+                                            src={`/img/NewArrivals/${image.ImageURL}`}
+                                            alt="asdsa"
+                                        />
+                                    </div>
+                                    <div className="content-overlay">
+                                        <p className="mb-2 w-full text-left text-sm font-bold"> Promotion </p>
+                                        <p className="w-full text-left text-xl font-bold"> Soft Stools Design </p>
+                                        <div className="mt-8 flex w-full flex-1 items-end justify-start">
+                                            <p className="w-full">
+                                                <ButtonHov />
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         {/* pt-[12px] cho box title */}
                         {Array.isArray(image.info) && image.info.length > 0 && (
                             <div className="flex-1 pt-3">
@@ -102,11 +124,33 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                 {Picture.map((t, index) => (
                     <SwiperSlide key={index}>
                         <div className="flex h-full flex-col">
-                            <img
-                                className={cn(`w-full rounded-md object-cover`, t.info?.length > 0 ? "aspect-square" : "h-full")}
-                                src={`/img/NewArrivals/${t.ImageURL}`}
-                                alt="asdsa"
-                            />
+                            {t.info?.length > 0 ? (
+                                <img
+                                    className={cn(`w-full rounded-md object-cover`, t.info?.length > 0 ? "aspect-square" : "h-full")}
+                                    src={`/img/NewArrivals/${t.ImageURL}`}
+                                    alt="asdsa"
+                                />
+                            ) : (
+                                <div className="relative grid grid-cols-[1fr] overflow-hidden">
+                                    <div className="block h-full w-full overflow-hidden">
+                                        <img
+                                            className={cn(`w-full rounded-md object-cover`, t.info?.length > 0 ? "aspect-square" : "h-full")}
+                                            src={`/img/NewArrivals/${t.ImageURL}`}
+                                            alt="asdsa"
+                                        />
+                                    </div>
+                                    <div className="content-overlay">
+                                        <p className="mb-4 w-full text-left text-xl font-bold"> Promotion </p>
+                                        <p className="w-full text-left text-3xl font-bold"> Soft Stools Design </p>
+                                        <div className="mt-8 flex w-full flex-1 items-end justify-start">
+                                            <p>
+                                                <ButtonHov />
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {Array.isArray(t.info) && t.info.length > 0 && (
                                 <div className="flex-1 pt-10 xl:pt-5">
                                     {t.info.map((info, idx) => (

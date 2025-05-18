@@ -158,6 +158,16 @@
   }
 
   /* -[MAIN LAYOUT CUSTOM - END]----------------------------------------------------------------- */
+  /* Hiệu ứng Hover xoay 360 của dấu x */
+  .hover-rotate {
+    transition: transform 0.2s ease;
+  }
+
+  .hover-rotate:hover {
+    transform: rotate(180deg);
+  }
+
+
 
   /* Icon */
   .icon-custom {
@@ -180,7 +190,7 @@
 
   /* Button Hover */
   .btn {
-    @apply text-black hover:before:bg-black relative h-10 overflow-hidden border border-white rounded-4xl bg-white px-3 shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:transition-all before:duration-500 hover:text-white hover:before:left-0 hover:before:w-full;
+    @apply max-md:w-full text-black hover:before:bg-black relative h-10 overflow-hidden border border-white rounded-4xl bg-white px-3 shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:transition-all before:duration-500 hover:text-white hover:before:left-0 hover:before:w-full;
   }
 
   /* Chỉnh ảnh png thành màu đỏ */
@@ -216,7 +226,7 @@
 
   /* Thẻ Banner trên nav */
   .content-overlay {
-    @apply flex flex-col items-center absolute top-0 left-0 bottom-0 right-0 text-white p-8 bg-transparent
+    @apply flex flex-col items-center absolute top-0 left-0 bottom-0 right-0 text-white p-3 md:p-7 bg-transparent;
   }
 
   /* -[Mega Menu Grid - END]--------------------------------------------------------------------- */
@@ -327,8 +337,6 @@
 
 
   /* -[Swiper New Arrivals Custom]------------------------------------------------------------ */
-  /* .NewArrivalsSwiper .swiper-wrapper{ @apply !h-auto; } */
-  /* .NewArrivalsSwiper .swiper-wrapper .swiper-slide{ @apply !h-auto; } */
   .NewArrivalsSwiper .swiper-slide {
     @apply !flex !flex-col !h-auto;
     /* Cho phép slide mở rộng theo nội dung cao nhất */
@@ -345,6 +353,26 @@
   }
 
   /* -[Swiper New Arrivals Custom - End]------------------------------------------------------ */
+
+
+  /* -[Cart Custom + Effect]------------------------------------------------------------------ */
+  /* Hiệu ứng di chuyển qua bên phải */
+  @keyframes SlideInRight {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .cart-panel-effect {
+    animation: SlideInRight 0.3s ease-out;
+  }
+
+  /* -[Cart Custom + Effect - End]------------------------------------------------------------ */
+
 
 
   /* -[FOOTER]-------------------------------------------------------------------------------- */
