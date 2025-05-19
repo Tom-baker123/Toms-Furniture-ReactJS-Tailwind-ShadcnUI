@@ -6,13 +6,13 @@ const LoginForm = ({ onSwitch }) => {
     return (
         <div className="my-5 flex flex-col">
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Login</h2>
-            <p className="text-md mt-3 text-center font-semibold text-gray-500 md:text-md">If you have an account with us, please log in.</p>
+            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">If you have an account with us, please log in.</p>
             <form className="mt-6 flex flex-col">
                 {/* [1.] Email */}
                 <div className="Form-Field">
                     <label
                         htmlFor=""
-                        className="mb-3 block font-semibold"
+                        className="Form-Label"
                     >
                         Email
                     </label>
@@ -24,10 +24,10 @@ const LoginForm = ({ onSwitch }) => {
                 </div>
 
                 {/* [2.] Password */}
-                <div className="Form-Field mt-6">
+                <div className="Form-Field">
                     <label
                         htmlFor=""
-                        className="mb-3 block font-semibold"
+                        className="Form-Label"
                     >
                         Password
                     </label>
@@ -50,7 +50,7 @@ const LoginForm = ({ onSwitch }) => {
                     hoverBgColor=" bg-white" // lớp trượt màu đen
                     textColor="text-white"
                 >
-                    Sign Up
+                    Login
                 </ButtonHovCT>
             </form>
 
