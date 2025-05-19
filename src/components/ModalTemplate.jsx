@@ -1,13 +1,36 @@
 import { useModal } from "@/context/ModalContext";
+import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const ANIMATION_DURATION = 250; // ms
 
 const ModalTemplate = () => {
-    const { isOpen, modalContent, closeModal } = useModal();
+    const { isOpen, modalContent, modalOptions, closeModal } = useModal();
     const [show, setShow] = useState(false);
     const [animate, setAnimate] = useState("in");
+
+    // [1.] Xử lý sự kiện
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape" && isOpen) {
+                closeModal();
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [isOpen, closeModal]);
+
+    // [2.] Xử lý ngăn không cho scroll khi modal bật lên
+    useEffect(() => {
+        if (isOpen) document.body.classList.add("overflow-hidden");
+        else document.body.classList.remove("overflow-hidden");
+
+        // Clean up khi mount
+        return () => document.body.classList.remove("overflow-hidden");
+    }, [isOpen]);
 
     useEffect(() => {
         if (isOpen) {
@@ -23,15 +46,22 @@ const ModalTemplate = () => {
     if (!show) return null;
 
     return (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}>
+        <div
+            className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}
+        >
             {/* Backdrop */}
             <div
                 onClick={closeModal}
                 className={`fixed inset-0 bg-black/50 transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}
-            ></div>
+            />
+
             {/* Modal content */}
             <div
-                className={`relative mx-5 w-full max-w-md rounded-lg bg-white p-6 shadow-lg z-[9999] ${animate === "in" ? "animate-scale-in" : "animate-scale-out"}`}
+                className={cn(
+                    `relative z-[9999] mx-1.5 w-full rounded-lg bg-white p-6 shadow-lg md:mx-3.5`,
+                    animate === "in" ? "animate-scale-in" : "animate-scale-out",
+                    modalOptions.className || "",
+                )}
                 onClick={(e) => e.stopPropagation()}
             >
                 <button
