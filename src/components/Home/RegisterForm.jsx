@@ -12,7 +12,7 @@ const RegisterForm = ({ onSwitch }) => {
                 <div className="Form-Field">
                     <label
                         htmlFor=""
-                        className="mb-3 block font-semibold"
+                        className="Form-Label"
                     >
                         Email
                     </label>
@@ -24,10 +24,10 @@ const RegisterForm = ({ onSwitch }) => {
                 </div>
 
                 {/* [2.] Email */}
-                <div className="Form-Field mt-6">
+                <div className="Form-Field">
                     <label
                         htmlFor=""
-                        className="mb-3 block font-semibold"
+                        className="Form-Label"
                     >
                         Password
                     </label>
@@ -39,10 +39,10 @@ const RegisterForm = ({ onSwitch }) => {
                 </div>
 
                 {/* [3.] Password */}
-                <div className="Form-Field mt-6">
+                <div className="Form-Field">
                     <label
                         htmlFor=""
-                        className="mb-3 block font-semibold"
+                        className="Form-Label"
                     >
                         Password
                     </label>
@@ -54,10 +54,10 @@ const RegisterForm = ({ onSwitch }) => {
                 </div>
 
                 {/* [4.] Confirm Password */}
-                <div className="Form-Field mt-6">
+                <div className="Form-Field">
                     <label
                         htmlFor=""
-                        className="mb-3 block font-semibold"
+                        className="Form-Label"
                     >
                         Password
                     </label>
@@ -67,23 +67,23 @@ const RegisterForm = ({ onSwitch }) => {
                         placeholder="Password"
                     />
                 </div>
-                <Link
+                {/* <Link
                     to={"/ForgotPassword"}
                     className="mt-2 font-semibold text-gray-500 underline"
                 >
                     Forgot Password
-                </Link>
+                </Link> */}
 
                 <ButtonHovCT
-                    className={"mt-6 !border-black"}
+                    className={"mt-8 !border-black"}
                     bgColor="bg-black"
                     hoverBgColor=" bg-white" // lớp trượt màu đen
                     textColor="text-white"
                 >
-                    Sign Up
+                    Register
                 </ButtonHovCT>
             </form>
-            <span className="mt-2 flex justify-center items-center gap-1 font-semibold">
+            <span className="mt-2 flex items-center justify-center gap-1 font-semibold">
                 <span className="text-gray-500">Already have an account</span>
                 <Link
                     to={"#"}
@@ -91,7 +91,7 @@ const RegisterForm = ({ onSwitch }) => {
                         e.preventDefault();
                         onSwitch && onSwitch();
                     }}
-                    className="font-bold text-center underline"
+                    className="text-center font-bold underline"
                 >
                     Login here
                 </Link>
