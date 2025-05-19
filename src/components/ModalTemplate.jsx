@@ -58,19 +58,23 @@ const ModalTemplate = () => {
             {/* Modal content */}
             <div
                 className={cn(
-                    `relative z-[9999] mx-1.5 w-full rounded-lg bg-white p-6 shadow-lg md:mx-3.5`,
+                    `relative z-[9999] max-h-full w-full overflow-auto rounded-lg px-3 md:px-10 pt-7 [scrollbar-width:_thin]`,
                     animate === "in" ? "animate-scale-in" : "animate-scale-out",
-                    modalOptions.className || "",
                 )}
-                onClick={(e) => e.stopPropagation()}
+                onClick={closeModal}
             >
-                <button
-                    className="absolute top-5 right-5 cursor-pointer text-gray-500 hover:text-gray-700"
-                    onClick={closeModal}
+                <div
+                    className={cn(`relative mx-auto w-full rounded-md bg-white p-5 shadow-lg md:p-7`, modalOptions.className || "")}
+                    onClick={(e) => e.stopPropagation()}
                 >
-                    <X className="h-7 w-7 stroke-3" />
-                </button>
-                {modalContent}
+                    <button
+                        className="absolute top-5 right-5 cursor-pointer text-gray-500 hover:text-gray-700"
+                        onClick={closeModal}
+                    >
+                        <X className="h-7 w-7 stroke-3" />
+                    </button>
+                    {modalContent}
+                </div>
             </div>
         </div>
     );

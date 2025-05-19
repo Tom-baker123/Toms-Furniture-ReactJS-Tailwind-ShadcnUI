@@ -5,6 +5,8 @@ import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
 import { useModal } from "@/context/ModalContext";
 import LoginForm from "./Home/LoginForm";
+import RegisterForm from "./Home/RegisterForm";
+import AuthSwitcher from "./Home/AuthSwitcher";
 
 const Header = ({ onOpenCartModal }) => {
     // Trạng thái đăng nhập
@@ -18,13 +20,10 @@ const Header = ({ onOpenCartModal }) => {
     // [2.] Xử lý modal cho Authentication Button
 
     const handleLoginRegister = () => {
-        openModal(
-            <>
-                <LoginForm />
-            </>,
-            { className: "max-w-2xl" },
-        );
+        openModal(<AuthSwitcher />, { className: "max-w-md" });
     };
+
+    <div className="max-w-80"></div>;
 
     return (
         <>

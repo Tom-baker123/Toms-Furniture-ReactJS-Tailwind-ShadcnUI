@@ -2,14 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 
-const LoginForm = () => {
-    // TRÊN 24
-    // DƯỚI 8
-    // Dưới login 12
+const LoginForm = ({ onSwitch }) => {
     return (
-        <div className="flex flex-col">
+        <div className="my-5 flex flex-col">
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Login</h2>
-            <p className="mt-3 text-center text-sm font-semibold text-gray-500 md:text-xl">If you have an account with us, please log in.</p>
+            <p className="text-md mt-3 text-center font-semibold text-gray-500 md:text-md">If you have an account with us, please log in.</p>
             <form className="mt-6 flex flex-col">
                 {/* [1.] Email */}
                 <div className="Form-Field">
@@ -56,6 +53,17 @@ const LoginForm = () => {
                     Sign Up
                 </ButtonHovCT>
             </form>
+
+            <Link
+                to={"#"}
+                className="mt-2 text-center font-semibold underline"
+                onClick={(e) => {
+                    e.preventDefault();
+                    onSwitch && onSwitch();
+                }}
+            >
+                Create new account
+            </Link>
         </div>
     );
 };
