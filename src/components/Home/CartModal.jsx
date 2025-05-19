@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Cart from "@/pages/Cart";
+import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 
 const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     const [show, setShow] = useState(false);
@@ -46,7 +48,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
             {/* Panel trượt từ bên phải */}
             <div
                 className={cn(
-                    "fixed top-0 right-0 z-[9999] h-screen w-full bg-white transition-transform duration-300 sm:w-3/4 md:w-[32rem]",
+                    "fixed top-0 right-0 z-[9999] flex h-screen w-full flex-col bg-white transition-transform duration-300 sm:w-3/4 md:w-[32rem]",
                     open ? "translate-x-0" : "translate-x-full",
                 )}
             >
@@ -71,7 +73,69 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                 </div>
 
                 {/* Nội dung modal */}
-                {children}
+                {/* {children} */}
+                <div className="flex h-full flex-col  w-full">
+                    <div className="Cart-Modal-Content flex-1 ">asdasdsad</div>
+
+                    <div className="Cart-Modal-Footer border-t border-gray-200 bg-white drop-shadow-2xl">
+                        <div className="grid grid-cols-1 gap-3">
+                            <div className="flex gap-2">
+                                <ButtonHovCT
+                                    className="!border-gray-200"
+                                    bgColor="bg-gray-200"
+                                    hoverBgColor="bg-black"
+                                    textColor="text-black"
+                                    hoverTextColor="group-hover:text-white"
+                                >
+                                    <span className="flex items-center justify-center">
+                                        Order Note <ChevronRight />
+                                    </span>
+                                </ButtonHovCT>
+                                <ButtonHovCT
+                                    className="!border-gray-200"
+                                    bgColor="bg-gray-200"
+                                    hoverBgColor="bg-black"
+                                    textColor="text-black"
+                                    hoverTextColor="group-hover:text-white"
+                                >
+                                    <span className="flex items-center justify-center">
+                                        Estimate Shipping <ChevronRight />
+                                    </span>
+                                </ButtonHovCT>
+                            </div>
+                            <div className="">
+                                <div className="grid gap-5">
+                                    <div className="grid gap-1">
+                                        <div className="flex items-center justify-between text-xl font-bold">
+                                            <div className="">Estimated total</div>
+                                            <div className="text-2xl">{"2.000.000"} VND</div>
+                                        </div>
+                                        <div className="text-left text-sm">Taxes and shipping calculated at checkout</div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <ButtonHovCT
+                                            className="!border-gray-200"
+                                            bgColor="bg-gray-200"
+                                            hoverBgColor="bg-black"
+                                            textColor="text-black"
+                                            hoverTextColor="group-hover:text-white"
+                                        >
+                                            Order Note
+                                        </ButtonHovCT>
+                                        <ButtonHovCT
+                                            bgColor="bg-black"
+                                            hoverBgColor=" bg-white" // lớp trượt màu đen
+                                            textColor="text-white"
+                                            className="flex-1 !border-black"
+                                        >
+                                            Estimate Shipping
+                                        </ButtonHovCT>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     );
