@@ -3,14 +3,14 @@ import clsx from "clsx";
 
 // 👇 Mapping các màu hover text để Tailwind biết và build sẵn
 const ColorSelectiton = {
-    defualt: "text-black bg-white",
+    default: "text-black bg-white",
     // white_black: 'text-black bg-white',
     black_white: "text-white bg-black",
     amber_black: "text-black bg-amber-200",
 };
 
 const ColorHoverSelectiton = {
-    defualt: "hover:before:bg-white hover:text-black",
+    default: "hover:before:bg-white hover:text-black",
     black_amber: "hover:before:bg-black hover:text-amber-200",
     white_black: "hover:before:bg-white hover:text-black",
 };

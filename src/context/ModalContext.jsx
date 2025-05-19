@@ -13,18 +13,23 @@ const ModalContext = createContext();
 export const ModalProvider = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
+    const [modalOptions, setModalOptions] = useState({});
 
-    const openModal = (content) => {
+    const openModal = (content, options = {}) => {
         setModalContent(content);
+        setModalOptions(options);
         setIsOpen(true);
     };
 
     const closeModal = () => {
         setIsOpen(false);
-        setTimeout(() => setModalContent(null), 250);
+        setTimeout(() => {
+            setModalContent(null);
+            setModalOptions({});
+        }, 250);
     };
 
-    return <ModalContext.Provider value={{ isOpen, modalContent, openModal, closeModal }}>{children}</ModalContext.Provider>;
+    return <ModalContext.Provider value={{ isOpen, modalContent, modalOptions, openModal, closeModal }}>{children}</ModalContext.Provider>;
 };
 
 export const useModal = () => useContext(ModalContext);

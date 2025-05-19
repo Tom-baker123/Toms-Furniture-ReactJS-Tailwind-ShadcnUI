@@ -4,19 +4,26 @@ import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
 import { useModal } from "@/context/ModalContext";
+import LoginForm from "./Home/LoginForm";
 
 const Header = ({ onOpenCartModal }) => {
     // Trạng thái đăng nhập
     const [isLogin, setIsLogin] = useState(true);
+    // Gọi hàm modal
+    const { openModal } = useModal();
 
     // [1.] Xử lý hiệu ứng ẩn hiện navbar khi cuộn theo chiều dọc
     const showHead = showHeader();
 
     // [2.] Xử lý modal cho Authentication Button
-    const { openModal } = useModal();
 
     const handleLoginRegister = () => {
-        openModal();
+        openModal(
+            <>
+                <LoginForm />
+            </>,
+            { className: "max-w-2xl" },
+        );
     };
 
     return (
@@ -95,7 +102,11 @@ const Header = ({ onOpenCartModal }) => {
                                 <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Find a store</p>
                             </button>
 
-                            <button className="flex cursor-pointer">
+                            {/* Login / Register */}
+                            <button
+                                onClick={handleLoginRegister}
+                                className="flex cursor-pointer"
+                            >
                                 <svg
                                     className="icon icon-account icon--large icon--thick shrink-0"
                                     viewBox="0 0 24 24"
