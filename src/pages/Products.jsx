@@ -27,7 +27,7 @@ const Products = () => {
 
             <div className="pt-7 pb-[60px]">
                 {/* [3.] Toolbar */}
-                <div className={cn(`container-custom transition-[top] sticky z-10 bg-white py-3 shadow`, showHead ? `top-[138px]` : `top-0`)}>
+                <div className={cn(`container-custom sticky z-10 bg-white py-3  transition-[top]`, showHead ? `top-[138px]` : `top-0`)}>
                     {/* Đảm bảo toolbar ở trên cùng */}
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col-reverse items-center gap-4 md:flex-row md:gap-8">
@@ -104,76 +104,61 @@ const Products = () => {
                 </div>
 
                 {/* [4.] Danh sách sản phẩm */}
-                <div className="container-custom">
-                    {/* [4.1] Filter */}
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    <div className="">asdasdasd;lml;msdm;alsmdl;asmdl;</div>
-                    {/* [4.2] Product List */}
+                <div className="container-custom mt-4">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[12rem_1fr]">
+                        {/* [4.1] Filter */}
+                        <div className={cn(`sticky self-start transition-[top]`, showHead ? `top-[230px]` : `top-[90px]`)}>
+                            <h3 className="mb-4 text-lg font-semibold">Filter Products</h3>
+                            <div className="space-y-4">
+                                {/* Ví dụ các bộ lọc */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Category</label>
+                                    <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                        <option>All</option>
+                                        <option>Chairs</option>
+                                        <option>Tables</option>
+                                        <option>Sofas</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Price Range</label>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1000"
+                                        className="w-full"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Color</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="checkbox"
+                                            id="red"
+                                        />
+                                        <label htmlFor="red">Red</label>
+                                        <input
+                                            type="checkbox"
+                                            id="blue"
+                                        />
+                                        <label htmlFor="blue">Blue</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/* [4.2] Product List */}
+                        <div className="flex flex-col gap-5">{/* Danh sách sản phẩm (Ví dụ) */}
+                            {Array.from({ length: 12 }).map((_, index) => (
+                                <div
+                                    key={index}
+                                    className="border border-gray-300 rounded-lg p-4"
+                                >
+                                    <div className="h-40 bg-gray-200 mb-2 rounded"></div>
+                                    <h4 className="text-lg font-medium">Product {index + 1}</h4>
+                                    <p className="text-gray-500">$99.99</p>
+                                </div>
+                            ))}</div>
+                    </div>
                 </div>
             </div>
         </>
