@@ -42,48 +42,42 @@ export const AlbumSwiperData = [
         id: 0,
         title: "Welcome Home",
         url: "lookbook-slider-1.png",
-        description:
-            "This is your dream room that you have ever wanted. ",
+        description: "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 1,
         title: "Welcome Home",
         url: "lookbook-slider-1.png",
-        description:
-            "This is your dream room that you have ever wanted. ",
+        description: "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 2,
         title: "Welcome Home",
         url: "lookbook-slider-1.png",
-        description:
-            "This is your dream room that you have ever wanted. ",
+        description: "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 3,
         title: "Welcome Home",
         url: "lookbook-slider-1.png",
-        description:
-            "This is your dream room that you have ever wanted. ",
+        description: "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 4,
         title: "Welcome Home",
         url: "lookbook-slider-1.png",
-        description:
-            "This is your dream room that you have ever wanted. ",
+        description: "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
     {
         id: 5,
         title: "Welcome Home",
         url: "lookbook-slider-1.png",
-        description:
-            "This is your dream room that you have ever wanted. ",
+        description: "This is your dream room that you have ever wanted. ",
         categories: ["Travel", "History"],
     },
 ];
@@ -283,6 +277,10 @@ export const NewArrivalsTabs = {
     },
 };
 // [6. NEW ARRIVALS - END]----------------------------------------------------------------------------------------------------
+
+// [7. Product List]----------------------------------------------------------------------------------------------------------
+
+// [7. Product List - End]----------------------------------------------------------------------------------------------------
 
 // #region [Footer Contact]---------------------------------------------------------
 export const FooterContact = [
