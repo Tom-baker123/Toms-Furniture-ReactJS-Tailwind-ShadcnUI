@@ -374,7 +374,7 @@
   }
 
   .Cart-Modal-Footer {
-    @apply px-4 py-3 sm:px-[28px] sm:py-5;
+    @apply flex flex-col px-4 py-3 sm:px-[28px] sm:py-5;
 
   }
 

@@ -10,7 +10,7 @@ const ModalTemplate = () => {
     const [show, setShow] = useState(false);
     const [animate, setAnimate] = useState("in");
 
-    // [1.] Xử lý sự kiện
+    // [1.] Xử lý sự kiện nhấn nút escape để thoát modal
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "Escape" && isOpen) {
@@ -32,6 +32,7 @@ const ModalTemplate = () => {
         return () => document.body.classList.remove("overflow-hidden");
     }, [isOpen]);
 
+    // [3.] Xử lý sự kiện đóng mở modal
     useEffect(() => {
         if (isOpen) {
             setShow(true);
@@ -42,6 +43,8 @@ const ModalTemplate = () => {
             return () => clearTimeout(timeout);
         }
     }, [isOpen]);
+
+    
 
     if (!show) return null;
 
