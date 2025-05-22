@@ -2,18 +2,18 @@ import PaginationSwiper from "@/components/Swiper-Components/PaginationSwiper";
 
 // [2. CATEGORY LIST]----------------------------------------------------------------------------------------------------------
 export const categoryList = [
-    { id: 0, name: "Sale Items", url: "collection-sales.png" },
-    { id: 1, name: "Press Tables", url: "Turn-Table-Mono.png" },
-    { id: 2, name: "Lighting", url: "Pendantlamp-1.png" },
-    { id: 3, name: "Spoke Sofa", url: "Spoke-Sofa-Basic.png" },
-    { id: 4, name: "Storage", url: "Curve-Coat-Rack-Shelf.png" },
-    { id: 5, name: "Turn Chairs", url: "Arc-Chair-dark.png" },
-    { id: 6, name: "Longe Chairs", url: "Turn-chair-Warm.png" },
-    { id: 7, name: "Curve Coat", url: "Curve-Coat-Rack.png" },
-    { id: 8, name: "Bend Chairs", url: "Turn-chair-colorful.png" },
-    { id: 9, name: "Accessories", url: "bottlegrinder.png" },
-    { id: 10, name: "Cross Tables", url: "Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png" },
-    { id: 11, name: "Bar Chairs", url: "Arc-Chair-dark.png" },
+    { id: 0, name: "Sale Items", url: "collection-sales.png", linkWebsite: "products" },
+    { id: 1, name: "Press Tables", url: "Turn-Table-Mono.png", linkWebsite: "products" },
+    { id: 2, name: "Lighting", url: "Pendantlamp-1.png", linkWebsite: "products" },
+    { id: 3, name: "Spoke Sofa", url: "Spoke-Sofa-Basic.png", linkWebsite: "products" },
+    { id: 4, name: "Storage", url: "Curve-Coat-Rack-Shelf.png", linkWebsite: "products" },
+    { id: 5, name: "Turn Chairs", url: "Arc-Chair-dark.png", linkWebsite: "products" },
+    { id: 6, name: "Longe Chairs", url: "Turn-chair-Warm.png", linkWebsite: "products" },
+    { id: 7, name: "Curve Coat", url: "Curve-Coat-Rack.png", linkWebsite: "products" },
+    { id: 8, name: "Bend Chairs", url: "Turn-chair-colorful.png", linkWebsite: "products" },
+    { id: 9, name: "Accessories", url: "bottlegrinder.png", linkWebsite: "products" },
+    { id: 10, name: "Cross Tables", url: "Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png", linkWebsite: "products" },
+    { id: 11, name: "Bar Chairs", url: "Arc-Chair-dark.png", linkWebsite: "products" },
 ];
 // [2. CATEGORY LIST - END]----------------------------------------------------------------------------------------------------
 

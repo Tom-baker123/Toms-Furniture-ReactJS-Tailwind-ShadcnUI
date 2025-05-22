@@ -4,8 +4,6 @@ import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
 import { useModal } from "@/context/ModalContext";
-import LoginForm from "./Home/LoginForm";
-import RegisterForm from "./Home/RegisterForm";
 import AuthSwitcher from "./Home/AuthSwitcher";
 
 const Header = ({ onOpenCartModal }) => {
@@ -175,6 +173,8 @@ const Header = ({ onOpenCartModal }) => {
                 <Navbar />
             </header>
             {/* -[HEADER - END]-------------------------------------------------------------------- */}
+
+            {/* -[Product  END]-------------------------------------------------------------------- */}
         </>
     );
 };

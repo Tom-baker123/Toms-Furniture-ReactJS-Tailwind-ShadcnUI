@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import ScrollToTop from "@/components/Header-Components/ScrollToTop";
 import CartModal from "@/components/Home/CartModal";
 import ModalTemplate from "@/components/ModalTemplate";
+import Breadcrumbs from "@/components/tailwind-custom/Breadcrumbs";
 import { ModalProvider } from "@/context/ModalContext";
 import React, { useState } from "react";
 import { Toaster } from "react-hot-toast";
@@ -22,6 +23,8 @@ const HomeLayout = () => {
                 open={openCartModal}
                 onClose={() => setOpenCartModal(false)}
             />
+            <Breadcrumbs/>
+
             <Outlet /> {/* 2. Thiết lập OUTLET */}
             <Footer /> {/* 3. Thiết lập footer */}
             <Toaster /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}

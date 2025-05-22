@@ -6,7 +6,7 @@ import {
     PageNotFound,
     Contact,
     FindAStore,
-    Product,
+    Products,
     ProductDetails,
     FAQ,
     Profile,
@@ -46,12 +46,12 @@ const router = createBrowserRouter([
                 loader: isUserLoggedIn,
             },
             {
-                path: "product",
+                path: "products",
                 loader: isUserLoggedIn,
                 children: [
                     {
                         index: true,
-                        element: <Product />, // Đây là trang danh sách sản phẩm
+                        element: <Products />, // Đây là trang danh sách sản phẩm
                     },
                     {
                         path: ":proid",

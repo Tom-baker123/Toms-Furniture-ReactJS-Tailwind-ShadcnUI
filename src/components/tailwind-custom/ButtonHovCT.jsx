@@ -34,3 +34,17 @@ const ButtonHovCT = ({
 };
 
 export default ButtonHovCT;
+
+// [--Example--]
+{
+    /* 
+<ButtonHovCT
+    className={"!border-black"}
+    bgColor="bg-black"
+    hoverBgColor=" bg-white" // lớp trượt màu đen
+    textColor="text-white"
+>
+    Sign Up
+</ButtonHovCT> 
+*/
+}
