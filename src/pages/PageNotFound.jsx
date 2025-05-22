@@ -1,15 +1,29 @@
-import ButtonHov from '@/components/tailwind-custom/ButtonHov'
-import React from 'react'
+import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
+import React from "react";
 
 const PageNotFound = () => {
-  return (
-    <div className='w-full py-24 flex flex-col gap-3 items-center justify-center'>
-      <img src="../src/assets/sub-icon/EmptyBox.png" alt="Page Not Found" width={100} height={100}/>
-      <h1 className='font-extrabold text-3xl'>404 Page not found </h1>
-      <p className='text-md text-gray-500'>The page you requested does not exist.</p>
-      <ButtonHov Title='Continue Shopping' classCustom='px-2'/>
-    </div>
-  )
-}
+    return (
+        <div className="flex w-full flex-col items-center justify-center gap-5 py-10 my-auto">
+            <img
+                src="/img/sub-icon/EmptyBox.png"
+                alt="Page Not Found"
+                width={100}
+                height={100}
+            />
+            <div className="flex flex-col gap-1">
+                <h1 className="text-3xl font-extrabold">404 Page not found </h1>
+                <p className="text-md text-gray-500">The page you requested does not exist.</p>
+            </div>
+            <ButtonHovCT
+                className={"!border-black"}
+                bgColor="bg-black"
+                hoverBgColor=" bg-white" // lớp trượt màu đen
+                textColor="text-white"
+            >
+                Continue Shopping
+            </ButtonHovCT>
+        </div>
+    );
+};
 
-export default PageNotFound
+export default PageNotFound;
