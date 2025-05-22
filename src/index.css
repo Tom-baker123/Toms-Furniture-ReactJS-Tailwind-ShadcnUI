@@ -154,7 +154,7 @@
   /* 1.  Container Custom: */
   .container-custom {
     /* xl:px-[50px] */
-    @apply px-[15px] overflow-hidden mx-auto 2xl:max-w-7xl;
+    @apply px-[15px] mx-auto 2xl:max-w-7xl;
   }
 
   /* -[MAIN LAYOUT CUSTOM - END]----------------------------------------------------------------- */
@@ -453,6 +453,15 @@
   }
 
   /* -[Login Modal - End]--------------------------------------------------------------------- */
+
+  /* -[Products Filter]----------------------------------------------------------------------- */
+  .sticky-element {
+    position: sticky;
+    top: 80px;
+    --sticky-offset: 0px;
+  }
+
+  /* -[Products Filter - End]----------------------------------------------------------------- */
 
   /* -[FOOTER]-------------------------------------------------------------------------------- */
   @media (min-width: 1024px) {

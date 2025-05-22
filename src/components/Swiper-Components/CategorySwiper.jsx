@@ -7,6 +7,7 @@ import "swiper/css"; // Import CSS cơ bản của Swiper
 import "swiper/css/navigation"; // Import CSS cho Navigation
 import "swiper/css/pagination"; // Import CSS cho Pagination
 import { categoryList } from "@/assets/FakeData";
+import { Link } from "react-router-dom";
 
 const CategorySwiper = () => {
     // Tạo ref cho nút prev và next
@@ -54,8 +55,8 @@ const CategorySwiper = () => {
                         // style={{ width: "8rem" }} // 👈 Phải đặt min-width để slidesPerView="auto" hoạt động đẹp
                     >
                         <span className="flex h-full w-full shrink-0 items-start justify-center">
-                            <a
-                                href="#"
+                            <Link
+                                to={t.linkWebsite}
                                 className="relative flex flex-col items-center justify-start text-center decoration-0"
                             >
                                 {/* Logo Category */}
@@ -90,7 +91,7 @@ const CategorySwiper = () => {
                                         </span>
                                     </h3>
                                 </div>
-                            </a>
+                            </Link>
                         </span>
                     </SwiperSlide>
                 ))}
