@@ -1,3 +1,4 @@
+import { NewArrivalsPicture } from "@/assets/FakeData";
 import BannerProducts from "@/components/Home/ProductCategoryComponents/BannerProducts";
 import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
@@ -27,7 +28,7 @@ const Products = () => {
 
             <div className="pt-7 pb-[60px]">
                 {/* [3.] Toolbar */}
-                <div className={cn(`container-custom sticky z-10 bg-white py-3  transition-[top]`, showHead ? `top-[138px]` : `top-0`)}>
+                <div className={cn(`container-custom sticky z-50 bg-white py-3 transition-[top]`, showHead ? `top-[138px]` : `top-0`)}>
                     {/* Đảm bảo toolbar ở trên cùng */}
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col-reverse items-center gap-4 md:flex-row md:gap-8">
@@ -107,7 +108,7 @@ const Products = () => {
                 <div className="container-custom mt-4">
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[12rem_1fr]">
                         {/* [4.1] Filter */}
-                        <div className={cn(`sticky self-start transition-[top]`, showHead ? `top-[230px]` : `top-[90px]`)}>
+                        <div className={cn(`sticky self-start transition-[top] max-lg:hidden`, showHead ? `top-[230px]` : `top-[90px]`)}>
                             <h3 className="mb-4 text-lg font-semibold">Filter Products</h3>
                             <div className="space-y-4">
                                 {/* Ví dụ các bộ lọc */}
@@ -147,17 +148,62 @@ const Products = () => {
                             </div>
                         </div>
                         {/* [4.2] Product List */}
-                        <div className="flex flex-col gap-5">{/* Danh sách sản phẩm (Ví dụ) */}
-                            {Array.from({ length: 12 }).map((_, index) => (
-                                <div
-                                    key={index}
-                                    className="border border-gray-300 rounded-lg p-4"
-                                >
-                                    <div className="h-40 bg-gray-200 mb-2 rounded"></div>
-                                    <h4 className="text-lg font-medium">Product {index + 1}</h4>
-                                    <p className="text-gray-500">$99.99</p>
+
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:grid-cols-4">
+                            {NewArrivalsPicture.map((image, index) => (
+                                <div key={index}>
+                                    {image.info?.length > 0 ? (
+                                        <img
+                                            className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
+                                            src={`/img/NewArrivals/${image.ImageURL}`}
+                                            alt="asdsa"
+                                        />
+                                    ) : (
+                                        <div className="relative grid h-full grid-cols-[1fr] overflow-hidden">
+                                            <div className="block h-full w-full overflow-hidden">
+                                                <img
+                                                    className={cn(
+                                                        `w-full rounded-md object-cover`,
+                                                        image.info?.length > 0 ? "aspect-square" : "h-full",
+                                                    )}
+                                                    src={`/img/NewArrivals/${image.ImageURL}`}
+                                                    alt="asdsa"
+                                                />
+                                            </div>
+                                            <div className="content-overlay">
+                                                <p className="mb-2 w-full text-left text-sm font-bold"> Promotion </p>
+                                                <p className="w-full text-left text-xl font-bold"> Soft Stools Design </p>
+                                                <div className="mt-8 flex w-full flex-1 items-end justify-start">
+                                                    <p className="w-full">
+                                                        <ButtonHov />
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* pt-[12px] cho box title */}
+                                    {Array.isArray(image.info) && image.info.length > 0 && (
+                                        <div className="flex-1 pt-3">
+                                            {image.info.map((info, idx) => (
+                                                <div
+                                                    className="flex h-full w-full flex-col justify-between"
+                                                    key={idx}
+                                                >
+                                                    <p className="text-sm font-semibold text-gray-700">{info.type}</p>
+                                                    <h3 className="text-[20px] font-bold">{info.proName}</h3>
+                                                    <p className="font-bold">{info.price}</p>
+                                                    <div className="flex gap-x-2">
+                                                        <div className="mt-1 h-5 w-5 bg-gray-600 md:mt-2"></div>
+                                                        <div className="mt-1 h-5 w-5 bg-gray-300 md:mt-2"></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                            ))}</div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
