@@ -1,1 +1,25 @@
 -Nhớ kiểm tra: Not Responsive
+
+
+<div
+    key={index}
+    className="flex-1"
+>
+    <details open={isDesktop}>
+        <summary
+            // onClick={isDesktop ? (e) => e.preventDefault : undefined}
+            className={`flex cursor-pointer text-[1.2rem] font-bold lg:pointer-events-none`}
+        >
+            <h3 className="py-3 lg:py-0">{t.footerHeading}</h3>
+        </summary>
+
+        {/* Horizontal Line */}
+        <div className="w-full border-b border-gray-200 lg:hidden" />
+
+        <ul className="space-y-2 py-3 font-semibold text-gray-500">
+            {t.footerList.map((fl, flindex) => (
+                <li key={flindex}> {fl} </li>
+            ))}
+        </ul>
+    </details>
+</div>

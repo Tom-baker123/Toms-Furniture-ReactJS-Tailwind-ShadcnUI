@@ -3,6 +3,7 @@ import React from "react";
 import ButtonHovCustom from "./tailwind-custom/ButtonHovCustom";
 import { useDesktopBreakpoint } from "@/hooks/useDesktopBreakpoint";
 import ButtonHovCT from "./tailwind-custom/ButtonHovCT";
+import Collapse from "./tailwind-custom/Collapse";
 
 const Footer = () => {
     // 1. Xử lý details đóng mở responsive footer
@@ -123,12 +124,13 @@ const Footer = () => {
                         key={index}
                         className="flex-1"
                     >
-                        <details open={isDesktop}>
+                        <details className="hidden lg:block" open={isDesktop}>
                             <summary
                                 // onClick={isDesktop ? (e) => e.preventDefault : undefined}
-                                className={`flex cursor-pointer text-[1.2rem] font-bold lg:pointer-events-none`}
+                                className={`flex cursor-pointer justify-between text-[1.2rem] font-bold lg:pointer-events-none`}
                             >
                                 <h3 className="py-3 lg:py-0">{t.footerHeading}</h3>
+                                
                             </summary>
 
                             {/* Horizontal Line */}
@@ -140,6 +142,10 @@ const Footer = () => {
                                 ))}
                             </ul>
                         </details>
+
+                        <div className="lg:hidden">
+                            <Collapse title={t.footerHeading} json={t.footerList}/>
+                        </div>
                     </div>
                 ))}
             </section>
