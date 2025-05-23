@@ -59,7 +59,7 @@ const NavItem1 = () => {
                             document.body,
                         )}
                     <div
-                        className={`fixed left-0 z-10 mt-[17px] w-full bg-white shadow-2xl transition-all duration-300 ${
+                        className={`fixed left-0 z-50 mt-[17px] w-full bg-white shadow-2xl transition-all duration-300 ${
                             isHovered
                                 ? "pointer-events-auto visible translate-y-0 opacity-100"
                                 : "pointer-events-none invisible -translate-y-4 opacity-0"
@@ -67,7 +67,7 @@ const NavItem1 = () => {
                         onMouseEnter={() => setIsHovered(true)} // Giữ dropdown khi chuột vào
                         onMouseLeave={handleMouseLeave} // Ẩn dropdown khi chuột rời
                     >
-                        <div className="custom-scrollbar z-50 mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
+                        <div className="custom-scrollbar mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
                             <div className="flex flex-wrap">
                                 <div className="nav-custom-grid flex-1">
                                     <div className="mega-menu__column flex flex-col gap-8">

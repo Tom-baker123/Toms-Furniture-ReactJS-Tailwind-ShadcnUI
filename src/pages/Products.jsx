@@ -1,5 +1,6 @@
 import { NewArrivalsPicture } from "@/assets/FakeData";
 import BannerProducts from "@/components/Home/ProductCategoryComponents/BannerProducts";
+import FilterComponents from "@/components/Home/ProductCategoryComponents/FilterComponents";
 import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
 import ButtonHov from "@/components/tailwind-custom/ButtonHov";
@@ -20,27 +21,29 @@ const Products = () => {
             <div className="container-custom">
                 <BannerProducts className="my-2"></BannerProducts>
             </div>
+
             {/* [2.] Category List */}
             <div className="container-custom">
                 <CategorySwiper />
                 <div className="border-b"></div>
             </div>
 
-            <div className="pt-7 pb-[60px]">
+            {/* [3.] Toolbar + Product List*/}
+            <div className="pt-7 pb-[60px] scroll-smooth">
                 {/* [3.] Toolbar */}
-                <div className={cn(`container-custom sticky z-50 bg-white py-3 transition-[top]`, showHead ? `top-[138px]` : `top-0`)}>
+                <div className={cn(`container-custom sticky z-10 bg-white py-3 transition-[top]`, showHead ? `top-[138px] z-10` : `top-0 z-10`)}>
                     {/* Đảm bảo toolbar ở trên cùng */}
                     <div className="flex items-center justify-between">
-                        <div className="flex flex-col-reverse items-center gap-4 md:flex-row md:gap-8">
+                        <div className="flex flex-col-reverse items-center gap-4 max-md:justify-between md:flex-row md:gap-8">
                             <ProductCategoryToolbar />
-                            <span className="text-xl font-semibold text-gray-500">{106} products</span>
+                            <span className="text-md font-semibold text-gray-500">{106} products</span>
                         </div>
 
                         {/* Right Toolbar */}
                         <div className="flex items-end gap-4 max-md:flex-col md:items-center lg:gap-8">
                             {/* Nút Compare */}
                             <label className="inline-flex cursor-pointer items-center gap-3">
-                                <span className="ms-3 text-xl font-semibold text-gray-900">Compare: </span>
+                                <span className="text-md ms-3 !font-bold text-gray-900">Compare: </span>
                                 <input
                                     type="checkbox"
                                     value=""
@@ -53,7 +56,7 @@ const Products = () => {
                             <form className="hidden items-center gap-3 font-semibold lg:flex">
                                 <label
                                     htmlFor="sortBy"
-                                    className="text-xl whitespace-nowrap"
+                                    className="text-md font-bold whitespace-nowrap"
                                 >
                                     Sort By:
                                 </label>
@@ -77,11 +80,11 @@ const Products = () => {
                             </form>
 
                             {/* Hiển thị dưới dạng */}
-                            <div className="flex items-end gap-2 text-xl font-semibold md:items-center">
-                                <p className="max-md:hidden">View as: </p>
+                            <div className="flex items-end gap-2 font-semibold md:items-center">
+                                <p className="text-md font-bold max-md:hidden">View as: </p>
                                 {/* Layout Button 1 */}
                                 <ButtonHovCT
-                                    className={"!border-black !px-3.5 !py-3.5"}
+                                    className={"!border-black !px-2.5 !py-2.5"}
                                     bgColor="bg-black"
                                     hoverBgColor=" bg-white"
                                     textColor="text-white"
@@ -91,7 +94,7 @@ const Products = () => {
 
                                 {/* Layout Button 2 */}
                                 <ButtonHovCT
-                                    className={"!border-black !px-3.5 !py-3.5"}
+                                    className={"!border-black !px-2.5 !py-2.5"}
                                     bgColor="bg-white"
                                     hoverBgColor=" bg-black"
                                     textColor="text-black"
@@ -109,48 +112,17 @@ const Products = () => {
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[12rem_1fr]">
                         {/* [4.1] Filter */}
                         <div className={cn(`sticky self-start transition-[top] max-lg:hidden`, showHead ? `top-[230px]` : `top-[90px]`)}>
-                            <h3 className="mb-4 text-lg font-semibold">Filter Products</h3>
-                            <div className="space-y-4">
-                                {/* Ví dụ các bộ lọc */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Category</label>
-                                    <select className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        <option>All</option>
-                                        <option>Chairs</option>
-                                        <option>Tables</option>
-                                        <option>Sofas</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Price Range</label>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="1000"
-                                        className="w-full"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700">Color</label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="checkbox"
-                                            id="red"
-                                        />
-                                        <label htmlFor="red">Red</label>
-                                        <input
-                                            type="checkbox"
-                                            id="blue"
-                                        />
-                                        <label htmlFor="blue">Blue</label>
-                                    </div>
-                                </div>
-                            </div>
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Availability"
+                            />
+                            <FilterComponents showHead={showHead} />
+                            <FilterComponents showHead={showHead} />
+                            <FilterComponents showHead={showHead} />
                         </div>
                         {/* [4.2] Product List */}
 
-                        
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-5 lg:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
                             {NewArrivalsPicture.map((image, index) => (
                                 <div key={index}>
                                     {image.info?.length > 0 ? (
