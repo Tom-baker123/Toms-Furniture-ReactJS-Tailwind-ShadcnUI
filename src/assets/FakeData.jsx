@@ -1,6 +1,6 @@
 import PaginationSwiper from "@/components/Swiper-Components/PaginationSwiper";
 
-// [2. CATEGORY LIST]----------------------------------------------------------------------------------------------------------
+// [1.2. CATEGORY LIST]----------------------------------------------------------------------------------------------------------
 export const categoryList = [
     { id: 0, name: "Sale Items", url: "collection-sales.png", linkWebsite: "products" },
     { id: 1, name: "Press Tables", url: "Turn-Table-Mono.png", linkWebsite: "products" },
@@ -15,9 +15,9 @@ export const categoryList = [
     { id: 10, name: "Cross Tables", url: "Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png", linkWebsite: "products" },
     { id: 11, name: "Bar Chairs", url: "Arc-Chair-dark.png", linkWebsite: "products" },
 ];
-// [2. CATEGORY LIST - END]----------------------------------------------------------------------------------------------------
+// [1.2. CATEGORY LIST - END]----------------------------------------------------------------------------------------------------
 
-// [3. HERO LIST]-------------------------------------------------------------------------------------------------------------
+// [1.3. HERO LIST]-------------------------------------------------------------------------------------------------------------
 export const HeroList = [
     {
         id: 0,
@@ -34,9 +34,9 @@ export const HeroList = [
         url_mobile: "slideshow-2--mb.png",
     },
 ];
-// [3. HERO LIST - END]-------------------------------------------------------------------------------------------------------
+// [1.3. HERO LIST - END]-------------------------------------------------------------------------------------------------------
 
-// [4. ALBUM SWIPER]----------------------------------------------------------------------------------------------------------
+// [1.4. ALBUM SWIPER]----------------------------------------------------------------------------------------------------------
 export const AlbumSwiperData = [
     {
         id: 0,
@@ -81,9 +81,9 @@ export const AlbumSwiperData = [
         categories: ["Travel", "History"],
     },
 ];
-// [4. ALBUM SWIPER - END]----------------------------------------------------------------------------------------------------
+// [1.4. ALBUM SWIPER - END]----------------------------------------------------------------------------------------------------
 
-// [5. FEATURE SECTION]-------------------------------------------------------------------------------------------------------
+// [1.5. FEATURE SECTION]-------------------------------------------------------------------------------------------------------
 export const FeatureSectionData = [
     {
         id: 0,
@@ -110,10 +110,10 @@ export const FeatureSectionData = [
         url: "multicolumn-4.png",
     },
 ];
-// [5. FEATURE SECTION - END]-------------------------------------------------------------------------------------------------
+// [1.5. FEATURE SECTION - END]-------------------------------------------------------------------------------------------------
 
-// [6. NEW ARRIVALS]----------------------------------------------------------------------------------------------------------
-// 6.1: New Arrivals Picture
+// [1.6. NEW ARRIVALS]----------------------------------------------------------------------------------------------------------
+// 1_6.1: New Arrivals Picture
 export const NewArrivalsPicture = [
     { id: "0", ImageURL: "collection-tabs-banner-1.png" },
     {
@@ -184,7 +184,7 @@ export const NewArrivalsPicture = [
         ],
     },
 ];
-// 6.2: Hot Items Picture
+// 1_6.2: Hot Items Picture
 export const HotItemsPicture = [
     { id: "0", ImageURL: "HotItems/collection-tabs-banner-2.jpg" },
     {
@@ -265,7 +265,7 @@ export const HotItemsPicture = [
         ],
     },
 ];
-// 6.3: TABS:
+// 1_6.3: TABS:
 export const NewArrivalsTabs = {
     NewArrivals: {
         label: "New Arrivals",
@@ -276,11 +276,72 @@ export const NewArrivalsTabs = {
         content: <PaginationSwiper Picture={HotItemsPicture} />,
     },
 };
-// [6. NEW ARRIVALS - END]----------------------------------------------------------------------------------------------------
+// [1.6. NEW ARRIVALS - END]----------------------------------------------------------------------------------------------------
 
-// [7. Product List]----------------------------------------------------------------------------------------------------------
+// [1.7. Product List]----------------------------------------------------------------------------------------------------------
 
-// [7. Product List - End]----------------------------------------------------------------------------------------------------
+// [1.7. Product List - End]----------------------------------------------------------------------------------------------------
+
+// |
+// |
+// |
+// |
+// |
+// |
+
+// [2.1. Filter]----------------------------------------------------------------------------------------------------------------
+export const Filters = [
+  {
+    id: 'availability',
+    label: 'Availability',
+    type: 'checkbox',
+    options: [
+      { id: 'instock', label: 'In stock', count: 1 },
+      { id: 'outstock', label: 'Out of stock', count: 0 },
+    ],
+  },
+  {
+    id: 'price',
+    label: 'Price',
+    type: 'range',
+    min: 0,
+    max: 509,
+  },
+  {
+    id: 'color',
+    label: 'Color',
+    type: 'checkbox',
+    options: [
+      { id: 'black', label: 'Black', count: 7, colorCode: '#000000' },
+      { id: 'brown', label: 'Brown', count: 1, colorCode: '#A52A2A' },
+      { id: 'grey', label: 'Grey', count: 2, colorCode: '#808080' },
+      { id: 'lightbeige', label: 'Light Beige', count: 3, colorCode: '#F5F5DC' },
+      { id: 'navyblue', label: 'Navy Blue', count: 3, colorCode: '#000080' },
+      { id: 'olive', label: 'Olive', count: 1, colorCode: '#808000' },
+      { id: 'red', label: 'Red', count: 2, colorCode: '#FF0000' },
+      { id: 'yellow', label: 'Yellow', count: 3, colorCode: '#FFFF00' },
+    ],
+  },
+  {
+    id: 'category',
+    label: 'Category',
+    type: 'checkbox',
+    options: [
+      { id: 'tablelamps', label: 'Table Lamps', count: 1 },
+      { id: 'booths', label: 'Booths', count: 0 },
+      { id: 'candles', label: 'Candles', count: 0 },
+      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
+      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
+      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
+      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
+      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
+      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
+    ],
+  },
+];
+
+// [2.1. Filter - End]----------------------------------------------------------------------------------------------------------
+
 
 // #region [Footer Contact]---------------------------------------------------------
 export const FooterContact = [
