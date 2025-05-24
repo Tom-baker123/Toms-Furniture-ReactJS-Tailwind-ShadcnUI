@@ -278,10 +278,6 @@ export const NewArrivalsTabs = {
 };
 // [1.6. NEW ARRIVALS - END]----------------------------------------------------------------------------------------------------
 
-// [1.7. Product List]----------------------------------------------------------------------------------------------------------
-
-// [1.7. Product List - End]----------------------------------------------------------------------------------------------------
-
 // |
 // |
 // |
@@ -291,57 +287,73 @@ export const NewArrivalsTabs = {
 
 // [2.1. Filter]----------------------------------------------------------------------------------------------------------------
 export const Filters = [
-  {
-    id: 'availability',
-    label: 'Availability',
-    type: 'checkbox',
-    options: [
-      { id: 'instock', label: 'In stock', count: 1 },
-      { id: 'outstock', label: 'Out of stock', count: 0 },
-    ],
-  },
-  {
-    id: 'price',
-    label: 'Price',
-    type: 'range',
-    min: 0,
-    max: 509,
-  },
-  {
-    id: 'color',
-    label: 'Color',
-    type: 'checkbox',
-    options: [
-      { id: 'black', label: 'Black', count: 7, colorCode: '#000000' },
-      { id: 'brown', label: 'Brown', count: 1, colorCode: '#A52A2A' },
-      { id: 'grey', label: 'Grey', count: 2, colorCode: '#808080' },
-      { id: 'lightbeige', label: 'Light Beige', count: 3, colorCode: '#F5F5DC' },
-      { id: 'navyblue', label: 'Navy Blue', count: 3, colorCode: '#000080' },
-      { id: 'olive', label: 'Olive', count: 1, colorCode: '#808000' },
-      { id: 'red', label: 'Red', count: 2, colorCode: '#FF0000' },
-      { id: 'yellow', label: 'Yellow', count: 3, colorCode: '#FFFF00' },
-    ],
-  },
-  {
-    id: 'category',
-    label: 'Category',
-    type: 'checkbox',
-    options: [
-      { id: 'tablelamps', label: 'Table Lamps', count: 1 },
-      { id: 'booths', label: 'Booths', count: 0 },
-      { id: 'candles', label: 'Candles', count: 0 },
-      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
-      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
-      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
-      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
-      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
-      { id: 'decorativebowls', label: 'Decorative Bowls', count: 0 },
-    ],
-  },
+    {
+        id: "availability",
+        label: "Availability",
+        type: "checkbox",
+        options: [
+            { id: "instock", label: "In stock", count: 1 },
+            { id: "outstock", label: "Out of stock", count: 0 },
+        ],
+    },
+    {
+        id: "price",
+        label: "Price",
+        type: "range",
+        min: 0,
+        max: 509,
+    },
+    {
+        id: "color",
+        label: "Color",
+        type: "checkbox",
+        options: [
+            { id: "black", label: "Black", count: 7, colorCode: "#000000" },
+            { id: "brown", label: "Brown", count: 1, colorCode: "#A52A2A" },
+            { id: "grey", label: "Grey", count: 2, colorCode: "#808080" },
+            { id: "lightbeige", label: "Light Beige", count: 3, colorCode: "#F5F5DC" },
+            { id: "navyblue", label: "Navy Blue", count: 3, colorCode: "#000080" },
+            { id: "olive", label: "Olive", count: 1, colorCode: "#808000" },
+            { id: "red", label: "Red", count: 2, colorCode: "#FF0000" },
+            { id: "yellow", label: "Yellow", count: 3, colorCode: "#FFFF00" },
+        ],
+    },
+    {
+        id: "category",
+        label: "Category",
+        type: "checkbox",
+        options: [
+            { id: "tablelamps", label: "Table Lamps", count: 1 },
+            { id: "booths", label: "Booths", count: 0 },
+            { id: "candles", label: "Candles", count: 0 },
+            { id: "decorativebowls", label: "Decorative Bowls", count: 0 },
+            { id: "decorativebowls", label: "Decorative Bowls", count: 0 },
+            { id: "decorativebowls", label: "Decorative Bowls", count: 0 },
+            { id: "decorativebowls", label: "Decorative Bowls", count: 0 },
+            { id: "decorativebowls", label: "Decorative Bowls", count: 0 },
+            { id: "decorativebowls", label: "Decorative Bowls", count: 0 },
+        ],
+    },
 ];
-
 // [2.1. Filter - End]----------------------------------------------------------------------------------------------------------
 
+export const Paragraph_About_Material = [
+    {
+        id: "0",
+        paragraph:
+            "From classic wood and metal to contemporary acrylic and glass, each material brings unique advantages to furniture design. Wood offers timeless strength and natural warmth, while metal adds resilience and industrial charm. Acrylic and glass, on the other hand, bring a modern touch, providing sleek, versatile options for contemporary spaces. The choice of material is not just about appearance; it defines durability and functionality, ensuring each piece serves its purpose beautifully.",
+    },
+    {
+        id: "1",
+        paragraph:
+            "When selecting furniture, it’s important to think beyond aesthetics. The right pieces create a cohesive atmosphere that balances beauty, practicality, and longevity. Minimalist designs, with their clean lines and simplicity, appeal to those who value modern elegance. However, traditional styles like Victorian, Art Deco, or Mid-Century Modern captivate with their intricate details and timeless craftsmanship, offering a sense of history and character that enriches any space.",
+    },
+    {
+        id: "2",
+        paragraph:
+            "This guide explores a variety of furniture styles and materials, helping you discover what aligns with your preferences and needs. Whether you lean toward contemporary sophistication or classic charm, choosing the right furniture ensures your space reflects your unique personality while meeting functional requirements. With the right selections, you can create a harmonious and inviting home.",
+    },
+];
 
 // #region [Footer Contact]---------------------------------------------------------
 export const FooterContact = [
