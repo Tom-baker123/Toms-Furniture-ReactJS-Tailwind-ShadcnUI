@@ -1,4 +1,5 @@
 import { NewArrivalsPicture } from "@/assets/FakeData";
+import AboutMaterial from "@/components/Home/ProductCategoryComponents/AboutMaterial";
 import BannerProducts from "@/components/Home/ProductCategoryComponents/BannerProducts";
 import FilterComponents from "@/components/Home/ProductCategoryComponents/FilterComponents";
 import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
@@ -30,7 +31,7 @@ const Products = () => {
 
             {/* [3.] Toolbar + Product List*/}
             <div className="pt-7 pb-[60px] scroll-smooth">
-                {/* [3.] Toolbar */}
+                {/* [3.1] Toolbar */}
                 <div className={cn(`container-custom sticky z-10 bg-white py-3 transition-[top]`, showHead ? `top-[133.5px] md:top-[157px] lg:top-[138px] z-10` : `top-0 z-10`)}>
                     {/* Đảm bảo toolbar ở trên cùng */}
                     <div className="flex items-center justify-between">
@@ -107,7 +108,7 @@ const Products = () => {
                     </div>
                 </div>
 
-                {/* [4.] Danh sách sản phẩm */}
+                {/* [3.2] Danh sách sản phẩm */}
                 <div className="container-custom mt-4">
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[12rem_1fr]">
                         {/* [4.1] Filter */}
@@ -178,6 +179,10 @@ const Products = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div className="">
+                <AboutMaterial/>
             </div>
         </>
     );

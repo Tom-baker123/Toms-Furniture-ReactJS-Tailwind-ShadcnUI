@@ -100,11 +100,12 @@ const Footer = () => {
                         </div>
                     </form>
 
-                    <p className="mt-5">
-                        By subscribing you agree to the
+                    <p className="mt-5 font-semibold text-gray-500 max-lg:pb-3">
+                        By subscribing you agree to the{" "}
                         <a
                             href="/policies/terms-of-service"
                             title="Terms of Service"
+                            className="underline"
                         >
                             Terms of Services
                         </a>{" "}
@@ -112,6 +113,7 @@ const Footer = () => {
                         <a
                             href="/policies/privacy-policy"
                             title="Privacy Policy"
+                            className="underline"
                         >
                             Privacy Policy.
                         </a>
@@ -124,13 +126,15 @@ const Footer = () => {
                         key={index}
                         className="flex-1"
                     >
-                        <details className="hidden lg:block" open={isDesktop}>
+                        <details
+                            className="hidden lg:block"
+                            open={isDesktop}
+                        >
                             <summary
                                 // onClick={isDesktop ? (e) => e.preventDefault : undefined}
                                 className={`flex cursor-pointer justify-between text-[1.2rem] font-bold lg:pointer-events-none`}
                             >
                                 <h3 className="py-3 lg:py-0">{t.footerHeading}</h3>
-                                
                             </summary>
 
                             {/* Horizontal Line */}
@@ -144,7 +148,10 @@ const Footer = () => {
                         </details>
 
                         <div className="lg:hidden">
-                            <Collapse title={t.footerHeading} json={t.footerList}/>
+                            <Collapse
+                                title={t.footerHeading}
+                                json={t.footerList}
+                            />
                         </div>
                     </div>
                 ))}
