@@ -147,7 +147,7 @@
   }
 
   body {
-    @apply bg-background text-foreground [scrollbar-color:_#cbd5e1_transparent] dark:[scrollbar-color:_#334155_transparent];
+    @apply scroll-smooth bg-background text-foreground [scrollbar-color:_#cbd5e1_transparent] dark:[scrollbar-color:_#334155_transparent];
   }
 
 
