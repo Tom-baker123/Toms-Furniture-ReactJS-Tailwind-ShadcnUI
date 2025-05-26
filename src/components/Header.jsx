@@ -5,6 +5,8 @@ import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
 import { useModal } from "@/context/ModalContext";
 import AuthSwitcher from "./Home/AuthSwitcher";
+import isSticky from "@/hooks/isSticky";
+import { cn } from "@/lib/utils";
 
 const Header = ({ onOpenCartModal }) => {
     // Trạng thái đăng nhập
@@ -16,12 +18,12 @@ const Header = ({ onOpenCartModal }) => {
     const showHead = showHeader();
 
     // [2.] Xử lý modal cho Authentication Button
-
     const handleLoginRegister = () => {
         openModal(<AuthSwitcher />, { className: "max-w-md" });
     };
 
-    <div className="max-w-80"></div>;
+    // [3.] Xử lý scroll xuống và scroll lên đầu
+    const isScroll = isSticky();
 
     return (
         <>
@@ -31,7 +33,11 @@ const Header = ({ onOpenCartModal }) => {
 
             {/* -[HEADER]-------------------------------------------------------------------------- */}
             <header
-                className={`sticky top-0 bg-white transition-transform duration-300 ${showHead ? "translate-y-0" : "-translate-y-full"} z-50 border-b-[0.5px] border-gray-300`}
+                className={cn(
+                    `sticky top-0 z-50 border-b-[0.5px] border-gray-300 bg-white transition-all duration-500`,
+                    showHead ? "translate-y-0" : "-translate-y-full !shadow-none",
+                    isScroll && "shadow-2xl",
+                )}
             >
                 {/* Trên Desktop */}
                 <div className="mx-auto grid grid-cols-[1fr_1fr] gap-2 px-3 pt-5 pb-3 max-md:grid-cols-[1fr_1.5fr] lg:grid-cols-[auto_auto_1fr] 2xl:max-w-7xl">

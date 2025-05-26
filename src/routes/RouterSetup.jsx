@@ -10,6 +10,7 @@ import {
     ProductDetails,
     FAQ,
     Profile,
+    Cart,
     // Admin Page
     Dashboard,
     CategoryManagement,
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
             { path: "contact", element: <Contact /> },
             { path: "faq", element: <FAQ /> },
             { path: "findastore", element: <FindAStore /> },
+            { path: "cart", element: <Cart /> },
             {
                 path: "profile",
                 element: <Profile />,
