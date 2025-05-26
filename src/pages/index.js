@@ -2,12 +2,13 @@
 export { default as Home }           from "./Home";
 export { default as Contact }        from "./Contact";
 export { default as FindAStore }     from "./FindAStore";
-export { default as Products }        from "./Products";
+export { default as Products }       from "./Products";
 export { default as ProductDetails } from "./ProductDetails";
 export { default as About }          from "./About";
 export { default as PageNotFound }   from "./PageNotFound";
 export { default as FAQ }            from "./FAQ";
 export { default as Profile }        from "./Profile";
+export { default as Cart }           from "./Cart";
 // [Home Page - END]-----------------------------------------
 // export { default as Terms } from "./Terms";
 
