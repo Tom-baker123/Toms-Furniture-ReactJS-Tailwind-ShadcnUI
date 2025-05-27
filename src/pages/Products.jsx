@@ -32,7 +32,7 @@ const Products = () => {
             {/* [3.] Toolbar + Product List*/}
             <div className="pt-7 pb-[60px] scroll-smooth">
                 {/* [3.1] Toolbar */}
-                <div className={cn(`container-custom sticky z-10 bg-white py-3 transition-[top]`, showHead ? `top-[133.5px] md:top-[157px] lg:top-[138px] z-10` : `top-0 z-10`)}>
+                <div className={cn(`container-custom sticky z-10 bg-white py-3 transition-all duration-500`, showHead ? `top-[133.5px] md:top-[157px] lg:top-[138px] z-10` : `top-0 z-10`)}>
                     {/* Đảm bảo toolbar ở trên cùng */}
                     <div className="flex items-center justify-between">
                         <div className="flex flex-col-reverse items-center h-full gap-6 max-md:justify-between md:flex-row md:gap-3">

@@ -36,7 +36,7 @@ const Header = ({ onOpenCartModal }) => {
                 className={cn(
                     `sticky top-0 z-50 border-b-[0.5px] border-gray-300 bg-white transition-all duration-500`,
                     showHead ? "translate-y-0" : "-translate-y-full !shadow-none",
-                    isScroll && "shadow-2xl",
+                    isScroll && "shadow-lg",
                 )}
             >
                 {/* Trên Desktop */}

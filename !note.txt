@@ -1,25 +1,53 @@
 -Nhớ kiểm tra: Not Responsive
 
-
-<div
-    key={index}
-    className="flex-1"
+<div className="flex items-start gap-3 md:items-center md:gap-6">
+<button
+    className="hover-rotate cursor-pointer"
+    aria-label="Close"
 >
-    <details open={isDesktop}>
-        <summary
-            // onClick={isDesktop ? (e) => e.preventDefault : undefined}
-            className={`flex cursor-pointer text-[1.2rem] font-bold lg:pointer-events-none`}
-        >
-            <h3 className="py-3 lg:py-0">{t.footerHeading}</h3>
-        </summary>
+    <X className="h-7 w-7 stroke-3" />
+</button>
+<a href="/">
+    <img
+        src="/img/cart-image/TurnTableMono.png"
+        alt="alskndfkasldnaklsdn"
+        className="object-cover size-32"
+        width={1500}
+        height={1500}
+    />
+</a>
 
-        {/* Horizontal Line */}
-        <div className="w-full border-b border-gray-200 lg:hidden" />
-
-        <ul className="space-y-2 py-3 font-semibold text-gray-500">
-            {t.footerList.map((fl, flindex) => (
-                <li key={flindex}> {fl} </li>
-            ))}
-        </ul>
-    </details>
+<div className="flex grow flex-col items-start gap-3">
+    <div className="flex w-full justify-between gap-3 md:grid">
+        <div className="grid w-full gap-1">
+            <div className="flex flex-wrap items-center justify-between gap-1">
+                <div class="block">
+                    <a
+                        href="/products/turn-table-mono?variant=49536661979433"
+                        class="cart-item__title text-pcard-title reversed-link"
+                    >
+                        Turn Table Mono
+                    </a>
+                </div>
+            </div>
+            <div class="cart-item__options">
+                <span class="cart-item__option-value text-subtext text-sm">Oak,</span>
+                <span class="cart-item__option-value text-subtext text-sm">Navy Blue</span>
+            </div>
+        </div>
+        <div className="grid w-full gap-1"></div>
+    </div>
+    <div className="">
+        <div className="flex w-full items-end justify-between gap-3 lg:hidden">
+            <div className="flex items-center gap-2">2</div>
+            <div class="grid gap-2 lg:hidden">
+                <div class="cart-item__prices">
+                    <div class="price font-body-bolder flex flex-wrap items-center gap-x-2 text-right">
+                        $709.00
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>

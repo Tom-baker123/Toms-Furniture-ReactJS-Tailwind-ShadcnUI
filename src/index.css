@@ -467,8 +467,8 @@
   
   /* ---------------------------------------[Product Category - End]------------------------- */
   /* ---------------------------------------[Shopping Cart]---------------------------------- */
-  .Cart-item{
-    @apply w-full;
+  .cart-item{
+    @apply border-y max-md:first:border-t-0 max-md:last:border-b-0;
   }
   /* ---------------------------------------[Shopping Cart - End]---------------------------- */
 
