@@ -1,9 +1,6 @@
 import React, { forwardRef } from "react";
-import { ChevronDown, ChevronUp, Projector, Search, Settings, User2 } from "lucide-react";
-import { FakeAdminData } from "@/assets/FakeAdminData";
-import { NavLink } from "react-router-dom";
-
 import { cn } from "@/lib/utils";
+import { NavLink } from "react-router-dom";
 import { navbarLinks } from "@/constants";
 
 const AppSidebar = forwardRef(({ collapsed }, ref) => {

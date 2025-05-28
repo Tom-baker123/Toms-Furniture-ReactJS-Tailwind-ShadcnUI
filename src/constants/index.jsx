@@ -26,9 +26,9 @@ export const navbarLinks = [
                 path: "/admin/order",
             },
             {
-                label: "New customer",
+                label: "Draft Orders",
                 icon: UserPlus,
-                path: "/admin/new-customer",
+                path: "/admin/draft_orders",
             },
             {
                 label: "Verified customers",

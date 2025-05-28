@@ -18,6 +18,7 @@ export { default as Dashboard }           from "./admin/Dashboard";
 export { default as CategoryManagement }  from "./admin/CategoryManagement";
 export { default as ProductManagement }   from "./admin/ProductManagement";
 export { default as OrderManagement }     from "./admin/OrderManagement";
+export { default as DraftOrders }         from "./admin/DraftOrders";
 export { default as AnalyticsReport }     from "./admin/AnalyticsReport";
 export { default as CustomerManagement }  from "./admin/CustomerManagement";
 export { default as PromotionManagement } from "./admin/PromotionManagement";
