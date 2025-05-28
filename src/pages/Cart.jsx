@@ -1,13 +1,17 @@
 import ProgressBar from "@/components/Home/ProgressBar";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
+import showHeader from "@/hooks/showHeader";
+import { cn } from "@/lib/utils";
 import { Ticket, X } from "lucide-react";
 import React, { useState } from "react";
 
 const Cart = ({ itemCount = 0 }) => {
     const [quantity, setQuantity] = useState(1);
+    // Sử dụng showHeader hook để lấy trạng thái hiển thị của header
+    const showHead = showHeader();
 
     return (
-        <main className="container-custom pt-2.5 pb-10 md:pt-3 md:pb-12">
+        <main className="container-custom pt-2.5 pb-10 md:pt-3 md:pb-12 scroll-smooth">
             <section className="mb-8 text-3xl font-bold md:text-4xl">Your Cart ({itemCount}) </section>
 
             <section className="grid grid-cols-12">
@@ -80,39 +84,40 @@ const Cart = ({ itemCount = 0 }) => {
                 </div>
 
                 <div className="col-span-12 md:col-span-4 md:pr-5">
-                    {/*  */}
-                    <div className="mb-3 flex flex-col gap-2 pb-5">
-                        <p className="font-semibold text-[#0d8756]"> You are eligible for free shipping. </p>
-                        <ProgressBar />
-                    </div>
-                    <div className="grid gap-6">
-                        {/* Cart Addon */}
-                        <div className="rounded-full bg-gray-200 px-5 py-4 text-lg font-bold">Order Note</div>
-
-                        {/*  */}
-                        <div className="flex cursor-pointer justify-between border-b-2 border-dashed pb-3">
-                            <Ticket
-                                className="text-red-500"
-                                size={25}
-                            />
-                            <p className="font-semibold text-gray-500">Get your Promotion</p>
+                    <div className={cn(`pt-3 sticky top-0 transition-all duration-500`, showHead ? `top-[133.5px] md:top-[157px] lg:top-[138px] z-10` : `top-0 z-10`)}>
+                        <div className="mb-3 flex flex-col gap-2 pb-5">
+                            <p className="font-semibold text-[#0d8756]"> You are eligible for free shipping. </p>
+                            <ProgressBar />
                         </div>
-                        <div className="grid gap-1">
-                            <div className="flex justify-between text-lg whitespace-nowrap lg:text-xl font-bold">
-                                <span className="">Estiamted total</span>
-                                <span>20,000,000 VND</span>
+                        <div className="grid gap-6">
+                            {/* Cart Addon */}
+                            <div className="rounded-full bg-gray-200 px-5 py-4 text-lg font-bold">Order Note</div>
+
+                            {/*  */}
+                            <div className="flex cursor-pointer justify-between border-b-2 border-dashed pb-3">
+                                <Ticket
+                                    className="text-red-500"
+                                    size={25}
+                                />
+                                <p className="font-semibold text-gray-500">Get your Promotion</p>
                             </div>
-                            <div className="">Taxes and shipping calculated at checkout</div>
-                        </div>
+                            <div className="grid gap-1">
+                                <div className="flex justify-between text-lg font-bold whitespace-nowrap lg:text-xl">
+                                    <span className="">Estiamted total</span>
+                                    <span>20,000,000 VND</span>
+                                </div>
+                                <div className="">Taxes and shipping calculated at checkout</div>
+                            </div>
 
-                        <ButtonHovCT
-                            className={"!border-black py-3 text-xl"}
-                            bgColor="bg-black"
-                            hoverBgColor=" bg-white" // lớp trượt màu đen
-                            textColor="text-white"
-                        >
-                            Check Out
-                        </ButtonHovCT>
+                            <ButtonHovCT
+                                className={"!border-black py-3 text-xl"}
+                                bgColor="bg-black"
+                                hoverBgColor=" bg-white" // lớp trượt màu đen
+                                textColor="text-white"
+                            >
+                                Check Out
+                            </ButtonHovCT>
+                        </div>
                     </div>
                 </div>
             </section>
