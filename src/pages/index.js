@@ -17,6 +17,7 @@ export { default as Cart }           from "./Cart";
 export { default as Dashboard }           from "./admin/Dashboard";
 export { default as CategoryManagement }  from "./admin/CategoryManagement";
 export { default as ProductManagement }   from "./admin/ProductManagement";
+export { default as ProductCollection }   from "./admin/ProductCollection";
 export { default as OrderManagement }     from "./admin/OrderManagement";
 export { default as DraftOrders }         from "./admin/DraftOrders";
 export { default as AnalyticsReport }     from "./admin/AnalyticsReport";
