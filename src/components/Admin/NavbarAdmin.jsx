@@ -36,8 +36,8 @@ const NavbarAdmin = ({ collapsed, setCollapsed }) => {
                         type="text"
                         name="search"
                         id="search"
-                        placeholder="Search..."
-                        className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-300 dark:text-slate-50"
+                        placeholder="Quick Search Ctrl + K "
+                        className="w-full bg-transparent text-slate-900 outline-0 placeholder:text-slate-400 dark:text-slate-50"
                     />
                 </div>
             </div>

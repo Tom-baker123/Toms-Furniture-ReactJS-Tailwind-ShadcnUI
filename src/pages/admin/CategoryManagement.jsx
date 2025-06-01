@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
 
 const CategoryManagement = () => {
-  return (
-    <div className='title'>CategoryManagement</div>
-  )
-}
+    return (
+        <>
+            <div className="title">Category Management</div>
+            
+        </>
+    );
+};
 
-export default CategoryManagement
+export default CategoryManagement;

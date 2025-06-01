@@ -68,7 +68,7 @@ const Header = ({ onOpenCartModal }) => {
                     </div>
 
                     {/* Thanh tìm kiếm */}
-                    <div className="hidden lg:block lg:w-[44rem] lg:px-10">
+                    <div className="hidden md:px-5 lg:block lg:w-[44rem] xl:px-10">
                         <SearchHeader />
                     </div>
 

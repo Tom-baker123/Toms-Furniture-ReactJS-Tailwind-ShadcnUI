@@ -1,4 +1,4 @@
-import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
+import { ChartColumn, Home, Boxes, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
@@ -30,14 +30,33 @@ export const navbarLinks = [
                 icon: UserPlus,
                 path: "/admin/draft_orders",
             },
+        ],
+    },
+
+    // Trang quản lý sản phẩm
+    {
+        title: "Products",
+        links: [
             {
-                label: "Verified customers",
-                icon: UserCheck,
-                path: "/admin/verified-customers",
+                label: "Products",
+                icon: Package,
+                path: "/admin/products",
+            },
+            {
+                label: "Product Collection",
+                // icon: PackagePlus,
+                icon: Boxes,
+                path: "/admin/product_collection",
+            },
+            {
+                label: "Inventory",
+                icon: ShoppingBag,
+                path: "/admin/inventory",
             },
         ],
     },
 
+    // Trang quản lý khách hàng
     {
         title: "Customers",
         links: [
@@ -58,26 +77,8 @@ export const navbarLinks = [
             },
         ],
     },
-    {
-        title: "Products",
-        links: [
-            {
-                label: "Products",
-                icon: Package,
-                path: "/admin/products",
-            },
-            {
-                label: "New product",
-                icon: PackagePlus,
-                path: "/admin/new-product",
-            },
-            {
-                label: "Inventory",
-                icon: ShoppingBag,
-                path: "/admin/inventory",
-            },
-        ],
-    },
+
+    // Trang thiết lập
     {
         title: "Settings",
         links: [
@@ -281,6 +282,89 @@ export const topProducts = [
         image: ProductImage,
         description: "Portable 2TB external hard drive for data storage.",
         price: 79.99,
+        status: "Out of Stock",
+        rating: 4.5,
+    },
+];
+
+export const AllCategories = [
+    {
+        number: 1,
+        name: "Wireless Headphones",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.5,
+    },
+    {
+        number: 2,
+        name: "Smartphone",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.7,
+    },
+    {
+        number: 3,
+        name: "Gaming Laptop",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.8,
+    },
+    {
+        number: 4,
+        name: "Smartwatch",
+        image: ProductImage,
+        description: "sssss",
+        status: "Out of Stock",
+        rating: 4.4,
+    },
+    {
+        number: 5,
+        name: "Bluetooth Speaker",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.3,
+    },
+    {
+        number: 6,
+        name: "4K Monitor",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.6,
+    },
+    {
+        number: 7,
+        name: "Mechanical Keyboard",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.7,
+    },
+    {
+        number: 8,
+        name: "Wireless Mouse",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.5,
+    },
+    {
+        number: 9,
+        name: "Action Camera",
+        image: ProductImage,
+        description: "sssss",
+        status: "In Stock",
+        rating: 4.8,
+    },
+    {
+        number: 10,
+        name: "External Hard Drive",
+        image: ProductImage,
+        description: "sssss",
         status: "Out of Stock",
         rating: 4.5,
     },
