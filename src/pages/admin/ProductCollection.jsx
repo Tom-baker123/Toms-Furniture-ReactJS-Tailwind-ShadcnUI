@@ -1,8 +1,11 @@
 import React from "react";
 import { AllCategories, topProducts } from "@/constants";
 import { PencilLine, Star, Trash } from "lucide-react";
+import { useLoaderData } from "react-router-dom";
 
 const ProductCollection = () => {
+    const categories =useLoaderData(); // 👈 get data from loader
+
     return (
         <div className="flex flex-col gap-y-4">
             <div className="title">Product Collection</div>

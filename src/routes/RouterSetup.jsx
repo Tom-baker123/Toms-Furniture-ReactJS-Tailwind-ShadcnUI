@@ -24,7 +24,6 @@ import {
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
-import { isUserLoggedIn } from "@/api/api";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
 
 {
@@ -47,11 +46,9 @@ const router = createBrowserRouter([
             {
                 path: "profile",
                 element: <Profile />,
-                loader: isUserLoggedIn,
             },
             {
                 path: "products",
-                loader: isUserLoggedIn,
                 children: [
                     {
                         index: true,
@@ -66,7 +63,6 @@ const router = createBrowserRouter([
             {
                 path: "products/:proid",
                 element: <ProductDetails />,
-                loader: isUserLoggedIn,
             },
             // Không tìm thấy trang phù hợp
             { path: "*", element: <PageNotFound /> },
@@ -81,7 +77,10 @@ const router = createBrowserRouter([
             { index: true, element: <Dashboard /> },
             { path: "category", element: <CategoryManagement /> },
             { path: "products", element: <ProductManagement /> },
-            { path: "product_collection", element: <ProductCollection /> },
+            {
+                path: "product_collection",
+                element: <ProductCollection />,
+            },
             { path: "order", element: <OrderManagement /> },
             { path: "draft_orders", element: <DraftOrders /> },
             { path: "analyticsReport", element: <AnalyticsReport /> },
