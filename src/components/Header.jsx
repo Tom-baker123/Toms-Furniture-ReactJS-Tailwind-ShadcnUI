@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import showHeader from "../hooks/showHeader";
 import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
@@ -7,22 +7,45 @@ import { useModal } from "@/context/ModalContext";
 import AuthSwitcher from "./Home/AuthSwitcher";
 import isSticky from "@/hooks/isSticky";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import { checkAuthStatus, logout } from "@/api/api";
+import toast from "react-hot-toast";
 
 const Header = ({ onOpenCartModal }) => {
-    // Trạng thái đăng nhập
-    const [isLogin, setIsLogin] = useState(true);
-    // Gọi hàm modal
-    const { openModal } = useModal();
+    const { openModal } = useModal(); // Gọi hàm modal
+    const [authStatus, setAuthStatus] = useState({ isAuthenticated: false }); // Gán trạng thái chưa đăng nhặp
+    const navigate = useNavigate(); // Sử dụng điều hướng để chuyển trang
 
-    // [1.] Xử lý hiệu ứng ẩn hiện navbar khi cuộn theo chiều dọc
+    // [0.] Kiểm tra trạng thái đăng nhập & gán vào state trạng thái đăng nhập
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            const result = await checkAuthStatus();
+            setAuthStatus(result);
+        };
+        fetchAuthStatus();
+    }, []);
+
+    // [1.] Xử lý trạng thái đăng xuất
+    const handleLogout = async () => {
+        const result = await logout();
+        if (result.message === "Đăng xuất thành công.") {
+            toast.success("Logout successfully!");
+            setAuthStatus({ isAuthenticated: false });
+            navigate("/"); // Chuyển hướng về trang chủ
+        } else {
+            toast.error(result.message);
+        }
+    };
+
+    // [2.] Xử lý hiệu ứng ẩn hiện navbar khi cuộn theo chiều dọc
     const showHead = showHeader();
 
-    // [2.] Xử lý modal cho Authentication Button
-    const handleLoginRegister = () => {
+    // [3.] Xử lý modal cho Authentication Button
+    const handleOpenAuthModal = () => {
         openModal(<AuthSwitcher />, { className: "max-w-md" });
     };
 
-    // [3.] Xử lý scroll xuống và scroll lên đầu
+    // [4.] Xử lý scroll xuống và scroll lên đầu
     const isScroll = isSticky();
 
     return (
@@ -106,36 +129,60 @@ const Header = ({ onOpenCartModal }) => {
                             </button>
 
                             {/* Login / Register */}
-                            <button
-                                onClick={handleLoginRegister}
-                                className="flex cursor-pointer"
-                            >
-                                <svg
-                                    className="icon icon-account icon--large icon--thick shrink-0"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="25"
-                                    height="25"
+                            {authStatus.isAuthenticated ? (
+                                <>
+                                    <Link
+                                        to="/profile"
+                                        className="hover:text-gray-600"
+                                    >
+                                        {authStatus.userName}
+                                    </Link>
+                                    {authStatus.role === "Admin" && (
+                                        <Link
+                                            to="/admin"
+                                            className="hover:text-gray-600"
+                                        >
+                                            Admin
+                                        </Link>
+                                    )}
+                                    <button
+                                        onClick={handleLogout}
+                                        className="hover:text-gray-600"
+                                    >
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={handleOpenAuthModal}
+                                    className="flex cursor-pointer"
                                 >
-                                    <path
-                                        d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z"
-                                        stroke="currentColor"
-                                        strokeWidth="2.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    ></path>
-                                    <path
-                                        d="M2.90625 20.2508C3.82775 18.6544 5.15328 17.3287 6.74958 16.407C8.34588 15.4853 10.1567 15 12 15C13.8433 15 15.6541 15.4853 17.2504 16.407C18.8467 17.3287 20.1722 18.6544 21.0938 20.2508"
-                                        stroke="currentColor"
-                                        strokeWidth="2.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    ></path>
-                                </svg>
-
-                                <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Sign in/ Register</p>
-                            </button>
+                                    <svg
+                                        className="icon icon-account icon--large icon--thick shrink-0"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="25"
+                                        height="25"
+                                    >
+                                        <path
+                                            d="M12 15C15.3137 15 18 12.3137 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 12.3137 8.68629 15 12 15Z"
+                                            stroke="currentColor"
+                                            strokeWidth="2.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        ></path>
+                                        <path
+                                            d="M2.90625 20.2508C3.82775 18.6544 5.15328 17.3287 6.74958 16.407C8.34588 15.4853 10.1567 15 12 15C13.8433 15 15.6541 15.4853 17.2504 16.407C18.8467 17.3287 20.1722 18.6544 21.0938 20.2508"
+                                            stroke="currentColor"
+                                            strokeWidth="2.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        ></path>
+                                    </svg>
+                                    <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Sign in/ Register</p>
+                                </button>
+                            )}
 
                             {/* Cart Icon */}
                             <button

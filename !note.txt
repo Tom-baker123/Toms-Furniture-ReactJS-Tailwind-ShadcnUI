@@ -1,53 +1,77 @@
 -Nhớ kiểm tra: Not Responsive
 
-<div className="flex items-start gap-3 md:items-center md:gap-6">
-<button
-    className="hover-rotate cursor-pointer"
-    aria-label="Close"
->
-    <X className="h-7 w-7 stroke-3" />
-</button>
-<a href="/">
-    <img
-        src="/img/cart-image/TurnTableMono.png"
-        alt="alskndfkasldnaklsdn"
-        className="object-cover size-32"
-        width={1500}
-        height={1500}
-    />
-</a>
+--------------------------------------------------------------------------------------------------------------------------------------------
+import React from "react";
+import { Link } from "react-router-dom";
+import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 
-<div className="flex grow flex-col items-start gap-3">
-    <div className="flex w-full justify-between gap-3 md:grid">
-        <div className="grid w-full gap-1">
-            <div className="flex flex-wrap items-center justify-between gap-1">
-                <div class="block">
-                    <a
-                        href="/products/turn-table-mono?variant=49536661979433"
-                        class="cart-item__title text-pcard-title reversed-link"
+const LoginForm = ({ onSwitch }) => {
+    return (
+        <div className="my-5 flex flex-col">
+            <h2 className="text-center text-2xl font-bold lg:text-3xl">Login</h2>
+            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">If you have an account with us, please log in.</p>
+            <form className="mt-6 flex flex-col">
+                {/* [1.] Email */}
+                <div className="Form-Field">
+                    <label
+                        htmlFor=""
+                        className="Form-Label"
                     >
-                        Turn Table Mono
-                    </a>
+                        Email
+                    </label>
+                    <input
+                        className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
+                        type="text"
+                        placeholder="Email"
+                    />
                 </div>
-            </div>
-            <div class="cart-item__options">
-                <span class="cart-item__option-value text-subtext text-sm">Oak,</span>
-                <span class="cart-item__option-value text-subtext text-sm">Navy Blue</span>
-            </div>
-        </div>
-        <div className="grid w-full gap-1"></div>
-    </div>
-    <div className="">
-        <div className="flex w-full items-end justify-between gap-3 lg:hidden">
-            <div className="flex items-center gap-2">2</div>
-            <div class="grid gap-2 lg:hidden">
-                <div class="cart-item__prices">
-                    <div class="price font-body-bolder flex flex-wrap items-center gap-x-2 text-right">
-                        $709.00
-                    </div>
+
+                {/* [2.] Password */}
+                <div className="Form-Field">
+                    <label
+                        htmlFor=""
+                        className="Form-Label"
+                    >
+                        Password
+                    </label>
+                    <input
+                        className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
+                        type="text"
+                        placeholder="Password"
+                    />
                 </div>
-            </div>
+                <Link
+                    to={"/ForgotPassword"}
+                    className="mt-2 font-semibold text-gray-500 underline"
+                >
+                    Forgot Password
+                </Link>
+
+                <ButtonHovCT
+                    className={"mt-6 !border-black"}
+                    bgColor="bg-black"
+                    hoverBgColor=" bg-white" // lớp trượt màu đen
+                    textColor="text-white"
+                >
+                    Login
+                </ButtonHovCT>
+            </form>
+
+            <Link
+                to={"#"}
+                className="mt-2 text-center font-semibold underline"
+                onClick={(e) => {
+                    e.preventDefault();
+                    onSwitch && onSwitch();
+                }}
+            >
+                Create new account
+            </Link>
         </div>
-    </div>
-</div>
-</div>
+    );
+};
+
+export default LoginForm;
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
