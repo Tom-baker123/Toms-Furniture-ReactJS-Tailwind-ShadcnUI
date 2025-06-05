@@ -132,15 +132,15 @@ const Header = ({ onOpenCartModal }) => {
                             {/* Login / Register */}
                             {authStatus.isAuthenticated ? (
                                 <DropdownCT>
-                                    <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
-                                        <span className="text-sm font-semibold">
-                                            👋 Hi, <span className="text-primary font-bold whitespace-nowrap">{authStatus.userName}</span>
+                                    <li className="cursor-pointer px-4 py-1.5 hover:bg-gray-100">
+                                        <span className="text-sm font-semibold whitespace-nowrap">
+                                            👋Hello <span className="text-primary font-bold whitespace-nowrap">{authStatus.userName}</span>
                                         </span>
                                     </li>
-                                    <hr className="my-1 border-gray-300" />
+                                    <hr className=" border-gray-300" />
                                     <li
                                         id="profile"
-                                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
+                                        className="cursor-pointer px-4 py-1 hover:bg-gray-100"
                                     >
                                         <Link
                                             to="/profile"
@@ -149,22 +149,22 @@ const Header = ({ onOpenCartModal }) => {
                                             Profile
                                         </Link>
                                     </li>
-                                    <li
-                                        id="profile"
-                                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
-                                    >
-                                        {authStatus.role === "Admin" && (
+                                    {authStatus.role === "Admin" && (
+                                        <li
+                                            id="profile"
+                                            className="cursor-pointer px-4 py-1 hover:bg-gray-100"
+                                        >
                                             <Link
                                                 to="/admin"
                                                 className="hover:text-gray-600"
                                             >
                                                 Admin
                                             </Link>
-                                        )}
-                                    </li>
+                                        </li>
+                                    )}
 
                                     <li
-                                        className="cursor-pointer px-4 py-2 font-bold text-red-500 hover:bg-gray-100"
+                                        className="cursor-pointer px-4 py-1 font-bold text-red-500 hover:bg-gray-100"
                                         onClick={logout}
                                     >
                                         <button

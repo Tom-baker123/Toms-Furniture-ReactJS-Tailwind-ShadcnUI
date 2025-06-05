@@ -32,7 +32,7 @@ const DropdownMenu = ({children}) => {
             </div>
             {isDropOpen && (
                 <div className="absolute top-full right-0 z-20">
-                    <ul className='w-50 mt-1 py-2 bg-white shadow-lg rounded-lg border border-gray-200'>
+                    <ul className='w-fit mt-1 pb-1.5 overflow-hidden bg-white shadow-lg rounded-lg border border-gray-200'>
                         {children}
                     </ul>
                 </div>

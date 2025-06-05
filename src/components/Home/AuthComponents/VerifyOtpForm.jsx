@@ -9,38 +9,41 @@ export const VerifyOtpForm = ({ email }) => {
     const [otpDigits, setOtpDigits] = useState(Array(OTP_LENGTH).fill(""));
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
-    const [timer, setTimer] = useState(60);
+    const [timer, setTimer] = useState(0); // 🛠 Ban đầu không đếm ngược
     const inputsRef = useRef([]);
     const { closeModal } = useModal();
 
-    // Countdown timer
+    // ⏳ Countdown chỉ chạy nếu timer > 0
     useEffect(() => {
         if (timer <= 0) return;
-        const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
+        const interval = setInterval(() => {
+            setTimer((prev) => prev - 1);
+        }, 1000);
         return () => clearInterval(interval);
     }, [timer]);
 
-    // Handle OTP input change
+    // ✍️ Nhập từng số
     const handleChange = (e, index) => {
         const value = e.target.value;
-        if (!/^\d*$/.test(value)) return; // Only allow numbers
+        if (!/^\d*$/.test(value)) return; // Chỉ cho số
 
         const newOtp = [...otpDigits];
-        newOtp[index] = value.slice(-1); // Only keep the last digit
+        newOtp[index] = value.slice(-1);
         setOtpDigits(newOtp);
 
         if (value && index < OTP_LENGTH - 1) {
-            inputsRef.current[index + 1].focus(); // Move to next input
+            inputsRef.current[index + 1].focus();
         }
     };
 
-    // Handle backspace to focus previous input
+    // ⬅️ Lùi lại khi bấm Backspace
     const handleKeyDown = (e, index) => {
         if (e.key === "Backspace" && !otpDigits[index] && index > 0) {
             inputsRef.current[index - 1].focus();
         }
     };
 
+    // 📋 Dán nguyên dãy số vào
     const handlePaste = (e) => {
         e.preventDefault();
         const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
@@ -56,6 +59,7 @@ export const VerifyOtpForm = ({ email }) => {
         }
     };
 
+    // ✅ Gửi OTP để xác minh
     const handleVerify = async (e) => {
         e.preventDefault();
         const otp = otpDigits.join("");
@@ -77,6 +81,7 @@ export const VerifyOtpForm = ({ email }) => {
         }
     };
 
+    // 🔄 Gửi lại OTP và bắt đầu đếm ngược
     const handleResend = async () => {
         if (timer > 0) return;
 
@@ -87,7 +92,7 @@ export const VerifyOtpForm = ({ email }) => {
         if (result.message === "Gửi mã OTP mới thành công. Vui lòng kiểm tra email của bạn.") {
             toast.success("A new OTP has been sent to your email.");
             setOtpDigits(Array(OTP_LENGTH).fill(""));
-            setTimer(60);
+            setTimer(60); // ✅ Bắt đầu đếm ngược sau khi gửi
         } else {
             toast.error(result.message);
         }
@@ -129,6 +134,8 @@ export const VerifyOtpForm = ({ email }) => {
                     {isVerifying ? "Verifying..." : "Verify OTP"}
                 </ButtonHovCT>
             </form>
+
+            {/* 🔄 Hiển thị thông báo hoặc nút resend */}
             <div className="mt-4 text-center">
                 {timer > 0 ? (
                     <p className="text-gray-500">Resend available in <strong>{timer}s</strong></p>
