@@ -7,9 +7,10 @@ import { useModal } from "@/context/ModalContext";
 import AuthSwitcher from "./Home/AuthSwitcher";
 import isSticky from "@/hooks/isSticky";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { checkAuthStatus, logout } from "@/api/api";
 import toast from "react-hot-toast";
+import DropdownCT from "./tailwind-custom/DropdownCT";
 
 const Header = ({ onOpenCartModal }) => {
     const { openModal } = useModal(); // Gọi hàm modal
@@ -130,28 +131,50 @@ const Header = ({ onOpenCartModal }) => {
 
                             {/* Login / Register */}
                             {authStatus.isAuthenticated ? (
-                                <>
-                                    <Link
-                                        to="/profile"
-                                        className="hover:text-gray-600"
+                                <DropdownCT>
+                                    <li className="cursor-pointer px-4 py-2 hover:bg-gray-100">
+                                        <span className="text-sm font-semibold">
+                                            👋 Hi, <span className="text-primary font-bold whitespace-nowrap">{authStatus.userName}</span>
+                                        </span>
+                                    </li>
+                                    <hr className="my-1 border-gray-300" />
+                                    <li
+                                        id="profile"
+                                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
                                     >
-                                        {authStatus.userName}
-                                    </Link>
-                                    {authStatus.role === "Admin" && (
                                         <Link
-                                            to="/admin"
+                                            to="/profile"
                                             className="hover:text-gray-600"
                                         >
-                                            Admin
+                                            Profile
                                         </Link>
-                                    )}
-                                    <button
-                                        onClick={handleLogout}
-                                        className="hover:text-gray-600"
+                                    </li>
+                                    <li
+                                        id="profile"
+                                        className="cursor-pointer px-4 py-2 hover:bg-gray-100"
                                     >
-                                        Logout
-                                    </button>
-                                </>
+                                        {authStatus.role === "Admin" && (
+                                            <Link
+                                                to="/admin"
+                                                className="hover:text-gray-600"
+                                            >
+                                                Admin
+                                            </Link>
+                                        )}
+                                    </li>
+
+                                    <li
+                                        className="cursor-pointer px-4 py-2 font-bold text-red-500 hover:bg-gray-100"
+                                        onClick={logout}
+                                    >
+                                        <button
+                                            onClick={handleLogout}
+                                            className="hover:text-red-700"
+                                        >
+                                            Logout
+                                        </button>
+                                    </li>
+                                </DropdownCT>
                             ) : (
                                 <button
                                     onClick={handleOpenAuthModal}

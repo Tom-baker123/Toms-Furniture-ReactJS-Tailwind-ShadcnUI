@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     // Main Page
     Home,
@@ -22,9 +22,29 @@ import {
     CustomerManagement,
     PromotionManagement,
 } from "../pages";
-import { createBrowserRouter, RouterProvider, Outlet, redirect } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
+import { checkAuthStatus } from "@/api/api";
+
+const AdminRoute = ({ children }) => {
+    const [authStatus, setAuthStatus] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            const result = await checkAuthStatus();
+            setAuthStatus(result);
+            if (!result.isAuthenticated || result.role !== "Admin") {
+                navigate("/");
+            }
+        };
+        fetchAuthStatus();
+    }, [navigate]);
+
+    if (!authStatus) return null;
+    return authStatus.isAuthenticated && authStatus.role === "Admin" ? children : <Navigate to="/" />;
+};
 
 {
     /* -[Thiết lập url]------------------------------------ */
@@ -72,7 +92,11 @@ const router = createBrowserRouter([
     // [Router của Admin]------------------------------
     {
         path: "/admin",
-        element: <AdminLayouts />,
+        element: (
+            <AdminRoute>
+                <AdminLayouts />
+            </AdminRoute>
+        ),
         children: [
             { index: true, element: <Dashboard /> },
             { path: "category", element: <CategoryManagement /> },
