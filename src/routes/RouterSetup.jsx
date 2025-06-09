@@ -25,7 +25,7 @@ import {
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
-import { checkAuthStatus } from "@/api/api";
+import { checkAuthStatus, getAllCategories } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 
 const AdminRoute = ({ children }) => {
@@ -108,6 +108,9 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <ProductCollection />, // Đây là trang danh sách sản phẩm
+                        loader: async () => {
+                            return await getAllCategories();
+                        },
                     },
                     {
                         path: "New_Collection",

@@ -1,10 +1,10 @@
 import React from "react";
-import { AllCategories, topProducts } from "@/constants";
-import { PencilLine, Star, Trash } from "lucide-react";
+import { AllCategories } from "@/constants";
+import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData } from "react-router-dom";
 
 const ProductCollection = () => {
-    const categories =useLoaderData(); // 👈 get data from loader
+    const categories = useLoaderData(); // Lấy dữ liệu từ loader
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -21,35 +21,30 @@ const ProductCollection = () => {
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <th className="table-head">#</th>
+                                    <th className="table-head">Image</th>
                                     <th className="table-head">Name Collection</th>
-                                    <th className="table-head">Status</th>
+                                    <th className="table-head">Description</th>
                                     <th className="table-head">Actions</th>
                                 </tr>
                             </thead>
 
                             <tbody className="table-body">
-                                {AllCategories.map((product, proIndex) => (
+                                {categories.map((category, catIndex) => (
                                     <tr
-                                        key={proIndex}
+                                        key={catIndex}
                                         className="table-row"
                                     >
-                                        <td className="table-cell">{product.number}</td>
+                                        <td className="table-cell">{category.id}</td>
                                         <td className="table-cell">
-                                            <div className="flex w-max gap-x-4">
-                                                <img
-                                                    src={product.image}
-                                                    alt={product.name}
-                                                    className="size-14 rounded-lg object-cover"
-                                                />
-                                                <div className="flex flex-col">
-                                                    <p>{product.name}</p>
-                                                    <p className="font-normal text-slate-600 dark:text-shadow-slate-400">{product.description}</p>
-                                                </div>
-                                            </div>
+                                            <img
+                                                src={category.imageUrl}
+                                                alt="s"
+                                                width={50}
+                                                height={50}
+                                            />
                                         </td>
-                                        
-                                        <td className="table-cell">{product.status}</td>
-                                        
+                                        <td className="table-cell">{category.categoryName}</td>
+                                        <td className="table-cell">{category.descriptions}</td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button className="text-blue-500 dark:text-blue-600">

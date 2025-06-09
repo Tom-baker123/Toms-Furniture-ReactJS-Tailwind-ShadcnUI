@@ -124,7 +124,12 @@ export const getProductDetail = () => {
 // [1.] API lấy tất cả danh sách danh mục sản phẩm
 export const getAllCategories = async () => {
     try {
-        const response = await fetch("https://localhost:7030/api/Category");
+        const response = await fetch(`${API_BASE_URL}/Category`, {
+            method: "GET",
+            headers: {
+                "Content-type": "application/json",
+            }
+        });
         // Kiểm tra xem response có thành công hay không?
         if (!response.ok) {
             throw new Error("Failed to fetch categories!");
@@ -133,7 +138,7 @@ export const getAllCategories = async () => {
         return data;
     } catch (error) {
         console.log(`Can't get all categories with an error: ${error}`);
-        return []
+        return [];
     }
 }
 // [2.] API lấy tất cả user
