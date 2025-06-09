@@ -191,7 +191,7 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
             0
         );
         const maxLength = Math.max(...items.map((item) => item.sanPham.length || 20));
-        const maxWidth = Math.max(...items.map((item) => item.sanPham.width || 20)); 
+        const maxWidth = Math.max(...items.map((item) => item.sanPham.width || 20));
         const totalHeight = items.reduce(
             (sum, item) => sum + (item.sanPham.height || 10) * item.soLuong,
             0
@@ -241,7 +241,7 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
 
 
 //#region [ADMIN Page 🪪]----------------------------------------------
-// [1.] API lấy tất cả danh sách danh mục sản phẩm
+// [1.1] API lấy tất cả danh sách danh mục sản phẩm
 export const getAllCategories = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/Category`, {
@@ -261,6 +261,34 @@ export const getAllCategories = async () => {
         return [];
     }
 }
+// [1.2] API thêm danh mục sản phẩm
+export const createCategory = async (categoryData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("categoryVModel.CategoryName", categoryData.CategoryName);
+        formData.append("categoryVModel.Descriptions", categoryData.Descriptions || "");
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Category`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to create category");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating category:", error);
+        throw error;
+    }
+};
+
 // [2.] API lấy tất cả user
 export const getAllUsers = async () => {
     try {
