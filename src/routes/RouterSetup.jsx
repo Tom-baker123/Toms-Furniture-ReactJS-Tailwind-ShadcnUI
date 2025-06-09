@@ -27,6 +27,7 @@ import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
 import { checkAuthStatus, getAllCategories } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
+import Payment from "@/pages/Payment";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -64,6 +65,7 @@ const router = createBrowserRouter([
             { path: "faq", element: <FAQ /> },
             { path: "findastore", element: <FindAStore /> },
             { path: "cart", element: <Cart /> },
+            { path: "payment", element: <Payment /> },
             {
                 path: "profile",
                 element: <Profile />,
