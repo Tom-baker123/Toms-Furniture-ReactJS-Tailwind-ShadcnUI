@@ -54,10 +54,10 @@ const LoginForm = ({ onSwitch }) => {
                         type="email"
                         placeholder="Email"
                         {...register("email", {
-                            required: "Email là bắt buộc",
+                            required: "Email is required",
                             pattern: {
                                 value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                message: "Định dạng email không hợp lệ",
+                                message: "Email format not support",
                             },
                         })}
                     />

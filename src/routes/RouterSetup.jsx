@@ -26,6 +26,7 @@ import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Nav
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
 import { checkAuthStatus } from "@/api/api";
+import CategoryForm from "@/components/Admin/Form/CategoryForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -103,7 +104,16 @@ const router = createBrowserRouter([
             { path: "products", element: <ProductManagement /> },
             {
                 path: "product_collection",
-                element: <ProductCollection />,
+                children: [
+                    {
+                        index: true,
+                        element: <ProductCollection />, // Đây là trang danh sách sản phẩm
+                    },
+                    {
+                        path: "New_Collection",
+                        element: <CategoryForm />,
+                    },
+                ],
             },
             { path: "order", element: <OrderManagement /> },
             { path: "draft_orders", element: <DraftOrders /> },
