@@ -1,4 +1,17 @@
-import { ChartColumn, Home, Boxes, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
+import {
+    ChartColumn,
+    Home,
+    Boxes,
+    NotepadText,
+    Package,
+    PackagePlus,
+    Settings,
+    ShoppingBag,
+    UserCheck,
+    UserPlus,
+    Users,
+    ScrollText,
+} from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
@@ -43,9 +56,9 @@ export const navbarLinks = [
                 path: "/admin/products",
             },
             {
-                label: "Product Collection",
+                label: "Category",
                 // icon: PackagePlus,
-                icon: Boxes,
+                icon: ScrollText,
                 path: "/admin/product_collection",
             },
             {
@@ -75,6 +88,49 @@ export const navbarLinks = [
                 icon: UserCheck,
                 path: "/admin/verified-customers",
             },
+        ],
+    },
+
+    // Trang quản lý khách hàng
+    {
+        title: "Product Attribute",
+        links: [
+            {
+                label: "Materials",
+                icon: Users,
+                path: "/admin/...",
+            },
+            {
+                label: "Units",
+                icon: UserPlus,
+                path: "/admin/...",
+            },
+            {
+                label: "Colors",
+                icon: UserCheck,
+                path: "/admin/...",
+            },
+            {
+                label: "Sizes",
+                icon: UserCheck,
+                path: "/admin/...",
+            },
+            {
+                label: "Suppliers",
+                icon: UserCheck,
+                path: "/admin/...",
+            },
+            {
+                label: "Brands",
+                icon: UserCheck,
+                path: "/admin/...",
+            },
+            {
+                label: "Countries",
+                icon: UserCheck,
+                path: "/admin/...",
+            },
+            
         ],
     },
 

@@ -25,9 +25,10 @@ import {
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
-import { checkAuthStatus, getAllCategories } from "@/api/api";
+import { checkAuthStatus, getAllCategories, getProductList } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
+import ProductForm from "@/components/Admin/Form/ProductForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -101,9 +102,26 @@ const router = createBrowserRouter([
             </AdminRoute>
         ),
         children: [
+            // [1.] Trang chủ admin
             { index: true, element: <Dashboard /> },
-            { path: "category", element: <CategoryManagement /> },
-            { path: "products", element: <ProductManagement /> },
+            // [2.] Trang sản phẩm
+            {
+                path: "products",
+                children: [
+                    {
+                        index: true,
+                        element: <ProductManagement />,
+                        loader: async () => {
+                            return await getProductList();
+                        },
+                    },
+                    {
+                        path: "New_Product",
+                        element: <ProductForm />,
+                    },
+                ],
+            },
+            // [3.] Trang danh mục
             {
                 path: "product_collection",
                 children: [
@@ -120,6 +138,17 @@ const router = createBrowserRouter([
                     },
                 ],
             },
+            // [4.]
+            { path: "order", element: <OrderManagement /> },
+            // [5.]
+            // [6.]
+            // [7.]
+            // [8.]
+            // [9.]
+            // [10.]
+            // [11.]
+            // [12.]
+            // [13.]
             { path: "order", element: <OrderManagement /> },
             { path: "draft_orders", element: <DraftOrders /> },
             { path: "analyticsReport", element: <AnalyticsReport /> },
@@ -130,6 +159,7 @@ const router = createBrowserRouter([
         ],
     },
 ]);
+
 {
     /* -[Thiết lập url - End]------------------------------ */
 }

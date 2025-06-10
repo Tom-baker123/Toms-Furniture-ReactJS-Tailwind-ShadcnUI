@@ -8,7 +8,9 @@ export const YOUR_SHOP_WARD_CODE = "20804"; // Replace with valid ward code
 
 //#region [Global API🌐]-----------------------------------------------
 // [0.] Các đường dẫn API
-const API_BASE_URL = "https://localhost:7030/api";
+// const API_BASE_URL = "https://localhost:7030/api";
+// const API_BASE_URL = "http://tom11357-001-site1.qtempurl.com/api";
+const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
 //[1.] Kiểm tra trạng thái đăng nhập của người dùng
 export const checkAuthStatus = async () => {
     try {
@@ -119,9 +121,6 @@ export const logout = async () => {
 
 
 //#region [Home Page 🏠]-----------------------------------------------
-export const getProductList = () => {
-    return true;
-};
 export const getProductDetail = () => {
     return true;
 };
@@ -289,7 +288,36 @@ export const createCategory = async (categoryData, imageFile) => {
     }
 };
 
-// [2.] API lấy tất cả user
+// [1.1] API lấy tất cả danh sách danh mục sản phẩm
+
+
+// [??.1] API lấy tất cả danh sách sản phẩm 
+export const getProductList = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to fetch products: ${response.status} ${errorText}`);
+        }
+
+        const data = await response.json();
+        return data; // Trả về danh sách sản phẩm
+    } catch (error) {
+        console.log("You have an error while fetching product: ", error);
+        return [];
+    }
+}
+
+
+
+// [3.] API lấy tất cả user
 export const getAllUsers = async () => {
     try {
         // Gửi yêu cầu đến API để kiểm tra trạng thái đăng nhập + cookie
