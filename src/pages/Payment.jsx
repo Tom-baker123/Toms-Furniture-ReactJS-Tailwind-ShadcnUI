@@ -1,22 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {
-    getProvinces,
-    getDistricts,
-    getWards,
-    getAvailableServices,
-    calculateShippingFee,
-    YOUR_SHOP_DISTRICT_ID,
-} from "@/api/api";
+import { getProvinces, getDistricts, getWards, getAvailableServices, calculateShippingFee, YOUR_SHOP_DISTRICT_ID } from "@/api/api";
 
 const mockCartItems = [
     {
-        sanPham: { weight: 1500, width: 30, length: 40, height: 20 },
+        sanPham: { weight: 500, width: 30, length: 40, height: 20 },
         soLuong: 2,
     },
-    {
-        sanPham: { weight: 2000, width: 50, length: 60, height: 30 },
-        soLuong: 1,
-    },
+    // {
+    //     sanPham: { weight: 2000, width: 50, length: 60, height: 30 },
+    //     soLuong: 1,
+    // },
 ];
 
 const Payment = () => {
@@ -74,12 +67,7 @@ const Payment = () => {
                 try {
                     const services = await getAvailableServices(YOUR_SHOP_DISTRICT_ID, selectedDistrict);
                     if (services.length > 0) {
-                        const fee = await calculateShippingFee(
-                            selectedDistrict,
-                            selectedWard,
-                            mockCartItems,
-                            services[0].service_type_id
-                        );
+                        const fee = await calculateShippingFee(selectedDistrict, selectedWard, mockCartItems, services[0].service_type_id);
                         setShippingFee(fee);
                         setError("");
                     } else {
@@ -96,20 +84,23 @@ const Payment = () => {
     }, [selectedDistrict, selectedWard]);
 
     return (
-        <div className="max-w-xl mx-auto p-4 space-y-4">
+        <div className="mx-auto max-w-xl space-y-4 p-4">
             <h2 className="text-xl font-bold">Thông tin giao hàng</h2>
 
             {/* Province */}
             <div>
-                <label className="block text-sm font-medium mb-1">Tỉnh / Thành phố</label>
+                <label className="mb-1 block text-sm font-medium">Tỉnh / Thành phố</label>
                 <select
                     value={selectedProvince}
                     onChange={handleProvinceChange}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full rounded border px-3 py-2"
                 >
                     <option value="">-- Chọn tỉnh --</option>
                     {provinces.map((province) => (
-                        <option key={province.ProvinceID} value={province.ProvinceID}>
+                        <option
+                            key={province.ProvinceID}
+                            value={province.ProvinceID}
+                        >
                             {province.ProvinceName}
                         </option>
                     ))}
@@ -118,16 +109,19 @@ const Payment = () => {
 
             {/* District */}
             <div>
-                <label className="block text-sm font-medium mb-1">Quận / Huyện</label>
+                <label className="mb-1 block text-sm font-medium">Quận / Huyện</label>
                 <select
                     value={selectedDistrict}
                     onChange={handleDistrictChange}
                     disabled={!selectedProvince}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full rounded border px-3 py-2"
                 >
                     <option value="">-- Chọn quận --</option>
                     {districts.map((district) => (
-                        <option key={district.DistrictID} value={district.DistrictID}>
+                        <option
+                            key={district.DistrictID}
+                            value={district.DistrictID}
+                        >
                             {district.DistrictName}
                         </option>
                     ))}
@@ -136,16 +130,19 @@ const Payment = () => {
 
             {/* Ward */}
             <div>
-                <label className="block text-sm font-medium mb-1">Phường / Xã</label>
+                <label className="mb-1 block text-sm font-medium">Phường / Xã</label>
                 <select
                     value={selectedWard}
                     onChange={handleWardChange}
                     disabled={!selectedDistrict}
-                    className="w-full border rounded px-3 py-2"
+                    className="w-full rounded border px-3 py-2"
                 >
                     <option value="">-- Chọn phường --</option>
                     {wards.map((ward) => (
-                        <option key={ward.WardCode} value={ward.WardCode}>
+                        <option
+                            key={ward.WardCode}
+                            value={ward.WardCode}
+                        >
                             {ward.WardName}
                         </option>
                     ))}
@@ -153,18 +150,10 @@ const Payment = () => {
             </div>
 
             {/* Error Message */}
-            {error && (
-                <div className="text-red-600 font-medium mt-4">
-                    {error}
-                </div>
-            )}
+            {error && <div className="mt-4 font-medium text-red-600">{error}</div>}
 
             {/* Shipping Fee */}
-            {shippingFee > 0 && (
-                <div className="text-green-600 font-medium mt-4">
-                    Phí vận chuyển: {shippingFee.toLocaleString()}₫
-                </div>
-            )}
+            {shippingFee > 0 && <div className="mt-4 font-medium text-green-600">Phí vận chuyển: {shippingFee.toLocaleString()}₫</div>}
         </div>
     );
 };
