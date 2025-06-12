@@ -1,5 +1,5 @@
 import React from "react";
-import { AllCategories } from "@/constants";
+// import { AllCategories } from "@/constants";
 import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData } from "react-router-dom";
 

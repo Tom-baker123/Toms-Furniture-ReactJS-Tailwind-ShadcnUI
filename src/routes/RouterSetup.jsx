@@ -21,6 +21,7 @@ import {
     AnalyticsReport,
     CustomerManagement,
     PromotionManagement,
+    InventoryManagement,
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
@@ -139,21 +140,32 @@ const router = createBrowserRouter([
                 ],
             },
             // [4.]
-            { path: "order", element: <OrderManagement /> },
+            { path: "inventory", element: <InventoryManagement />, loader: async () => await getProductList() },
             // [5.]
+            { path: "materials", element: <OrderManagement /> },
             // [6.]
+            { path: "units", element: <OrderManagement /> },
             // [7.]
+            { path: "colors", element: <OrderManagement /> },
             // [8.]
+            { path: "sizes", element: <OrderManagement /> },
             // [9.]
+            { path: "suppliers", element: <OrderManagement /> },
             // [10.]
+            { path: "brands", element: <OrderManagement /> },
             // [11.]
+            { path: "countries", element: <OrderManagement /> },
             // [12.]
-            // [13.]
             { path: "order", element: <OrderManagement /> },
+            // [13.]
             { path: "draft_orders", element: <DraftOrders /> },
+            // [14.]
             { path: "analyticsReport", element: <AnalyticsReport /> },
+            // [15.]
             { path: "customer", element: <CustomerManagement /> },
+            // [16.]
             { path: "promotion", element: <PromotionManagement /> },
+
             // Không tìm thấy trang phù hợp
             { path: "*", element: <PageNotFound /> },
         ],

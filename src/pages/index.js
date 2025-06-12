@@ -14,14 +14,15 @@ export { default as Cart } from "./Cart";
 
 
 // [ADMIN Page 🪪]----------------------------------------------
-export { default as Dashboard } from "./admin/Dashboard";
+export { default as AnalyticsReport } from "./admin/AnalyticsReport";
 export { default as CategoryManagement } from "./admin/CategoryManagement";
+export { default as CustomerManagement } from "./admin/CustomerManagement";
+export { default as DraftOrders } from "./admin/DraftOrders";
+export { default as Dashboard } from "./admin/Dashboard";
+export { default as InventoryManagement } from "./admin/InventoryManagement";
+export { default as OrderManagement } from "./admin/OrderManagement";
 export { default as ProductManagement } from "./admin/ProductManagement";
 export { default as ProductCollection } from "./admin/ProductCollection";
-export { default as OrderManagement } from "./admin/OrderManagement";
-export { default as DraftOrders } from "./admin/DraftOrders";
-export { default as AnalyticsReport } from "./admin/AnalyticsReport";
-export { default as CustomerManagement } from "./admin/CustomerManagement";
 export { default as PromotionManagement } from "./admin/PromotionManagement";
 // [ADMIN Page - END]------------------------------------------
 
