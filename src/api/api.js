@@ -1,16 +1,19 @@
 import axios from "axios";
 
+
 const TOKEN = "8ed1bdc4-4501-11f0-9b81-222185cb68c8"; // Replace with valid token
 const GHN_BASE_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api";
 export const SHOP_ID = 196808; // Replace with valid ShopID
 export const YOUR_SHOP_DISTRICT_ID = 1450; // Replace with valid district ID
 export const YOUR_SHOP_WARD_CODE = "20804"; // Replace with valid ward code
 
-//#region [Global API🌐]-----------------------------------------------
 // [0.] Các đường dẫn API
 // const API_BASE_URL = "https://localhost:7030/api";
 // const API_BASE_URL = "http://tom11357-001-site1.qtempurl.com/api";
 const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
+
+
+//#region [Global API🌐]-----------------------------------------------
 //[1.] Kiểm tra trạng thái đăng nhập của người dùng
 export const checkAuthStatus = async () => {
     try {
@@ -291,7 +294,7 @@ export const createCategory = async (categoryData, imageFile) => {
 // [1.1] API lấy tất cả danh sách danh mục sản phẩm
 
 
-// [??.1] API lấy tất cả danh sách sản phẩm 
+// [2.1] API lấy tất cả danh sách sản phẩm 
 export const getProductList = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product`, {
@@ -314,6 +317,52 @@ export const getProductList = async () => {
         return [];
     }
 }
+// [2.2] API thêm sản phẩm 
+// Đang hoàn thành các chức năng nhỏ
+// [2.3] API cập nhật sản phẩm 
+// API cập nhật sản phẩm
+export const updateProduct = async (productData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(productData),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to update product: ${response.status} ${errorText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log("Error updating product: ", error);
+        throw error;
+    }
+};
+// [2.4] API xóa sản phẩm 
+// API xóa sản phẩm
+export const deleteProduct = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to delete product: ${response.status} ${errorText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log("Error deleting product: ", error);
+        throw error;
+    }
+};
 
 
 
