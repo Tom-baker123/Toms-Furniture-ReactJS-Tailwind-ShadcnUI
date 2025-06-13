@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 const TOKEN = "8ed1bdc4-4501-11f0-9b81-222185cb68c8"; // Replace with valid token
 const GHN_BASE_URL = "https://dev-online-gateway.ghn.vn/shiip/public-api";
 export const SHOP_ID = 196808; // Replace with valid ShopID
@@ -317,10 +316,10 @@ export const getProductList = async () => {
         return [];
     }
 }
+
+
 // [2.2] API thêm sản phẩm 
-// Đang hoàn thành các chức năng nhỏ
 // [2.3] API cập nhật sản phẩm 
-// API cập nhật sản phẩm
 export const updateProduct = async (productData) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product`, {
@@ -344,7 +343,6 @@ export const updateProduct = async (productData) => {
     }
 };
 // [2.4] API xóa sản phẩm 
-// API xóa sản phẩm
 export const deleteProduct = async (id) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product/${id}`, {
@@ -364,8 +362,6 @@ export const deleteProduct = async (id) => {
     }
 };
 
-
-
 // [3.] API lấy tất cả user
 export const getAllUsers = async () => {
     try {
@@ -384,6 +380,170 @@ export const getAllUsers = async () => {
         return { message: "Can't get all users!" };
     }
 }
+
+
+// [4.1] API lấy tất cả danh sách thương hiệu
+export const getAllBrands = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Brand`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch brands';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching brands: ${error.message}`);
+        throw error;
+    }
+};
+
+// [4.2] API lấy thương hiệu theo ID
+export const getBrandById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Brand/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch brand with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching brand with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [4.3] API thêm thương hiệu
+export const createBrand = async (brandData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("brandVModel.BrandName", brandData.BrandName);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Brand`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        console.log("Create brand response status:", response.status); // Debug
+        console.log("Create brand response headers:", response.headers.get('content-type')); // Debug
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create brand';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                console.log("Error data (JSON):", errorData); // Debug
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+                console.log("Error data (text):", errorMessage); // Debug
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating brand:", error.message);
+        throw error;
+    }
+};
+
+// [4.4] API cập nhật thương hiệu
+export const updateBrand = async (brandData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("brandVModel.Id", brandData.Id);
+        formData.append("brandVModel.BrandName", brandData.BrandName);
+        formData.append("brandVModel.IsActive", brandData.IsActive);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Brand`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update brand';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating brand:", error.message);
+        throw error;
+    }
+};
+
+// [4.5] API xóa thương hiệu
+export const deleteBrand = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Brand/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete brand with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting brand:", error.message);
+        throw error;
+    }
+};
+
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
 
 

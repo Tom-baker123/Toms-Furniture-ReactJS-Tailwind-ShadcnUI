@@ -24,9 +24,9 @@ const HomeLayout = () => {
                 onClose={() => setOpenCartModal(false)}
             />
             <Breadcrumbs />
-            <Outlet/> {/* 2. Thiết lập OUTLET */}
+            <Outlet /> {/* 2. Thiết lập OUTLET */}
             <Footer /> {/* 3. Thiết lập footer */}
-            <Toaster /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}
+            <Toaster toastOptions={{ duration: 2000 }} /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}
             <ModalTemplate />
         </ModalProvider>
     );

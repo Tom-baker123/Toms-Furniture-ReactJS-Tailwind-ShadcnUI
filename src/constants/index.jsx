@@ -123,14 +123,13 @@ export const navbarLinks = [
             {
                 label: "Brands",
                 icon: UserCheck,
-                path: "/admin/...",
+                path: "/admin/brands",
             },
             {
                 label: "Countries",
                 icon: UserCheck,
                 path: "/admin/...",
             },
-            
         ],
     },
 
