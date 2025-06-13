@@ -1,3 +1,4 @@
+import EditorCDN from "@/components/Admin/EditorCDN";
 import { FooterAdmin } from "@/components/Admin/FooterAdmin";
 import { overviewData, recentSalesData, topProducts } from "@/constants";
 import { useTheme } from "@/context/ThemeContext";
@@ -242,8 +243,8 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-
-            <FooterAdmin/>
+            <EditorCDN />
+            <FooterAdmin />
         </div>
     );
 };

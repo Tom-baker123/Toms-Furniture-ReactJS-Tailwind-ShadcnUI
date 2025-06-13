@@ -15,6 +15,7 @@ export { default as Cart } from "./Cart";
 
 // [ADMIN Page 🪪]----------------------------------------------
 export { default as AnalyticsReport } from "./admin/AnalyticsReport";
+export { default as BrandManagement } from "./admin/BrandManagement";
 export { default as CategoryManagement } from "./admin/CategoryManagement";
 export { default as CustomerManagement } from "./admin/CustomerManagement";
 export { default as DraftOrders } from "./admin/DraftOrders";

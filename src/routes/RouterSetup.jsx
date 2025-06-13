@@ -13,6 +13,7 @@ import {
     Cart,
     // Admin Page
     Dashboard,
+    BrandManagement,
     CategoryManagement,
     ProductManagement,
     ProductCollection,
@@ -26,10 +27,11 @@ import {
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
-import { checkAuthStatus, getAllCategories, getProductList } from "@/api/api";
+import { checkAuthStatus, getAllBrands, getAllCategories, getBrandById, getProductList } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
 import ProductForm from "@/components/Admin/Form/ProductForm";
+import BrandForm from "@/components/Admin/Form/BrandForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -151,8 +153,27 @@ const router = createBrowserRouter([
             { path: "sizes", element: <OrderManagement /> },
             // [9.]
             { path: "suppliers", element: <OrderManagement /> },
-            // [10.]
-            { path: "brands", element: <OrderManagement /> },
+            // [10.] Trang thương hiệu
+            {
+                path: "brands",
+                children: [
+                    {
+                        index: true,
+                        element: <BrandManagement />,
+                        loader: async () => {
+                            return await getAllBrands();
+                        },
+                    },
+                    { path: "new_brand", element: <BrandForm /> },
+                    {
+                        path: "edit_brand/:id",
+                        element: <BrandForm />,
+                        loader: async ({ params }) => {
+                            return await getBrandById(params.id);
+                        },
+                    },
+                ],
+            },
             // [11.]
             { path: "countries", element: <OrderManagement /> },
             // [12.]
