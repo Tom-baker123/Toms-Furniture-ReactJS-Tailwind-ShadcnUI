@@ -24,16 +24,28 @@ import {
     ProductCollection,
     PromotionManagement,
     CountryManagement,
+    SupplierManagement, // Thêm mới
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
-import { checkAuthStatus, getAllBrands, getAllCategories, getAllCountries, getBrandById, getCountryById, getProductList } from "@/api/api";
+import {
+    checkAuthStatus,
+    getAllBrands,
+    getAllCategories,
+    getAllCountries,
+    getAllSuppliers,
+    getBrandById,
+    getCountryById,
+    getProductList,
+    getSupplierById,
+} from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
 import ProductForm from "@/components/Admin/Form/ProductForm";
 import BrandForm from "@/components/Admin/Form/BrandForm";
 import CountryForm from "@/components/Admin/Form/CountryForm";
+import SupplierForm from "@/components/Admin/Form/SupplierForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -154,7 +166,23 @@ const router = createBrowserRouter([
             // [8.]
             { path: "sizes", element: <OrderManagement /> },
             // [9.]
-            { path: "suppliers", element: <OrderManagement /> },
+            {
+                path: "suppliers",
+                children: [
+                    {
+                        index: true,
+                        element: <SupplierManagement />,
+                        loader: async () => await getAllSuppliers(),
+                    },
+                    { path: "new_supplier", element: <SupplierForm /> },
+                    {
+                        path: "edit_supplier/:id",
+                        element: <SupplierForm />,
+                        loader: async ({ params }) => await getSupplierById(params.id),
+                    },
+                ],
+            },
+
             // [10.] Trang thương hiệu
             {
                 path: "brands",
@@ -174,7 +202,7 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            // [11.]
+            // [11.] Xuất xứ
             {
                 path: "countries",
                 children: [

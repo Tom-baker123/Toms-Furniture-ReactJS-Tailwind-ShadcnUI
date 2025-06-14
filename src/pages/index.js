@@ -26,6 +26,7 @@ export { default as OrderManagement } from "./admin/OrderManagement";
 export { default as ProductManagement } from "./admin/ProductManagement";
 export { default as ProductCollection } from "./admin/ProductCollection";
 export { default as PromotionManagement } from "./admin/PromotionManagement";
+export { default as SupplierManagement } from "./admin/SupplierManagement";
 // [ADMIN Page - END]------------------------------------------
 
 

@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 import { useForm } from "react-hook-form";
 import { checkAuthStatus, login } from "@/api/api";
 import toast from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 const LoginForm = ({ onSwitch }) => {
+    const [isSubmitting, setIsSubmitting] = useState(false); // 🆕 trạng thái loading
+
     // [1.] Thành phần này sử dụng react-hook-form để quản lý form
     const {
         register,
@@ -18,7 +21,9 @@ const LoginForm = ({ onSwitch }) => {
 
     // [3.]
     const onSubmit = async (data) => {
+        setIsSubmitting(true); // 🔐 Khóa nút lại
         const result = await login(data.email, data.password);
+        setIsSubmitting(false); // 🔓 Mở lại
         if (result.message === "Đăng nhập thành công.") {
             toast.success("Login successful!");
             const authStatus = await checkAuthStatus();
@@ -88,13 +93,14 @@ const LoginForm = ({ onSwitch }) => {
                     Forgot Password
                 </Link>
                 <ButtonHovCT
-                    className="mt-6 !border-black"
+                    className={cn("mt-6", isSubmitting ? "!border-gray-300 !bg-gray-300" : "!border-black")}
                     bgColor="bg-black"
                     hoverBgColor="bg-white"
                     textColor="text-white"
                     type="submit"
+                    disabled={isSubmitting} // 🔒 Vô hiệu khi đang gửi
                 >
-                    Login
+                    {isSubmitting ? "Logging in..." : "Login"}
                 </ButtonHovCT>
             </form>
 

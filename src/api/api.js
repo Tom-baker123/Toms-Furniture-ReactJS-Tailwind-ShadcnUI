@@ -318,6 +318,7 @@ export const getProductList = async () => {
 }
 
 
+// ------------------------------------------------------------------
 // [2.2] API thêm sản phẩm 
 // [2.3] API cập nhật sản phẩm 
 export const updateProduct = async (productData) => {
@@ -362,6 +363,8 @@ export const deleteProduct = async (id) => {
     }
 };
 
+
+// ------------------------------------------------------------------
 // [3.] API lấy tất cả user
 export const getAllUsers = async () => {
     try {
@@ -382,6 +385,7 @@ export const getAllUsers = async () => {
 }
 
 
+// ------------------------------------------------------------------
 // [4.1] API lấy tất cả danh sách thương hiệu
 export const getAllBrands = async () => {
     try {
@@ -543,6 +547,8 @@ export const deleteBrand = async (id) => {
         throw error;
     }
 };
+
+
 // ------------------------------------------------------------------
 // [5.1] Lấy tất cả danh sách xuất xứ
 export const getAllCountries = async () => {
@@ -700,6 +706,175 @@ export const deleteCountry = async (id) => {
         throw error;
     }
 };
+
+
+// [6.1] API lấy tất cả danh sách nhà cung cấp
+export const getAllSuppliers = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Supplier`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch suppliers'; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching suppliers: ${error.message}`); // Thông báo lỗi bằng tiếng Anh
+        throw error;
+    }
+};
+
+// [6.2] API lấy nhà cung cấp theo ID
+export const getSupplierById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Supplier/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch supplier with ID ${id}`; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching supplier with ID ${id}: ${error.message}`); // Thông báo lỗi bằng tiếng Anh
+        throw error;
+    }
+};
+
+// [6.3] API thêm nhà cung cấp
+export const createSupplier = async (supplierData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("supplierVModel.SupplierName", supplierData.SupplierName || "");
+        formData.append("supplierVModel.ContactName", supplierData.ContactName || "");
+        formData.append("supplierVModel.Email", supplierData.Email);
+        formData.append("supplierVModel.PhoneNumber", supplierData.PhoneNumber || "");
+        formData.append("supplierVModel.Notes", supplierData.Notes || "");
+        formData.append("supplierVModel.TaxId", supplierData.TaxId);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Supplier`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create supplier'; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating supplier:", error.message); // Thông báo lỗi bằng tiếng Anh
+        throw error;
+    }
+};
+
+// [6.4] API cập nhật nhà cung cấp
+export const updateSupplier = async (supplierData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("supplierVModel.Id", supplierData.Id);
+        formData.append("supplierVModel.SupplierName", supplierData.SupplierName || "");
+        formData.append("supplierVModel.ContactName", supplierData.ContactName || "");
+        formData.append("supplierVModel.Email", supplierData.Email);
+        formData.append("supplierVModel.PhoneNumber", supplierData.PhoneNumber || "");
+        formData.append("supplierVModel.Notes", supplierData.Notes || "");
+        formData.append("supplierVModel.TaxId", supplierData.TaxId);
+        formData.append("supplierVModel.IsActive", supplierData.IsActive);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Supplier`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update supplier'; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating supplier:", error.message); // Thông báo lỗi bằng tiếng Anh
+        throw error;
+    }
+};
+
+// [6.5] API xóa nhà cung cấp
+export const deleteSupplier = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Supplier/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete supplier with ID ${id}`; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting supplier:", error.message); // Thông báo lỗi bằng tiếng Anh
+        throw error;
+    }
+};
+
 
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
 
