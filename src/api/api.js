@@ -134,7 +134,7 @@ export const getProvinces = async () => {
         });
         return response.data.data || [];
     } catch (error) {
-        console.error("Lỗi lấy tỉnh:", error);
+        console.error("Error lấy tỉnh:", error);
         return [];
     }
 };
@@ -147,7 +147,7 @@ export const getDistricts = async (provinceId) => {
         });
         return response.data.data || [];
     } catch (error) {
-        console.error("Lỗi lấy quận:", error);
+        console.error("Error lấy quận:", error);
         return [];
     }
 };
@@ -160,7 +160,7 @@ export const getWards = async (districtId) => {
         });
         return response.data.data || [];
     } catch (error) {
-        console.error("Lỗi lấy phường:", error);
+        console.error("Error lấy phường:", error);
         return [];
     }
 };
@@ -177,7 +177,7 @@ export const getAvailableServices = async (fromDistrictId, toDistrictId) => {
         });
         return response.data.data || [];
     } catch (error) {
-        console.error("Lỗi lấy dịch vụ khả dụng:", error);
+        console.error("Error lấy dịch vụ khả dụng:", error);
         return [];
     }
 };
@@ -230,7 +230,7 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
             throw new Error(response.data.message || "API returned non-200 status");
         }
     } catch (error) {
-        console.error("❌ Lỗi khi tính phí vận chuyển:", {
+        console.error("❌ Error khi tính phí vận chuyển:", {
             message: error.message,
             response: error.response?.data,
             payload,
@@ -520,7 +520,7 @@ export const updateBrand = async (brandData, imageFile) => {
 // [4.5] API xóa thương hiệu
 export const deleteBrand = async (id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/Brand/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/Brand?id=${id}`, {
             method: "DELETE",
             credentials: "include",
         });
@@ -540,6 +540,163 @@ export const deleteBrand = async (id) => {
         return await response.json();
     } catch (error) {
         console.error("Error deleting brand:", error.message);
+        throw error;
+    }
+};
+// ------------------------------------------------------------------
+// [5.1] Lấy tất cả danh sách xuất xứ
+export const getAllCountries = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Country`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Không thể lấy danh sách xuất xứ';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error khi lấy danh sách xuất xứ: ${error.message}`);
+        throw error;
+    }
+};
+
+// [5.2] Lấy xuất xứ theo ID
+export const getCountryById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Country/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Không thể lấy xuất xứ với ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error khi lấy xuất xứ với ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [5.3] Thêm xuất xứ mới
+export const createCountry = async (countryData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("countryVModel.CountryName", countryData.CountryName);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Country`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Không thể tạo xuất xứ';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error khi tạo xuất xứ:", error.message);
+        throw error;
+    }
+};
+
+// [5.4] Cập nhật xuất xứ
+export const updateCountry = async (countryData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("countryVModel.Id", countryData.Id);
+        formData.append("countryVModel.CountryName", countryData.CountryName);
+        formData.append("countryVModel.IsActive", countryData.IsActive);
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Country`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Không thể cập nhật xuất xứ';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error khi cập nhật xuất xứ:", error.message);
+        throw error;
+    }
+};
+
+// [5.5] Xóa xuất xứ
+export const deleteCountry = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Country/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Không thể xóa xuất xứ với ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error khi xóa xuất xứ:", error.message);
         throw error;
     }
 };
