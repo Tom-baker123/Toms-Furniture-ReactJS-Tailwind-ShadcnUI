@@ -1,5 +1,6 @@
 import {
     ChartColumn,
+    Truck,
     Home,
     Boxes,
     NotepadText,
@@ -118,9 +119,9 @@ export const navbarLinks = [
                 path: "/admin/...",
             },
             {
-                label: "Suppliers",
-                icon: UserCheck,
-                path: "/admin/...",
+                label: "vendor",
+                icon: Truck,
+                path: "/admin/suppliers",
             },
             {
                 label: "Brands",

@@ -5,8 +5,11 @@ import { useModal } from "@/context/ModalContext";
 import { register } from "@/api/api";
 import { VerifyOtpForm } from "./AuthComponents/VerifyOtpForm";
 import { toast } from "react-hot-toast";
+import { cn } from "@/lib/utils";
 
 const RegisterForm = ({ onSwitch }) => {
+    const [isSubmitting, setIsSubmitting] = useState(false); // 🆕 trạng thái loading
+
     // Object khởi tạo form Data
     const [formData, setFormData] = useState({
         userName: "",
@@ -28,7 +31,9 @@ const RegisterForm = ({ onSwitch }) => {
     // [3.] Hàm xử lý gửi form đăng ký
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true); // 🔐 Khóa nút lại
         const result = await register(formData);
+        setIsSubmitting(false); // 🔓 Mở lại
         if (result?.message === "Đăng ký thành công. Vui lòng kiểm tra email để nhận mã OTP.") {
             toast.success("Registration successful! please check your email for the OTP code.");
             openModal(<VerifyOtpForm email={formData.email} />, { className: "max-w-md" });
@@ -171,13 +176,14 @@ const RegisterForm = ({ onSwitch }) => {
                 </div>
 
                 <ButtonHovCT
-                    className={"mt-8 !border-black"}
+                    className={cn("mt-8", isSubmitting ? "!border-gray-300 !bg-gray-300" : "!border-black")}
                     bgColor="bg-black"
                     hoverBgColor=" bg-white" // lớp trượt màu đen
                     textColor="text-white"
                     type="submit"
+                    disabled={isSubmitting} // 🔒 Vô hiệu khi đang gửi
                 >
-                    Register
+                    {isSubmitting ? "Registering..." : "Register"}
                 </ButtonHovCT>
             </form>
 
