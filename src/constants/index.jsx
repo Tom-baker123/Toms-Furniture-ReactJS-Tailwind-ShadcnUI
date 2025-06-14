@@ -4,6 +4,7 @@ import {
     Boxes,
     NotepadText,
     Package,
+    Tag,
     PackagePlus,
     Settings,
     ShoppingBag,
@@ -11,6 +12,7 @@ import {
     UserPlus,
     Users,
     ScrollText,
+    Globe,
 } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
@@ -122,13 +124,13 @@ export const navbarLinks = [
             },
             {
                 label: "Brands",
-                icon: UserCheck,
+                icon: Tag,
                 path: "/admin/brands",
             },
             {
                 label: "Countries",
-                icon: UserCheck,
-                path: "/admin/...",
+                icon: Globe,
+                path: "/admin/countries",
             },
         ],
     },

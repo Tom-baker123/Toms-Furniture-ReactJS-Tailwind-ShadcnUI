@@ -12,26 +12,28 @@ import {
     Profile,
     Cart,
     // Admin Page
-    Dashboard,
+    AnalyticsReport,
     BrandManagement,
     CategoryManagement,
+    CustomerManagement,
+    Dashboard,
+    DraftOrders,
+    InventoryManagement,
+    OrderManagement,
     ProductManagement,
     ProductCollection,
-    OrderManagement,
-    DraftOrders,
-    AnalyticsReport,
-    CustomerManagement,
     PromotionManagement,
-    InventoryManagement,
+    CountryManagement,
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
-import { checkAuthStatus, getAllBrands, getAllCategories, getBrandById, getProductList } from "@/api/api";
+import { checkAuthStatus, getAllBrands, getAllCategories, getAllCountries, getBrandById, getCountryById, getProductList } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
 import ProductForm from "@/components/Admin/Form/ProductForm";
 import BrandForm from "@/components/Admin/Form/BrandForm";
+import CountryForm from "@/components/Admin/Form/CountryForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -168,14 +170,27 @@ const router = createBrowserRouter([
                     {
                         path: "edit_brand/:id",
                         element: <BrandForm />,
-                        loader: async ({ params }) => {
-                            return await getBrandById(params.id);
-                        },
+                        loader: async ({ params }) => await getBrandById(params.id),
                     },
                 ],
             },
             // [11.]
-            { path: "countries", element: <OrderManagement /> },
+            {
+                path: "countries",
+                children: [
+                    {
+                        index: true,
+                        element: <CountryManagement />,
+                        loader: async () => await getAllCountries(),
+                    },
+                    { path: "new_country", element: <CountryForm /> },
+                    {
+                        path: "edit_country/:id",
+                        element: <CountryForm />,
+                        loader: async ({ params }) => await getCountryById(params.id),
+                    },
+                ],
+            },
             // [12.]
             { path: "order", element: <OrderManagement /> },
             // [13.]
@@ -198,5 +213,10 @@ const router = createBrowserRouter([
 }
 
 export default function RouterSetup() {
-    return <RouterProvider router={router} />;
+    return (
+        <RouterProvider
+            router={router}
+            hydrateFallback={<div>Loading...</div>}
+        />
+    );
 }
