@@ -25,6 +25,10 @@ import {
     PromotionManagement,
     CountryManagement,
     SupplierManagement, // Thêm mới
+    SizeManagement, // Thêm mới
+    ColorManagement,
+    MaterialManagement,
+    UnitManagement, // Thêm mới
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
@@ -33,12 +37,20 @@ import {
     checkAuthStatus,
     getAllBrands,
     getAllCategories,
+    getAllColors,
     getAllCountries,
+    getAllMaterials,
+    getAllSizes,
     getAllSuppliers,
+    getAllUnits,
     getBrandById,
+    getColorById,
     getCountryById,
+    getMaterialById,
     getProductList,
+    getSizeById,
     getSupplierById,
+    getUnitById,
 } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
@@ -46,6 +58,10 @@ import ProductForm from "@/components/Admin/Form/ProductForm";
 import BrandForm from "@/components/Admin/Form/BrandForm";
 import CountryForm from "@/components/Admin/Form/CountryForm";
 import SupplierForm from "@/components/Admin/Form/SupplierForm";
+import SizeForm from "@/components/Admin/Form/SizeForm";
+import ColorForm from "@/components/Admin/Form/ColorForm";
+import MaterialForm from "@/components/Admin/Form/MaterialForm";
+import UnitForm from "@/components/Admin/Form/UnitForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -157,15 +173,75 @@ const router = createBrowserRouter([
             },
             // [4.]
             { path: "inventory", element: <InventoryManagement />, loader: async () => await getProductList() },
-            // [5.]
-            { path: "materials", element: <OrderManagement /> },
-            // [6.]
-            { path: "units", element: <OrderManagement /> },
-            // [7.]
-            { path: "colors", element: <OrderManagement /> },
-            // [8.]
-            { path: "sizes", element: <OrderManagement /> },
-            // [9.]
+            // [5.] Vật liệu
+            {
+                path: "materials",
+                children: [
+                    {
+                        index: true,
+                        element: <MaterialManagement />,
+                        loader: async () => await getAllMaterials(),
+                    },
+                    { path: "new_material", element: <MaterialForm /> },
+                    {
+                        path: "edit_material/:id",
+                        element: <MaterialForm />,
+                        loader: async ({ params }) => await getMaterialById(params.id),
+                    },
+                ],
+            },
+            // [6.] Đơn vị
+            {
+                path: "units",
+                children: [
+                    {
+                        index: true,
+                        element: <UnitManagement />,
+                        loader: async () => await getAllUnits(),
+                    },
+                    { path: "new_unit", element: <UnitForm /> },
+                    {
+                        path: "edit_unit/:id",
+                        element: <UnitForm />,
+                        loader: async ({ params }) => await getUnitById(params.id),
+                    },
+                ],
+            },
+            // [7.] Màu sắc
+            {
+                path: "colors",
+                children: [
+                    {
+                        index: true,
+                        element: <ColorManagement />,
+                        loader: async () => await getAllColors(),
+                    },
+                    { path: "new_color", element: <ColorForm /> },
+                    {
+                        path: "edit_color/:id",
+                        element: <ColorForm />,
+                        loader: async ({ params }) => await getColorById(params.id),
+                    },
+                ],
+            },
+            // [8.] Kích thước
+            {
+                path: "sizes", // Cập nhật route cho Size
+                children: [
+                    {
+                        index: true,
+                        element: <SizeManagement />,
+                        loader: async () => await getAllSizes(),
+                    },
+                    { path: "new_size", element: <SizeForm /> },
+                    {
+                        path: "edit_size/:id",
+                        element: <SizeForm />,
+                        loader: async ({ params }) => await getSizeById(params.id),
+                    },
+                ],
+            },
+            // [9.] Nhà cung cấp
             {
                 path: "suppliers",
                 children: [
@@ -182,7 +258,6 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-
             // [10.] Trang thương hiệu
             {
                 path: "brands",

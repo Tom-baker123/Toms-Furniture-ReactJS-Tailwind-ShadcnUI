@@ -17,16 +17,21 @@ export { default as Cart } from "./Cart";
 export { default as AnalyticsReport } from "./admin/AnalyticsReport";
 export { default as BrandManagement } from "./admin/BrandManagement";
 export { default as CategoryManagement } from "./admin/CategoryManagement";
+export { default as ColorManagement } from "./admin/ColorManagement";
 export { default as CountryManagement } from "./admin/CountryManagement";
 export { default as CustomerManagement } from "./admin/CustomerManagement";
 export { default as DraftOrders } from "./admin/DraftOrders";
 export { default as Dashboard } from "./admin/Dashboard";
+export { default as MaterialManagement } from "./admin/MaterialManagement";
 export { default as InventoryManagement } from "./admin/InventoryManagement";
 export { default as OrderManagement } from "./admin/OrderManagement";
 export { default as ProductManagement } from "./admin/ProductManagement";
 export { default as ProductCollection } from "./admin/ProductCollection";
 export { default as PromotionManagement } from "./admin/PromotionManagement";
+export { default as SizeManagement } from "./admin/SizeManagement";
 export { default as SupplierManagement } from "./admin/SupplierManagement";
+export { default as UnitManagement } from "./admin/UnitManagement"
+
 // [ADMIN Page - END]------------------------------------------
 
 

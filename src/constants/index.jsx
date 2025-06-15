@@ -2,6 +2,10 @@ import {
     ChartColumn,
     Truck,
     Home,
+    Layers,
+    Ruler,
+    Palette,
+    Weight,
     Boxes,
     NotepadText,
     Package,
@@ -100,23 +104,23 @@ export const navbarLinks = [
         links: [
             {
                 label: "Materials",
-                icon: Users,
-                path: "/admin/...",
+                icon: Layers,
+                path: "/admin/materials",
             },
             {
                 label: "Units",
-                icon: UserPlus,
-                path: "/admin/...",
+                icon: Weight,
+                path: "/admin/units",
             },
             {
                 label: "Colors",
-                icon: UserCheck,
-                path: "/admin/...",
+                icon: Palette,
+                path: "/admin/Colors",
             },
             {
                 label: "Sizes",
-                icon: UserCheck,
-                path: "/admin/...",
+                icon: Ruler,
+                path: "/admin/sizes",
             },
             {
                 label: "vendor",
