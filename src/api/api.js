@@ -7,9 +7,9 @@ export const YOUR_SHOP_DISTRICT_ID = 1450; // Replace with valid district ID
 export const YOUR_SHOP_WARD_CODE = "20804"; // Replace with valid ward code
 
 // [0.] Các đường dẫn API
-// const API_BASE_URL = "https://localhost:7030/api";
+const API_BASE_URL = "https://localhost:7030/api";
 // const API_BASE_URL = "http://tom11357-001-site1.qtempurl.com/api";
-const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
+// const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
 
 
 //#region [Global API🌐]-----------------------------------------------
@@ -708,6 +708,7 @@ export const deleteCountry = async (id) => {
 };
 
 
+// ------------------------------------------------------------------
 // [6.1] API lấy tất cả danh sách nhà cung cấp
 export const getAllSuppliers = async () => {
     try {
@@ -876,6 +877,655 @@ export const deleteSupplier = async (id) => {
 };
 
 
+// ------------------------------------------------------------------
+// [7.1] API lấy tất cả danh sách kích thước
+export const getAllSizes = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Size`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch sizes';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching sizes: ${error.message}`);
+        throw error;
+    }
+};
+
+// [7.2] API lấy kích thước theo ID
+export const getSizeById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Size/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch size with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching size with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [7.3] API thêm kích thước
+export const createSize = async (sizeData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Size`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(sizeData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create size';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating size:", error.message);
+        throw error;
+    }
+};
+
+// [7.4] API cập nhật kích thước
+export const updateSize = async (sizeData) => {
+    try {
+        const formData = new FormData();
+        formData.append('Id', sizeData.Id);
+        formData.append('SizeName', sizeData.SizeName);
+        if (sizeData.IsActive !== undefined) {
+            formData.append('IsActive', sizeData.IsActive.toString());
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Size`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update size';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating size:", error.message);
+        throw error;
+    }
+};
+
+// [7.5] API xóa kích thước
+export const deleteSize = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Size/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete size with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting size:", error.message);
+        throw error;
+    }
+};
+
+
+// ------------------------------------------------------------------
+// [8.1] API lấy tất cả danh sách màu sắc
+// - Gọi API GET /api/Color để lấy toàn bộ danh sách màu sắc
+// - Trả về danh sách các màu sắc dưới dạng JSON
+export const getAllColors = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Color`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch colors';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching colors: ${error.message}`);
+        throw error;
+    }
+};
+
+// [8.2] API lấy màu sắc theo ID
+// - Gọi API GET /api/Color/{id} để lấy thông tin chi tiết của một màu sắc
+// - Trả về thông tin màu sắc hoặc null nếu không tìm thấy
+export const getColorById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Color/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch color with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching color with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [8.3] API thêm màu sắc
+// - Gọi API POST /api/Color để tạo mới một màu sắc
+// - Nhận dữ liệu từ form (ColorCreateVModel) và gửi dưới dạng JSON
+export const createColor = async (colorData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Color`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(colorData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create color';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating color:", error.message);
+        throw error;
+    }
+};
+
+// [8.4] API cập nhật màu sắc
+// - Gọi API PUT /api/Color để cập nhật thông tin màu sắc
+// - Dữ liệu được gửi dưới dạng FormData vì backend yêu cầu [FromForm]
+export const updateColor = async (colorData) => {
+    try {
+        const formData = new FormData();
+        formData.append('Id', colorData.Id);
+        formData.append('ColorName', colorData.ColorName);
+        formData.append('ColorCode', colorData.ColorCode || '');
+        if (colorData.IsActive !== undefined) {
+            formData.append('IsActive', colorData.IsActive.toString());
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Color`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update color';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating color:", error.message);
+        throw error;
+    }
+};
+
+// [8.5] API xóa màu sắc
+// - Gọi API DELETE /api/Color/{id} để xóa một màu sắc
+export const deleteColor = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Color/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete color with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting color:", error.message);
+        throw error;
+    }
+};
+
+
+// ------------------------------------------------------------------
+// [9.1] API lấy tất cả danh sách vật liệu
+// - Gọi API GET /api/Material để lấy toàn bộ danh sách vật liệu
+// - Trả về danh sách các vật liệu dưới dạng JSON
+export const getAllMaterials = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Material`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch materials';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching materials: ${error.message}`);
+        throw error;
+    }
+};
+
+// [9.2] API lấy vật liệu theo ID
+// - Gọi API GET /api/Material/{id} để lấy thông tin chi tiết của một vật liệu
+// - Trả về thông tin vật liệu hoặc null nếu không tìm thấy
+export const getMaterialById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Material/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch material with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching material with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [9.3] API thêm vật liệu
+// - Gọi API POST /api/Material để tạo mới một vật liệu
+// - Nhận dữ liệu từ form (MaterialCreateVModel) và gửi dưới dạng JSON
+export const createMaterial = async (materialData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Material`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(materialData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create material';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating material:", error.message);
+        throw error;
+    }
+};
+
+// [9.4] API cập nhật vật liệu
+// - Gọi API PUT /api/Material để cập nhật thông tin vật liệu
+// - Dữ liệu được gửi dưới dạng FormData vì backend yêu cầu [FromForm]
+export const updateMaterial = async (materialData) => {
+    try {
+        const formData = new FormData();
+        formData.append('Id', materialData.Id);
+        formData.append('MaterialName', materialData.MaterialName);
+        if (materialData.IsActive !== undefined) {
+            formData.append('IsActive', materialData.IsActive.toString());
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Material`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update material';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating material:", error.message);
+        throw error;
+    }
+};
+
+// [9.5] API xóa vật liệu
+// - Gọi API DELETE /api/Material/{id} để xóa một vật liệu
+export const deleteMaterial = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Material/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete material with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting material:", error.message);
+        throw error;
+    }
+};
+
+
+// ------------------------------------------------------------------
+// [10.1] API lấy tất cả danh sách đơn vị
+// - Gọi API GET /api/Unit để lấy toàn bộ danh sách đơn vị
+// - Trả về danh sách các đơn vị dưới dạng JSON
+export const getAllUnits = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Unit`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch units";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching units: ${error.message}`);
+        throw error;
+    }
+};
+
+// [10.2] API lấy đơn vị theo ID
+// - Gọi API GET /api/Unit/{id} để lấy thông tin chi tiết của một đơn vị
+// - Trả về thông tin đơn vị hoặc null nếu không tìm thấy
+export const getUnitById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Unit/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to fetch unit with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching unit with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [10.3] API thêm đơn vị
+// - Gọi API POST /api/Unit để tạo mới một đơn vị
+// - Nhận dữ liệu từ form (UnitCreateVModel) và gửi dưới dạng JSON
+export const createUnit = async (unitData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Unit`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(unitData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create unit";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating unit:", error.message);
+        throw error;
+    }
+};
+
+// [10.4] API cập nhật đơn vị
+// - Gọi API PUT /api/Unit để cập nhật thông tin đơn vị
+// - Dữ liệu được gửi dưới dạng FormData vì backend yêu cầu [FromForm]
+export const updateUnit = async (unitData) => {
+    try {
+        const formData = new FormData();
+        formData.append("Id", unitData.Id);
+        formData.append("UnitName", unitData.UnitName);
+        if (unitData.Description) {
+            formData.append("Description", unitData.Description);
+        }
+        if (unitData.IsActive !== undefined) {
+            formData.append("IsActive", unitData.IsActive.toString());
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Unit`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update unit";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating unit:", error.message);
+        throw error;
+    }
+};
+
+// [10.5] API xóa đơn vị
+// - Gọi API DELETE /api/Unit/{id} để xóa một đơn vị
+export const deleteUnit = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Unit/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to delete unit with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting unit:", error.message);
+        throw error;
+    }
+};
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
 
 
