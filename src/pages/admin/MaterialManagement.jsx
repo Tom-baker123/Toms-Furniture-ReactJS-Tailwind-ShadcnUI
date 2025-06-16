@@ -3,6 +3,7 @@ import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteMaterial } from "@/api/api";
 import toast from "react-hot-toast";
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 // Component hiển thị danh sách vật liệu
 const MaterialManagement = () => {
@@ -40,7 +41,7 @@ const MaterialManagement = () => {
                     <div className="card-title">All Materials</div> {/* Tiêu đề bảng bằng tiếng Anh */}
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table w-full">
                             <thead className="table-header">
                                 <tr className="table-row">
@@ -54,12 +55,28 @@ const MaterialManagement = () => {
                             </thead>
                             <tbody className="table-body">
                                 {materials.map((material) => (
-                                    <tr key={material.id} className="table-row">
+                                    <tr
+                                        key={material.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{material.id}</td>
                                         <td className="table-cell">{material.materialName}</td>
-                                        <td className="table-cell">{material.isActive ? "Active" : "Inactive"}</td>
+                                        {/* <td className="table-cell">{material.isActive ? "Active" : "Inactive"}</td>
                                         <td className="table-cell">{new Date(material.createdDate).toLocaleDateString()}</td>
-                                        <td className="table-cell">{material.updatedDate ? new Date(material.updatedDate).toLocaleDateString() : "N/A"}</td>
+                                        <td className="table-cell">
+                                            {material.updatedDate ? new Date(material.updatedDate).toLocaleDateString() : "N/A"}
+                                        </td> */}
+                                        <td className="table-cell">
+                                            {material.isActive ? (
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
+                                            ) : (
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
+                                            )}
+                                        </td>
+                                        <td className="table-cell">{FormatDatetime(material.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">
+                                            {FormatDatetime(material.updatedDate) ? FormatDatetime(new Date(material.updatedDate)) : "N/A"}
+                                        </td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

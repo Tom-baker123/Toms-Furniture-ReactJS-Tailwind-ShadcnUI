@@ -4,6 +4,7 @@ import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteSize } from "@/api/api";
 import toast from "react-hot-toast";
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 // Component hiển thị danh sách kích thước
 const SizeManagement = () => {
@@ -41,12 +42,12 @@ const SizeManagement = () => {
                     <div className="card-title">All Sizes</div> {/* Tiêu đề bảng bằng tiếng Anh */}
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table w-full">
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <th className="table-head whitespace-nowrap">#</th>
-                                    <th className="table-head whitespace-nowrap">Size Name</th> {/* Cột bằng tiếng Anh */}
+                                    <th className="table-head whitespace-nowrap">Size Name</th>
                                     <th className="table-head whitespace-nowrap">Status</th>
                                     <th className="table-head whitespace-nowrap">Created Date</th>
                                     <th className="table-head whitespace-nowrap">Updated Date</th>
@@ -54,16 +55,22 @@ const SizeManagement = () => {
                                 </tr>
                             </thead>
                             <tbody className="table-body">
-                                {sizes.map((size) => (
+                                {sizes.map((size, index) => (
                                     <tr
-                                        key={size.id}
+                                        key={index}
                                         className="table-row"
                                     >
                                         <td className="table-cell">{size.id}</td>
                                         <td className="table-cell">{size.sizeName}</td>
-                                        <td className="table-cell">{size.isActive ? "Active" : "Inactive"}</td> {/* Trạng thái bằng tiếng Anh */}
-                                        <td className="table-cell">{new Date(size.createdDate).toLocaleDateString()}</td>
-                                        <td className="table-cell">{size.updatedDate ? new Date(size.updatedDate).toLocaleDateString() : "N/A"}</td>
+                                        <td className="table-cell">
+                                            {size.isActive ? (
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
+                                            ) : (
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
+                                            )}
+                                        </td>
+                                        <td className="table-cell">{FormatDatetime(size.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">{size.updatedDate ? FormatDatetime(size.updatedDate) : "N/A"}</td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

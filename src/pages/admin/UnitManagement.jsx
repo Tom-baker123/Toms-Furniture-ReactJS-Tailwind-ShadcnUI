@@ -5,6 +5,7 @@ import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteUnit } from "@/api/api";
 import toast from "react-hot-toast";
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 // Component hiển thị danh sách đơn vị
 const UnitManagement = () => {
@@ -42,7 +43,7 @@ const UnitManagement = () => {
                     <div className="card-title">All Units</div> {/* Tiêu đề bảng bằng tiếng Anh */}
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table w-full">
                             <thead className="table-header">
                                 <tr className="table-row">
@@ -57,13 +58,27 @@ const UnitManagement = () => {
                             </thead>
                             <tbody className="table-body">
                                 {units.map((unit) => (
-                                    <tr key={unit.id} className="table-row">
+                                    <tr
+                                        key={unit.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{unit.id}</td>
                                         <td className="table-cell">{unit.unitName}</td>
                                         <td className="table-cell">{unit.description || "N/A"}</td>
-                                        <td className="table-cell">{unit.isActive ? "Active" : "Inactive"}</td>
+                                        {/* <td className="table-cell">{unit.isActive ? "Active" : "Inactive"}</td>
                                         <td className="table-cell">{new Date(unit.createdDate).toLocaleDateString()}</td>
-                                        <td className="table-cell">{unit.updatedDate ? new Date(unit.updatedDate).toLocaleDateString() : "N/A"}</td>
+                                        <td className="table-cell">{unit.updatedDate ? new Date(unit.updatedDate).toLocaleDateString() : "N/A"}</td> */}
+                                        <td className="table-cell">
+                                            {unit.isActive ? (
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
+                                            ) : (
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
+                                            )}
+                                        </td>
+                                        <td className="table-cell">{FormatDatetime(unit.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">
+                                            {FormatDatetime(unit.updatedDate) ? FormatDatetime(new Date(unit.updatedDate)) : "N/A"}
+                                        </td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

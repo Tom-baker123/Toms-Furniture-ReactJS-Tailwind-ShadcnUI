@@ -3,6 +3,7 @@ import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteCountry } from "@/api/api";
 import toast from "react-hot-toast";
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 const CountryManagement = () => {
     const countries = useLoaderData();
@@ -36,15 +37,17 @@ const CountryManagement = () => {
                     <div className="card-title text-lg font-bold text-slate-800 dark:text-slate-200">All Countries</div>
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table">
                             <thead className="table-header">
                                 <tr className="table-row">
-                                    <th className="table-head">#</th>
-                                    <th className="table-head">Image</th>
-                                    <th className="table-head">Country Name</th>
-                                    <th className="table-head">Status</th>
-                                    <th className="table-head">Actions</th>
+                                    <th className="table-head whitespace-nowrap">#</th>
+                                    <th className="table-head whitespace-nowrap">Image</th>
+                                    <th className="table-head whitespace-nowrap">Country Name</th>
+                                    <th className="table-head whitespace-nowrap">Status</th>
+                                    <th className="table-head whitespace-nowrap">Created Date </th>
+                                    <th className="table-head whitespace-nowrap">Updated Date </th>
+                                    <th className="table-head whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="table-body">
@@ -53,7 +56,9 @@ const CountryManagement = () => {
                                         key={country.id}
                                         className="table-row"
                                     >
+                                        {/* [1.] Id của xuất xứ */}
                                         <td className="table-cell">{country.id}</td>
+                                        {/* [2.] Ảnh của xuất xứ */}
                                         <td className="table-cell">
                                             {country.imageUrl ? (
                                                 <img
@@ -67,7 +72,9 @@ const CountryManagement = () => {
                                                 <span className="text-gray-800 dark:text-gray-200">_</span>
                                             )}
                                         </td>
+                                        {/* [3.] Tên của xuất xứ */}
                                         <td className="table-cell">{country.countryName}</td>
+                                        {/* [4.] Trạng thái của xuất xứ */}
                                         <td className="table-cell">
                                             {country.isActive ? (
                                                 <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
@@ -75,6 +82,11 @@ const CountryManagement = () => {
                                                 <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
                                             )}
                                         </td>
+                                        <td className="table-cell">{FormatDatetime(country.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">
+                                            {FormatDatetime(country.updatedDate) ? FormatDatetime(new Date(country.updatedDate)) : "N/A"}
+                                        </td>
+                                        {/* [7.] Action của xuất xứ */}
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

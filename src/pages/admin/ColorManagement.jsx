@@ -4,6 +4,7 @@ import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteColor } from "@/api/api";
 import toast from "react-hot-toast";
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 // Component hiển thị danh sách màu sắc
 const ColorManagement = () => {
@@ -41,7 +42,7 @@ const ColorManagement = () => {
                     <div className="card-title">All Colors</div> {/* Tiêu đề bảng bằng tiếng Anh */}
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table w-full">
                             <thead className="table-header">
                                 <tr className="table-row">
@@ -56,21 +57,33 @@ const ColorManagement = () => {
                             </thead>
                             <tbody className="table-body">
                                 {colors.map((color) => (
-                                    <tr key={color.id} className="table-row">
+                                    <tr
+                                        key={color.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{color.id}</td>
                                         <td className="table-cell">{color.colorName}</td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-2">
                                                 <span
-                                                    className="shadow inline-block h-5 w-5 rounded-full"
-                                                    style={{ backgroundColor: color.colorCode || '#000000' }}
+                                                    className="inline-block h-5 w-5 rounded-full shadow"
+                                                    style={{ backgroundColor: color.colorCode || "#000000" }}
                                                 ></span>
-                                                {color.colorCode || 'N/A'}
+                                                {color.colorCode || "N/A"}
                                             </div>
                                         </td>
-                                        <td className="table-cell">{color.isActive ? "Active" : "Inactive"}</td>
-                                        <td className="table-cell">{new Date(color.createdDate).toLocaleDateString()}</td>
-                                        <td className="table-cell">{color.updatedDate ? new Date(color.updatedDate).toLocaleDateString() : "N/A"}</td>
+                                        <td className="table-cell">
+                                            {color.isActive ? (
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
+                                            ) : (
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
+                                            )}
+                                        </td>
+                                        <td className="table-cell">{FormatDatetime(color.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">
+                                            {FormatDatetime(color.updatedDate) ? FormatDatetime(new Date(color.updatedDate)) : "N/A"}
+                                        </td>
+
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

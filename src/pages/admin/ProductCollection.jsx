@@ -15,7 +15,7 @@ const ProductCollection = () => {
                 </div>
                 {/* Product Table */}
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table">
                             {/* thead.table-header>tr.table-row>th.table-head*6 */}
                             <thead className="table-header">

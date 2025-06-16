@@ -545,7 +545,7 @@
 
   /* Khu vực sửa Format Table */
   .table {
-    @apply h-full w-full;
+    @apply h-auto w-full;
   }
 
   .table-header {
