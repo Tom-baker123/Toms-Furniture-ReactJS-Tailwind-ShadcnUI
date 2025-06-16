@@ -7,9 +7,9 @@ export const YOUR_SHOP_DISTRICT_ID = 1450; // Replace with valid district ID
 export const YOUR_SHOP_WARD_CODE = "20804"; // Replace with valid ward code
 
 // [0.] Các đường dẫn API
-// const API_BASE_URL = "https://localhost:7030/api";
+const API_BASE_URL = "https://localhost:7030/api";
 // const API_BASE_URL = "http://tom11357-001-site1.qtempurl.com/api";
-const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
+// const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
 
 
 //#region [Global API🌐]-----------------------------------------------
@@ -243,26 +243,72 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
 
 //#region [ADMIN Page 🪪]----------------------------------------------
 // [1.1] API lấy tất cả danh sách danh mục sản phẩm
+// - Gọi API GET /api/Category để lấy toàn bộ danh sách danh mục
+// - Trả về danh sách các danh mục dưới dạng JSON
 export const getAllCategories = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/Category`, {
             method: "GET",
             headers: {
-                "Content-type": "application/json",
-            }
+                "Content-Type": "application/json",
+            },
+            credentials: "include", // Gửi cookie xác thực
         });
-        // Kiểm tra xem response có thành công hay không?
+
         if (!response.ok) {
-            throw new Error("Failed to fetch categories!");
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch categories";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
         }
-        const data = await response.json();
-        return data;
+
+        return await response.json();
     } catch (error) {
-        console.log(`Can't get all categories with an error: ${error}`);
-        return [];
+        console.error(`Error fetching categories: ${error.message}`);
+        throw error;
     }
-}
-// [1.2] API thêm danh mục sản phẩm
+};
+
+// [1.2] API lấy danh mục theo ID
+// - Gọi API GET /api/Category/{id} để lấy thông tin chi tiết của một danh mục
+// - Trả về thông tin danh mục hoặc null nếu không tìm thấy
+export const getCategoryById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Category/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to fetch category with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching category with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [1.3] API thêm danh mục sản phẩm
+// - Gọi API POST /api/Category để tạo mới một danh mục
+// - Dữ liệu được gửi dưới dạng FormData vì backend yêu cầu [FromForm]
 export const createCategory = async (categoryData, imageFile) => {
     try {
         const formData = new FormData();
@@ -279,20 +325,94 @@ export const createCategory = async (categoryData, imageFile) => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Failed to create category");
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create category";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
         }
 
         return await response.json();
     } catch (error) {
-        console.error("Error creating category:", error);
+        console.error("Error creating category:", error.message);
         throw error;
     }
 };
 
-// [1.1] API lấy tất cả danh sách danh mục sản phẩm
+// [1.4] API cập nhật danh mục
+// - Gọi API PUT /api/Category để cập nhật thông tin danh mục
+// - Dữ liệu được gửi dưới dạng FormData vì backend yêu cầu [FromForm]
+export const updateCategory = async (categoryData, imageFile) => {
+    try {
+        const formData = new FormData();
+        formData.append("categoryVModel.Id", categoryData.Id);
+        formData.append("categoryVModel.CategoryName", categoryData.CategoryName);
+        formData.append("categoryVModel.Descriptions", categoryData.Descriptions || "");
+        formData.append("categoryVModel.IsActive", categoryData.IsActive.toString());
+        if (imageFile) {
+            formData.append("imageFile", imageFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Category`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update category";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating category:", error.message);
+        throw error;
+    }
+};
+
+// [1.5] API xóa danh mục
+// - Gọi API DELETE /api/Category/{id} để xóa một danh mục
+export const deleteCategory = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Category/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to delete category with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting category:", error.message);
+        throw error;
+    }
+};
 
 
+
+// ------------------------------------------------------------------
 // [2.1] API lấy tất cả danh sách sản phẩm 
 export const getProductList = async () => {
     try {
@@ -316,9 +436,6 @@ export const getProductList = async () => {
         return [];
     }
 }
-
-
-// ------------------------------------------------------------------
 // [2.2] API thêm sản phẩm 
 // [2.3] API cập nhật sản phẩm 
 export const updateProduct = async (productData) => {
