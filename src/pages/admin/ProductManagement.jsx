@@ -14,7 +14,7 @@ const ProductManagement = () => {
                 </div>
                 {/* Product Table */}
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table">
                             <thead className="table-header">
                                 <tr className="table-row">
@@ -29,7 +29,10 @@ const ProductManagement = () => {
                             </thead>
                             <tbody className="table-body">
                                 {products.map((product, index) => (
-                                    <tr key={product.id} className="table-row">
+                                    <tr
+                                        key={product.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{product.id}</td>
                                         <td className="table-cell">
                                             {product.sliders && product.sliders.length > 0 ? (

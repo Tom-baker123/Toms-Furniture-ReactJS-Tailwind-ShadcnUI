@@ -3,6 +3,7 @@ import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteSupplier } from "@/api/api";
 import toast from "react-hot-toast";
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 // Component hiển thị danh sách nhà cung cấp
 const SupplierManagement = () => {
@@ -39,17 +40,19 @@ const SupplierManagement = () => {
                     <div className="card-title">All Suppliers</div> {/* Tiêu đề bảng bằng tiếng Anh */}
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table w-full">
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <th className="table-head whitespace-nowrap">#</th>
-                                    <th className="table-head whitespace-nowrap">Supplier</th> {/* Cột bằng tiếng Anh */}
+                                    <th className="table-head whitespace-nowrap">Supplier</th>
                                     <th className="table-head whitespace-nowrap">Status</th>
                                     <th className="table-head whitespace-nowrap">Phone Number</th>
                                     <th className="table-head whitespace-nowrap">Email</th>
                                     <th className="table-head whitespace-nowrap">Debt</th>
                                     <th className="table-head whitespace-nowrap">Total</th>
+                                    <th className="table-head whitespace-nowrap">Created Date </th>
+                                    <th className="table-head whitespace-nowrap">Updated Date </th>
                                     <th className="table-head whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
@@ -61,11 +64,21 @@ const SupplierManagement = () => {
                                     >
                                         <td className="table-cell">{supplier.id}</td>
                                         <td className="table-cell">{supplier.supplierName || "N/A"}</td>
-                                        <td className="table-cell">{supplier.isActive ? "Active" : "Inactive"}</td> {/* Trạng thái bằng tiếng Anh */}
+                                        <td className="table-cell">
+                                            {supplier.isActive ? (
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
+                                            ) : (
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
+                                            )}
+                                        </td>
                                         <td className="table-cell">{supplier.phoneNumber || "N/A"}</td>
                                         <td className="table-cell">{supplier.email}</td>
-                                        <td className="table-cell text-right">0 USD</td> {/* Giả định, cần API tính toán */}
-                                        <td className="table-cell text-right">0 USD</td> {/* Giả định, cần API tính toán */}
+                                        <td className="table-cell text-right">0 USD</td>
+                                        <td className="table-cell text-right">0 USD</td>
+                                        <td className="table-cell">{FormatDatetime(supplier.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">
+                                            {FormatDatetime(supplier.updatedDate) ? FormatDatetime(new Date(supplier.updatedDate)) : "N/A"}
+                                        </td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

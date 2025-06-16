@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { deleteProduct } from "@/api/api"; // Import API xóa sản phẩm
+import { deleteProduct, updateProduct } from "@/api/api"; // Import API xóa sản phẩm
+import FormatDatetime from "@/hooks/FormatDatetime";
 
 const InventoryManagement = () => {
     const inventories = useLoaderData(); // Lấy dữ liệu từ loader
     const navigate = useNavigate();
+    const [stockUpdates, setStockUpdates] = useState({}); // Trạng thái lưu trữ tồn kho
 
     // Hàm xử lý xóa sản phẩm
     const handleDelete = async (id) => {
@@ -45,13 +47,14 @@ const InventoryManagement = () => {
                     <div className="card-title">Tất cả sản phẩm</div>
                 </div>
                 <div className="card-body p-0">
-                    <div className="relative h-[500px] w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+                    <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table w-full">
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <th className="table-head whitespace-nowrap">#</th>
                                     <th className="table-head whitespace-nowrap">Hình ảnh</th>
                                     <th className="table-head whitespace-nowrap">Tên sản phẩm</th>
+                                    <th className="table-head whitespace-nowrap">Variant</th>
                                     <th className="table-head whitespace-nowrap">Danh mục</th>
                                     <th className="table-head whitespace-nowrap">Tồn kho</th>
                                     <th className="table-head whitespace-nowrap">Ngày tạo</th>
@@ -76,28 +79,14 @@ const InventoryManagement = () => {
                                             />
                                         </td>
                                         <td className="table-cell">{inventory.productName}</td>
+                                        <td className="table-cell">"..."</td>
                                         <td className="table-cell">{inventory.categoryName || "Không có danh mục"}</td>
                                         <td className="table-cell">{calculateTotalStock(inventory.productVariants)}</td>
-                                        <td className="table-cell">{new Date(inventory.createdDate).toLocaleDateString()}</td>
+                                        <td className="table-cell">{FormatDatetime(inventory.createdDate) || "N/A"}</td>
                                         <td className="table-cell">
-                                            {inventory.updatedDate ? new Date(inventory.updatedDate).toLocaleDateString() : "Chưa cập nhật"}
+                                            {FormatDatetime(inventory.updatedDate) ? FormatDatetime(new Date(inventory.updatedDate)) : "N/A"}
                                         </td>
-                                        <td className="table-cell">
-                                            <div className="flex items-center gap-x-4">
-                                                <button
-                                                    className="text-blue-500 dark:text-blue-600"
-                                                    onClick={() => handleEdit(inventory.id)}
-                                                >
-                                                    <PencilLine size={20} />
-                                                </button>
-                                                <button
-                                                    className="cursor-pointer text-red-500"
-                                                    onClick={() => handleDelete(inventory.id)}
-                                                >
-                                                    <Trash size={20} />
-                                                </button>
-                                            </div>
-                                        </td>
+                                        <td className="table-cell">"..."</td>
                                     </tr>
                                 ))}
                             </tbody>
