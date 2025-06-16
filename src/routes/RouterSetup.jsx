@@ -44,6 +44,7 @@ import {
     getAllSuppliers,
     getAllUnits,
     getBrandById,
+    getCategoryById,
     getColorById,
     getCountryById,
     getMaterialById,
@@ -156,18 +157,21 @@ const router = createBrowserRouter([
             },
             // [3.] Trang danh mục
             {
-                path: "product_collection",
+                path: "categories",
                 children: [
                     {
                         index: true,
-                        element: <ProductCollection />, // Đây là trang danh sách sản phẩm
-                        loader: async () => {
-                            return await getAllCategories();
-                        },
+                        element: <CategoryManagement />,
+                        loader: async () => await getAllCategories(), // Loader để lấy danh sách danh mục
                     },
                     {
                         path: "New_Collection",
-                        element: <CategoryForm />,
+                        element: <CategoryForm />, // Form thêm danh mục
+                    },
+                    {
+                        path: "Edit_Collection/:id",
+                        element: <CategoryForm />, // Form sửa danh mục
+                        loader: async ({ params }) => await getCategoryById(params.id), // Loader để lấy dữ liệu danh mục theo ID
                     },
                 ],
             },

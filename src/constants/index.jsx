@@ -66,7 +66,7 @@ export const navbarLinks = [
                 label: "Category",
                 // icon: PackagePlus,
                 icon: ScrollText,
-                path: "/admin/product_collection",
+                path: "/admin/categories",
             },
             {
                 label: "Inventory",
