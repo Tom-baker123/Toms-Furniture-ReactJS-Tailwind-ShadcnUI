@@ -7,9 +7,9 @@ export const YOUR_SHOP_DISTRICT_ID = 1450; // Replace with valid district ID
 export const YOUR_SHOP_WARD_CODE = "20804"; // Replace with valid ward code
 
 // [0.] Các đường dẫn API
-const API_BASE_URL = "https://localhost:7030/api";
+// const API_BASE_URL = "https://localhost:7030/api";
 // const API_BASE_URL = "http://tom11357-001-site1.qtempurl.com/api";
-// const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
+const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
 
 
 //#region [Global API🌐]-----------------------------------------------
