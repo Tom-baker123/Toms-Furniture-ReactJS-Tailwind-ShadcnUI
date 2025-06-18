@@ -48,6 +48,7 @@ import {
     getColorById,
     getCountryById,
     getMaterialById,
+    getProductById,
     getProductList,
     getSizeById,
     getSupplierById,
@@ -145,13 +146,16 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <ProductManagement />,
-                        loader: async () => {
-                            return await getProductList();
-                        },
+                        loader: async () => await getProductList(),
                     },
                     {
                         path: "New_Product",
                         element: <ProductForm />,
+                    },
+                    {
+                        path: "Edit_Product/:id",
+                        element: <ProductForm />,
+                        loader: async ({ params }) => await getProductById(params.id),
                     },
                 ],
             },

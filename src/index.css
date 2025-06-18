@@ -230,7 +230,7 @@
   /* -[Mega Menu Grid - END]--------------------------------------------------------------------- */
 
   /* -[Hiệu ứng cho Dropdown Menu]------------------------------------------------------------ */
-  
+
 
   /* -[Hiệu ứng cho Dropdown Menu - End]------------------------------------------------------ */
 
@@ -497,6 +497,10 @@
 
 /* [ADMIN CSS]-------------------------------------------------------------- */
 @layer components {
+  .button-admin-hover {
+    @apply flex whitespace-nowrap items-center rounded-md bg-blue-600 px-5 py-2 font-semibold text-white shadow-md transition-all duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-indigo-300
+  }
+
   .sidebar-group {
     @apply flex w-full flex-col gap-y-2;
   }

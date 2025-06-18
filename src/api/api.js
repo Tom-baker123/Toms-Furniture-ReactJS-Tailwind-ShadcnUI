@@ -413,7 +413,9 @@ export const deleteCategory = async (id) => {
 
 
 // ------------------------------------------------------------------
-// [2.1] API lấy tất cả danh sách sản phẩm 
+// [2.1] API lấy tất cả danh sách sản phẩm
+// - Gọi API GET /api/Product để lấy toàn bộ danh sách sản phẩm
+// - Trả về danh sách sản phẩm dưới dạng JSON
 export const getProductList = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product`, {
@@ -425,20 +427,140 @@ export const getProductList = async () => {
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to fetch products: ${response.status} ${errorText}`);
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch products";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
         }
 
-        const data = await response.json();
-        return data; // Trả về danh sách sản phẩm
+        return await response.json();
     } catch (error) {
-        console.log("You have an error while fetching product: ", error);
-        return [];
+        console.error("Error fetching products:", error.message);
+        throw error;
     }
-}
-// [2.2] API thêm sản phẩm 
-// [2.3] API cập nhật sản phẩm 
-export const updateProduct = async (productData) => {
+};
+
+// [2.2] API lấy sản phẩm theo ID
+// - Gọi API GET /api/Product/{id} để lấy thông tin chi tiết của một sản phẩm
+// - Trả về thông tin sản phẩm hoặc null nếu không tìm thấy
+export const getProductById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to fetch product with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching product with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [2.3] API thêm sản phẩm
+// - Gọi API POST /api/Product để tạo mới một sản phẩm
+// - Dữ liệu được gửi dưới dạng JSON, bao gồm ProductVariants và Sliders
+export const createProduct = async (productData, sliders) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(productData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create product";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        const createdProduct = await response.json();
+        // Kiểm tra cấu trúc phản hồi để lấy productId
+        let productId;
+
+        if (createdProduct && createdProduct.productId) {
+            productId = createdProduct?.productId;
+            console.log(productId);
+        } else {
+            throw new Error("Unable to retrieve product ID from response");
+        }
+
+        // Tạo các Slider cho sản phẩm
+        for (const slider of sliders) {
+            if (slider.imageFile) {
+                const formData = new FormData();
+                formData.append("slidervModel.Title", slider.title || productData.ProductName);
+                formData.append("slidervModel.LinkUrl", slider.linkUrl || `/products/${productId}`);
+                formData.append("slidervModel.StartDate", new Date().toISOString());
+                formData.append("slidervModel.EndDate", new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
+                formData.append("slidervModel.IsPoster", "true");
+                formData.append("slidervModel.Position", "product_page");
+                formData.append("slidervModel.DisplayOrder", slider.displayOrder || 0);
+                formData.append("slidervModel.ProductId", productId.toString());
+                formData.append("ImageFile", slider.imageFile);
+
+                console.log(formData);
+
+                const sliderResponse = await fetch(`${API_BASE_URL}/Slider`, {
+                    method: "POST",
+                    credentials: "include",
+                    body: formData,
+                });
+
+                if (!sliderResponse.ok) {
+                    const contentType = sliderResponse.headers.get("content-type");
+                    let errorMessage = "Failed to create slider";
+                    if (contentType && contentType.includes("application/json")) {
+                        const errorData = await sliderResponse.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } else {
+                        errorMessage = await sliderResponse.text();
+                    }
+                    console.warn(`Warning: ${errorMessage}`);
+                }
+            }
+        }
+
+        return createdProduct;
+    } catch (error) {
+        console.error("Error creating product:", error.message);
+        throw error;
+    }
+};
+
+// [2.4] API cập nhật sản phẩm
+// - Gọi API PUT /api/Product để cập nhật thông tin sản phẩm
+// - Dữ liệu được gửi dưới dạng JSON, bao gồm ProductVariants và Sliders
+export const updateProduct = async (productData, sliders) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product`, {
             method: "PUT",
@@ -450,17 +572,61 @@ export const updateProduct = async (productData) => {
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to update product: ${response.status} ${errorText}`);
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update product";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
         }
 
-        return await response.json();
+        const updatedProduct = await response.json();
+        // Cập nhật hoặc tạo mới Sliders
+        for (const slider of sliders) {
+            if (slider.imageFile) {
+                const formData = new FormData();
+                formData.append("slidervModel.Title", slider.title || productData.ProductName);
+                formData.append("slidervModel.LinkUrl", slider.linkUrl || `/products/${productData.Id}`);
+                formData.append("slidervModel.StartDate", new Date().toISOString());
+                formData.append("slidervModel.EndDate", new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString());
+                formData.append("slidervModel.IsPoster", "true");
+                formData.append("slidervModel.Position", "product_page");
+                formData.append("slidervModel.DisplayOrder", slider.displayOrder || 0);
+                formData.append("slidervModel.ProductId", productData.Id);
+                formData.append("ImageFile", slider.imageFile);
+
+                const sliderResponse = await fetch(`${API_BASE_URL}/Slider`, {
+                    method: "POST",
+                    credentials: "include",
+                    body: formData,
+                });
+
+                if (!sliderResponse.ok) {
+                    const contentType = sliderResponse.headers.get("content-type");
+                    let errorMessage = "Failed to create slider";
+                    if (contentType && contentType.includes("application/json")) {
+                        const errorData = await sliderResponse.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } else {
+                        errorMessage = await sliderResponse.text();
+                    }
+                    console.warn(`Warning: ${errorMessage}`);
+                }
+            }
+        }
+
+        return updatedProduct;
     } catch (error) {
-        console.log("Error updating product: ", error);
+        console.error("Error updating product:", error.message);
         throw error;
     }
 };
-// [2.4] API xóa sản phẩm 
+
+// [2.5] API xóa sản phẩm
+// - Gọi API DELETE /api/Product/{id} để xóa một sản phẩm
 export const deleteProduct = async (id) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product/${id}`, {
@@ -469,13 +635,82 @@ export const deleteProduct = async (id) => {
         });
 
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to delete product: ${response.status} ${errorText}`);
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to delete product with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
         }
 
         return await response.json();
     } catch (error) {
-        console.log("Error deleting product: ", error);
+        console.error("Error deleting product:", error.message);
+        throw error;
+    }
+};
+
+// [2.6] API cập nhật biến thể sản phẩm
+// - Gọi API PUT /api/Product/variant để cập nhật biến thể sản phẩm
+export const updateProductVariant = async (variantData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product/variant`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(variantData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update product variant";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating product variant:", error.message);
+        throw error;
+    }
+};
+// #endregion [Product APIs 🛒 - End] ---------------------------------------
+
+// #region [Slider APIs 🖼️] -----------------------------------------------
+// [2.6] API xóa Slider
+// - Gọi API DELETE /api/Slider/{id} để xóa một Slider
+export const deleteSlider = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Slider/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to delete slider with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting slider:", error.message);
         throw error;
     }
 };
