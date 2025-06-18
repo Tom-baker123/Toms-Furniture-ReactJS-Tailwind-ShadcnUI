@@ -16,7 +16,6 @@ import {
 } from "@/api/api";
 import { MoveLeft, Plus, X, Upload, Image, Save, RotateCcw, Trash } from "lucide-react";
 import toast from "react-hot-toast";
-import { useDesktopBreakpoint } from "@/hooks/useDesktopBreakpoint";
 
 const ProductForm = () => {
     const navigate = useNavigate();
@@ -246,6 +245,7 @@ const ProductForm = () => {
         setImageErrors({});
     };
 
+    console.log(productData);
     return (
         <div className="min-h-screen">
             {/* Back Button */}
@@ -272,8 +272,10 @@ const ProductForm = () => {
                             disabled={isSubmitting || isLoading}
                             className={`button-admin-hover`}
                         >
-                            <Save className="sm:mr-2 h-5 w-5 " />
-                            <span className="max-sm:hidden">{isSubmitting || isLoading ? "Processing..." : isEditing ? "Update Product" : "Create Product"}</span>
+                            <Save className="h-5 w-5 sm:mr-2" />
+                            <span className="max-sm:hidden">
+                                {isSubmitting || isLoading ? "Processing..." : isEditing ? "Update Product" : "Create Product"}
+                            </span>
                         </button>
                         {/* <button
                             type="button"
@@ -475,7 +477,7 @@ const ProductForm = () => {
                                                         alt={`Preview ${index + 1}`}
                                                         className="h-full w-full rounded-md object-cover"
                                                     />
-                                                    <div className="bg-opacity-40 absolute inset-0 flex items-center justify-center rounded-md bg-black opacity-0 transition-opacity hover:opacity-100">
+                                                    <div className="bg-opacity-40 absolute inset-0 flex items-center justify-center rounded-md bg-black opacity-0 transition-opacity hover:opacity-90">
                                                         <div className="flex gap-2">
                                                             <label className="bg-opacity-90 hover:bg-opacity-100 cursor-pointer rounded bg-white px-2 py-1 text-xs font-medium text-gray-700">
                                                                 <Upload className="mr-1 inline h-3 w-3" />
@@ -530,9 +532,9 @@ const ProductForm = () => {
                                         </div>
 
                                         {/* Main image indicator */}
-                                        {index === 0 && (
-                                            <div className="absolute top-1 right-1 rounded bg-indigo-500 px-1.5 py-0.5 text-xs text-white">Main</div>
-                                        )}
+                                        {/* {index === 0 && (
+                                            <div className="absolute top-1 left-7 rounded bg-indigo-500 px-1.5 py-0.5 text-xs text-white">Main</div>
+                                        )} */}
                                     </div>
                                 ))}
 
@@ -586,7 +588,7 @@ const ProductForm = () => {
                                     >
                                         <Trash size={20} />
                                     </button>
-                                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                         {/* Original Price */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700">Original Price</label>

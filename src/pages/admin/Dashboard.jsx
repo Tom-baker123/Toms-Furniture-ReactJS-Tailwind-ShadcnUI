@@ -244,9 +244,8 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-            <EditorCDN />
+            {/* <EditorCDN /> */}
             <FooterAdmin />
-            <MultiImageForm/>
         </div>
     );
 };

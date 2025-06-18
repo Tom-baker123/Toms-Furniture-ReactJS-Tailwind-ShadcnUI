@@ -584,6 +584,7 @@ export const updateProduct = async (productData, sliders) => {
         }
 
         const updatedProduct = await response.json();
+
         // Cập nhật hoặc tạo mới Sliders
         for (const slider of sliders) {
             if (slider.imageFile) {
@@ -691,7 +692,7 @@ export const updateProductVariant = async (variantData) => {
 // - Gọi API DELETE /api/Slider/{id} để xóa một Slider
 export const deleteSlider = async (id) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/Slider/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/Slider?id=${id}`, {
             method: "DELETE",
             credentials: "include",
         });
