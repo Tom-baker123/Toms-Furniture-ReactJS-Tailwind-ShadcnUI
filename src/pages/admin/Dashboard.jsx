@@ -1,5 +1,6 @@
 import EditorCDN from "@/components/Admin/EditorCDN";
 import { FooterAdmin } from "@/components/Admin/FooterAdmin";
+import MultiImageForm from "@/components/Admin/MultiImageForm";
 import { overviewData, recentSalesData, topProducts } from "@/constants";
 import { useTheme } from "@/context/ThemeContext";
 import { Package, PencilLine, Star, Trash, TrendingUp } from "lucide-react";
@@ -245,6 +246,7 @@ const Dashboard = () => {
             </div>
             <EditorCDN />
             <FooterAdmin />
+            <MultiImageForm/>
         </div>
     );
 };
