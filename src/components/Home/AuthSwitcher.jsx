@@ -1,31 +1,38 @@
 import React, { useState } from "react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import { VerifyOtpForm } from "./AuthComponents/VerifyOtpForm";
+import ForgotPasswordForm from "./Form/ForgotPasswordForm";
+import ResetPasswordForm from "./Form/ResetPasswordForm";
+import { useModal } from "@/context/ModalContext";
 
 const AuthSwitcher = () => {
-    const [mode, setMode] = useState("login"); // login, register, verify-otp, resend-otp
-    const [emailForOTP, setEmailForOTP] = useState("");
+    const [currentForm, setCurrentForm] = useState("login");
+    const [email, setEmail] = useState(""); // Lưu email cho quên mật khẩu
+    const { openModal } = useModal();
 
-    const switchMode = (newMode, email = "") => {
-        setMode(newMode);
-        if (email !== "") setEmailForOTP(email);
+    const switchForm = (form) => {
+        setCurrentForm(form);
+    };
+
+    // Hàm lưu email từ ForgotPasswordForm
+    const handleSetEmail = (emailValue) => {
+        setEmail(emailValue);
     };
 
     return (
         <>
-            {mode === "login" && <LoginForm onSwitch={switchMode} />}
-            {mode === "register" && <RegisterForm onSwitch={switchMode} />}
-            {mode === "verify-otp" && (
-                <VerifyOtpForm
-                    onSwitch={switchMode}
-                    email={emailForOTP}
+            {currentForm === "login" && <LoginForm onSwitch={switchForm} />}
+            {currentForm === "register" && <RegisterForm onSwitch={switchForm} />}
+            {currentForm === "forgot-password" && (
+                <ForgotPasswordForm
+                    onSwitch={switchForm}
+                    onSetEmail={handleSetEmail}
                 />
             )}
-            {mode === "resend-otp" && (
-                <LoginForm
-                    onSwitch={switchMode}
-                    email={emailForOTP}
+            {currentForm === "reset-password" && (
+                <ResetPasswordForm
+                    email={email}
+                    onSwitch={switchForm}
                 />
             )}
         </>

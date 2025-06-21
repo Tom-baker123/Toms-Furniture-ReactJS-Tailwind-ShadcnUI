@@ -86,12 +86,13 @@ const LoginForm = ({ onSwitch }) => {
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
                 </div>
-                <Link
-                    to="/forgot-password"
-                    className="mt-2 font-semibold text-gray-500 underline"
+                <button
+                    type="button"
+                    onClick={() => onSwitch("forgot-password")}
+                    className="text-left mt-2 font-semibold text-gray-500 underline"
                 >
                     Forgot Password
-                </Link>
+                </button>
                 <ButtonHovCT
                     className={cn("mt-6", isSubmitting ? "!border-gray-300 !bg-gray-300" : "!border-black")}
                     bgColor="bg-black"
