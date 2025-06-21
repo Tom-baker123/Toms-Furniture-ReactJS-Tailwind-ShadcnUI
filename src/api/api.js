@@ -119,6 +119,36 @@ export const logout = async () => {
         return { message: "Error when logout!" };
     }
 };
+// [7.] Yêu cầu quên mật khẩu
+export const forgotPassword = async (email) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Auth/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email }),
+        });
+        return await response.json();
+    } catch (error) {
+        console.log("Error during forgot password:", error);
+        return { message: "Error when requesting forgot password!" };
+    }
+};
+// [8.] Đặt lại mật khẩu
+export const resetPassword = async (email, newPassword) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Auth/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ email, newPassword }),
+        });
+        return await response.json();
+    } catch (error) {
+        console.log("Error during reset password:", error);
+        return { message: "Error when resetting password!" };
+    }
+};
 //#endregion [Global API🌐 - End]--------------------------------------
 
 
