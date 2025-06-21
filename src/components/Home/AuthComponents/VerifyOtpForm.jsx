@@ -1,18 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
-import { useModal } from "@/context/ModalContext";
-import { verifyOtp, resendOtp } from "@/api/api";
 import { toast } from "react-hot-toast";
-import ResetPasswordForm from "../Form/ResetPasswordForm";
+import { useAuth } from "@/context/AuthContext";
 
-export const VerifyOtpForm = ({ email, context = "register", onSwitch }) => {
+export const VerifyOtpForm = ({ email, context = "register" }) => {
     const OTP_LENGTH = 6;
     const [otpDigits, setOtpDigits] = useState(Array(OTP_LENGTH).fill(""));
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
     const [timer, setTimer] = useState(0); // 🛠 Ban đầu không đếm ngược
     const inputsRef = useRef([]);
-    const { closeModal, openModal } = useModal();
+    const { handleVerifyOtp, handleResendOtp } = useAuth();
 
     // ⏳ Countdown chỉ chạy nếu timer > 0
     useEffect(() => {
@@ -70,27 +68,8 @@ export const VerifyOtpForm = ({ email, context = "register", onSwitch }) => {
         }
 
         setIsVerifying(true);
-        const result = await verifyOtp(email, otp);
+        await handleVerifyOtp(email, otp, context);
         setIsVerifying(false);
-
-        if (result.message === "Kích hoạt tài khoản thành công.") {
-            toast.success("Account activated successfully!");
-            if (context === "forgot-password") {
-                // Chuyển sang form reset password
-                openModal(
-                    <ResetPasswordForm
-                        email={email}
-                        onSwitch={onSwitch}
-                    />,
-                    { className: "max-w-md" },
-                );
-            } else {
-                closeModal();
-                window.location.reload();
-            }
-        } else {
-            toast.error(result.message);
-        }
     };
 
     // 🔄 Gửi lại OTP và bắt đầu đếm ngược
@@ -98,16 +77,10 @@ export const VerifyOtpForm = ({ email, context = "register", onSwitch }) => {
         if (timer > 0) return;
 
         setIsResending(true);
-        const result = await resendOtp(email);
+        await handleResendOtp(email);
         setIsResending(false);
-
-        if (result.message === "Gửi mã OTP mới thành công. Vui lòng kiểm tra email của bạn.") {
-            toast.success("A new OTP has been sent to your email.");
-            setOtpDigits(Array(OTP_LENGTH).fill(""));
-            setTimer(60); // ✅ Bắt đầu đếm ngược sau khi gửi
-        } else {
-            toast.error(result.message);
-        }
+        setOtpDigits(Array(OTP_LENGTH).fill(""));
+        setTimer(60);
     };
 
     return (

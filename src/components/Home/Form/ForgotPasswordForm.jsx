@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import ButtonHovCT from "../../tailwind-custom/ButtonHovCT";
-import { forgotPassword } from "@/api/api";
-import { VerifyOtpForm } from "../AuthComponents/VerifyOtpForm";
-import { useModal } from "@/context/ModalContext";
-import { toast } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
-const ForgotPasswordForm = ({ onSwitch, onSetEmail }) => {
+const ForgotPasswordForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { openModal } = useModal();
+    const { handleForgotPassword, switchForm } = useAuth();
 
     const {
         register,
@@ -20,25 +17,8 @@ const ForgotPasswordForm = ({ onSwitch, onSetEmail }) => {
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
-        const result = await forgotPassword(data.email);
+        await handleForgotPassword(data);
         setIsSubmitting(false);
-
-        if (result.message === "OTP code sent successfully. Please check your email.") {
-            toast.success("OTP sent successfully! Please check your email.");
-            onSetEmail(data.email); // Lưu email vào state
-            openModal(
-                <VerifyOtpForm
-                    email={data.email}
-                    context="forgot-password"
-                    onSwitch={onSwitch}
-                />,
-                {
-                    className: "max-w-md",
-                },
-            );
-        } else {
-            toast.error(result.message);
-        }
     };
 
     return (
@@ -88,7 +68,7 @@ const ForgotPasswordForm = ({ onSwitch, onSetEmail }) => {
                     to={"/"}
                     onClick={(e) => {
                         e.preventDefault();
-                        onSwitch("login");
+                        switchForm("login");
                     }}
                     className="text-center font-bold underline"
                 >

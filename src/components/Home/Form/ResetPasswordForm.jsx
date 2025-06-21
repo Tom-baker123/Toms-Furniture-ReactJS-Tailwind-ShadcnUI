@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ButtonHovCT from "../../tailwind-custom/ButtonHovCT";
 import { useForm } from "react-hook-form";
-import { resetPassword } from "@/api/api";
-import { toast } from "react-hot-toast";
 import { cn } from "@/lib/utils";
-import { useModal } from "@/context/ModalContext";
+import { useAuth } from "@/context/AuthContext";
 
-const ResetPasswordForm = ({ email, onSwitch }) => {
+const ResetPasswordForm = ({ email }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { closeModal } = useModal();
+    const { handleResetPassword, switchForm } = useAuth();
 
     const {
         register,
@@ -22,16 +20,8 @@ const ResetPasswordForm = ({ email, onSwitch }) => {
 
     const onSubmit = async (data) => {
         setIsSubmitting(true);
-        const result = await resetPassword(email, data.newPassword);
+        await handleResetPassword(email, data.newPassword);
         setIsSubmitting(false);
-
-        if (result.message === "Password has been reset successfully.") {
-            toast.success("Password reset successfully! Please login.");
-            closeModal(); // Đóng modal sau khi reset thành công
-            onSwitch("login"); // Chuyển về form login
-        } else {
-            toast.error(result.message);
-        }
     };
 
     return (
@@ -102,7 +92,7 @@ const ResetPasswordForm = ({ email, onSwitch }) => {
                     to={"/"}
                     onClick={(e) => {
                         e.preventDefault();
-                        onSwitch("login");
+                        switchForm("login");
                     }}
                     className="text-center font-bold underline"
                 >
