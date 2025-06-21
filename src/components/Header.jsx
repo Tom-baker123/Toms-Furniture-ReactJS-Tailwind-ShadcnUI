@@ -93,7 +93,7 @@ const Header = ({ onOpenCartModal }) => {
 
                     {/* Thanh tìm kiếm */}
                     <div className="hidden md:px-5 lg:block lg:w-[44rem] xl:px-10">
-                        <SearchHeader />
+                        <SearchHeader id="categories-desktop" />
                     </div>
 
                     {/* Thanh Nav gồm: giỏ hàng, Login/ Register, Find a store*/}
@@ -137,7 +137,7 @@ const Header = ({ onOpenCartModal }) => {
                                             👋Hello <span className="text-primary font-bold whitespace-nowrap">{authStatus.userName}</span>
                                         </span>
                                     </li>
-                                    <hr className=" border-gray-300" />
+                                    <hr className="border-gray-300" />
                                     <li
                                         id="profile"
                                         className="cursor-pointer px-4 py-1 hover:bg-gray-100"
@@ -242,7 +242,7 @@ const Header = ({ onOpenCartModal }) => {
 
                 {/* Trên Mobile: Thanh tìm kiếm */}
                 <div className="mx-auto w-full px-4 pt-2 pb-4 lg:hidden">
-                    <SearchHeader />
+                    <SearchHeader id="categories-mobile" />
                 </div>
 
                 {/* Thanh Nav Menu */}
