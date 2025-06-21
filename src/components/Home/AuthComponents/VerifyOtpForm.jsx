@@ -3,15 +3,16 @@ import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import { useModal } from "@/context/ModalContext";
 import { verifyOtp, resendOtp } from "@/api/api";
 import { toast } from "react-hot-toast";
+import ResetPasswordForm from "../Form/ResetPasswordForm";
 
-export const VerifyOtpForm = ({ email }) => {
+export const VerifyOtpForm = ({ email, context = "register", onSwitch }) => {
     const OTP_LENGTH = 6;
     const [otpDigits, setOtpDigits] = useState(Array(OTP_LENGTH).fill(""));
     const [isVerifying, setIsVerifying] = useState(false);
     const [isResending, setIsResending] = useState(false);
     const [timer, setTimer] = useState(0); // 🛠 Ban đầu không đếm ngược
     const inputsRef = useRef([]);
-    const { closeModal } = useModal();
+    const { closeModal, openModal } = useModal();
 
     // ⏳ Countdown chỉ chạy nếu timer > 0
     useEffect(() => {
@@ -74,8 +75,19 @@ export const VerifyOtpForm = ({ email }) => {
 
         if (result.message === "Kích hoạt tài khoản thành công.") {
             toast.success("Account activated successfully!");
-            closeModal();
-            window.location.reload();
+            if (context === "forgot-password") {
+                // Chuyển sang form reset password
+                openModal(
+                    <ResetPasswordForm
+                        email={email}
+                        onSwitch={onSwitch}
+                    />,
+                    { className: "max-w-md" },
+                );
+            } else {
+                closeModal();
+                window.location.reload();
+            }
         } else {
             toast.error(result.message);
         }
@@ -101,10 +113,13 @@ export const VerifyOtpForm = ({ email }) => {
     return (
         <div className="my-6 flex flex-col items-center">
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Verify OTP</h2>
-            <p className="text-md mt-2 text-center text-gray-500 font-semibold">
+            <p className="text-md mt-2 text-center font-semibold text-gray-500">
                 Enter the 6-digit OTP sent to <span className="text-black">{email}</span>
             </p>
-            <form className="mt-6 flex flex-col items-center" onSubmit={handleVerify}>
+            <form
+                className="mt-6 flex flex-col items-center"
+                onSubmit={handleVerify}
+            >
                 <div
                     className="flex gap-3"
                     onPaste={handlePaste}
@@ -115,7 +130,7 @@ export const VerifyOtpForm = ({ email }) => {
                             type="text"
                             inputMode="numeric"
                             maxLength={1}
-                            className="w-12 h-12 rounded-lg text-center text-2xl border border-gray-400 focus:outline-black bg-gray-100"
+                            className="h-12 w-12 rounded-lg border border-gray-400 bg-gray-100 text-center text-2xl focus:outline-black"
                             value={digit}
                             onChange={(e) => handleChange(e, idx)}
                             onKeyDown={(e) => handleKeyDown(e, idx)}
@@ -138,12 +153,14 @@ export const VerifyOtpForm = ({ email }) => {
             {/* 🔄 Hiển thị thông báo hoặc nút resend */}
             <div className="mt-4 text-center">
                 {timer > 0 ? (
-                    <p className="text-gray-500">Resend available in <strong>{timer}s</strong></p>
+                    <p className="text-gray-500">
+                        Resend available in <strong>{timer}s</strong>
+                    </p>
                 ) : (
                     <button
                         onClick={handleResend}
                         disabled={isResending}
-                        className="text-gray-500 underline font-semibold"
+                        className="font-semibold text-gray-500 underline"
                     >
                         {isResending ? "Sending..." : "Resend OTP"}
                     </button>
