@@ -1,45 +1,27 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
-import { useModal } from "@/context/ModalContext";
-import { register } from "@/api/api";
-import { VerifyOtpForm } from "./AuthComponents/VerifyOtpForm";
-import { toast } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
-const RegisterForm = ({ onSwitch }) => {
-    const [isSubmitting, setIsSubmitting] = useState(false); // 🆕 trạng thái loading
+const RegisterForm = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { handleRegister, switchForm } = useAuth();
 
-    // Object khởi tạo form Data
-    const [formData, setFormData] = useState({
-        userName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        gender: "",
-        phoneNumber: "",
-        userAddress: "",
-    });
-    // [1.] Hook để quản lý modal
-    const { openModal, closeModal } = useModal();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+    } = useForm();
 
-    // [2.] Hàm xử lý thay đổi dữ liệu trong form
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const password = watch("password");
 
-    // [3.] Hàm xử lý gửi form đăng ký
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true); // 🔐 Khóa nút lại
-        const result = await register(formData);
-        setIsSubmitting(false); // 🔓 Mở lại
-        if (result?.message === "Đăng ký thành công. Vui lòng kiểm tra email để nhận mã OTP.") {
-            toast.success("Registration successful! please check your email for the OTP code.");
-            openModal(<VerifyOtpForm email={formData.email} />, { className: "max-w-md" });
-        } else {
-            toast.error(result?.message);
-        }
+    const onSubmit = async (data) => {
+        setIsSubmitting(true);
+        await handleRegister(data);
+        setIsSubmitting(false);
     };
 
     return (
@@ -51,25 +33,21 @@ const RegisterForm = ({ onSwitch }) => {
             {/* [2.] Form đăng ký */}
             <form
                 className="mt-6 flex flex-col"
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
             >
                 {/* [1.] User Name */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor=""
-                        className="Form-Label"
-                    >
-                        User Name
-                    </label>
+                    <label className="Form-Label">User Name</label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="text"
-                        name="userName"
-                        value={formData.userName}
-                        onChange={handleChange}
                         placeholder="Your name"
-                        required
+                        {...register("userName", {
+                            required: "User name is required",
+                            minLength: { value: 3, message: "User name must be at least 3 characters" },
+                        })}
                     />
+                    {errors.userName && <p className="mt-1 text-sm text-red-500">{errors.userName.message}</p>}
                 </div>
 
                 {/* [2.] Email */}
@@ -78,12 +56,16 @@ const RegisterForm = ({ onSwitch }) => {
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
                         placeholder="Email"
-                        required
+                        {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                                value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
+                                message: "Invalid email format",
+                            },
+                        })}
                     />
+                    {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
                 </div>
 
                 {/* [3.] Password */}
@@ -92,86 +74,69 @@ const RegisterForm = ({ onSwitch }) => {
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
                         placeholder="Password"
-                        required
+                        {...register("password", {
+                            required: "Password is required",
+                            minLength: { value: 6, message: "Password must be at least 6 characters" },
+                        })}
                     />
+                    {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
                 </div>
 
                 {/* [4.] Confirm Password */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor=""
-                        className="Form-Label"
-                    >
-                        Confirm Password
-                    </label>
+                    <label className="Form-Label">Confirm Password</label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
                         placeholder="Confirm Password"
-                        required
+                        {...register("confirmPassword", {
+                            required: "Please confirm your password",
+                            validate: (value) => value === password || "Passwords do not match",
+                        })}
                     />
+                    {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>}
                 </div>
 
                 {/* [5.] Gender */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor=""
-                        className="Form-Label"
-                    >
-                        Gender
-                    </label>
+                    <label className="Form-Label">Gender</label>
                     <select
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg transition-all"
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
+                        {...register("gender", { required: "Please select a gender" })}
                     >
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                     </select>
+                    {errors.gender && <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>}
                 </div>
 
                 {/* [6.] Phone Number */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor=""
-                        className="Form-Label"
-                    >
-                        Phone Number
-                    </label>
+                    <label className="Form-Label">Phone Number</label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
-                        type="number"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
+                        type="tel"
                         placeholder="Phone Number"
+                        {...register("phoneNumber", {
+                            pattern: {
+                                value: /^[0-9]{10,15}$/,
+                                message: "Invalid phone number",
+                            },
+                        })}
                     />
+                    {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>}
                 </div>
 
                 {/* [7.] Address */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor=""
-                        className="Form-Label"
-                    >
-                        Address
-                    </label>
+                    <label className="Form-Label">Address</label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="text"
-                        name="userAddress"
-                        value={formData.userAddress}
-                        onChange={handleChange}
                         placeholder="Address"
+                        {...register("userAddress")}
                     />
                 </div>
 
@@ -191,10 +156,10 @@ const RegisterForm = ({ onSwitch }) => {
             <span className="mt-2 flex items-center justify-center gap-1 font-semibold">
                 <span className="text-gray-500">Already have an account</span>
                 <Link
-                    to={"/"}
+                    to="/"
                     onClick={(e) => {
                         e.preventDefault();
-                        onSwitch("login");
+                        switchForm("login");
                     }}
                     className="text-center font-bold underline"
                 >

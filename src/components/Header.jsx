@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import showHeader from "../hooks/showHeader";
 import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
@@ -7,47 +7,22 @@ import { useModal } from "@/context/ModalContext";
 import AuthSwitcher from "./Home/AuthSwitcher";
 import isSticky from "@/hooks/isSticky";
 import { cn } from "@/lib/utils";
-import { Link, useNavigate } from "react-router-dom";
-import { checkAuthStatus, logout } from "@/api/api";
-import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import DropdownCT from "./tailwind-custom/DropdownCT";
 
 const Header = ({ onOpenCartModal }) => {
     const { openModal } = useModal(); // Gọi hàm modal
-    const [authStatus, setAuthStatus] = useState({ isAuthenticated: false }); // Gán trạng thái chưa đăng nhặp
-    const navigate = useNavigate(); // Sử dụng điều hướng để chuyển trang
+    const { authStatus, handleLogout } = useAuth();
 
-    // [0.] Kiểm tra trạng thái đăng nhập & gán vào state trạng thái đăng nhập
-    useEffect(() => {
-        const fetchAuthStatus = async () => {
-            const result = await checkAuthStatus();
-            setAuthStatus(result);
-        };
-        fetchAuthStatus();
-    }, []);
-
-    // [1.] Xử lý trạng thái đăng xuất
-    const handleLogout = async () => {
-        const result = await logout();
-        if (result.message === "Đăng xuất thành công.") {
-            toast.success("Logout successfully!");
-            setAuthStatus({ isAuthenticated: false });
-            navigate("/"); // Chuyển hướng về trang chủ
-        } else {
-            toast.error(result.message);
-        }
-    };
-
-    // [2.] Xử lý hiệu ứng ẩn hiện navbar khi cuộn theo chiều dọc
     const showHead = showHeader();
+    // [1.] Xử lý scroll xuống và scroll lên đầu
+    const isScroll = isSticky();
 
-    // [3.] Xử lý modal cho Authentication Button
+    // [2.] Xử lý modal cho Authentication Button
     const handleOpenAuthModal = () => {
         openModal(<AuthSwitcher />, { className: "max-w-md" });
     };
-
-    // [4.] Xử lý scroll xuống và scroll lên đầu
-    const isScroll = isSticky();
 
     return (
         <>
@@ -165,14 +140,9 @@ const Header = ({ onOpenCartModal }) => {
 
                                     <li
                                         className="cursor-pointer px-4 py-1 font-bold text-red-500 hover:bg-gray-100"
-                                        onClick={logout}
+                                        onClick={handleLogout}
                                     >
-                                        <button
-                                            onClick={handleLogout}
-                                            className="hover:text-red-700"
-                                        >
-                                            Logout
-                                        </button>
+                                        <button className="hover:text-red-700">Logout</button>
                                     </li>
                                 </DropdownCT>
                             ) : (

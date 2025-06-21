@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 import { useForm } from "react-hook-form";
-import { checkAuthStatus, login } from "@/api/api";
-import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 
-const LoginForm = ({ onSwitch }) => {
+const LoginForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false); // 🆕 trạng thái loading
+    const { handleLogin, switchForm } = useAuth();
 
     // [1.] Thành phần này sử dụng react-hook-form để quản lý form
     const {
@@ -16,25 +16,17 @@ const LoginForm = ({ onSwitch }) => {
         formState: { errors },
     } = useForm();
 
-    // [2.] Điều hướng đến trang khác
-    const navigate = useNavigate();
-
-    // [3.]
     const onSubmit = async (data) => {
-        setIsSubmitting(true); // 🔐 Khóa nút lại
-        const result = await login(data.email, data.password);
-        setIsSubmitting(false); // 🔓 Mở lại
-        if (result.message === "Đăng nhập thành công.") {
-            toast.success("Login successful!");
-            const authStatus = await checkAuthStatus();
-            if (authStatus.role === "Admin") {
-                navigate("/admin");
-            } else {
-                navigate("/");
-            }
-            window.location.reload(); // Reload the page to update the auth status
-        } else {
-            toast.error(result.message);
+        setIsSubmitting(true);
+        await handleLogin(data);
+        setIsSubmitting(false);
+    };
+
+    // Xử lý phím Enter trong input
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Ngăn hành vi mặc định nếu cần
+            handleSubmit(onSubmit); // Gọi hàm submit
         }
     };
 
@@ -88,8 +80,8 @@ const LoginForm = ({ onSwitch }) => {
                 </div>
                 <button
                     type="button"
-                    onClick={() => onSwitch("forgot-password")}
-                    className="text-left mt-2 font-semibold text-gray-500 underline"
+                    onClick={() => switchForm("forgot-password")}
+                    className="mt-2 cursor-pointer text-left font-semibold text-gray-500 underline"
                 >
                     Forgot Password
                 </button>
@@ -110,7 +102,7 @@ const LoginForm = ({ onSwitch }) => {
                 className="mt-2 text-center font-semibold underline"
                 onClick={(e) => {
                     e.preventDefault();
-                    onSwitch("register");
+                    switchForm("register");
                 }}
             >
                 Create new account
