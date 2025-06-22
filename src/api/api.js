@@ -764,7 +764,7 @@ export const getAllUsers = async () => {
     } catch (error) {
         console.log("Error fetching users: ", error);
         return { message: "Can't get all users!" };
-    }
+            }
 }
 
 
