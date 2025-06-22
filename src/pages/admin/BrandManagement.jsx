@@ -1,5 +1,5 @@
-import React from "react";
-import { PencilLine, Trash } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { PencilLine, Trash, ChevronUp, ChevronDown } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteBrand } from "@/api/api";
 import toast from "react-hot-toast";
@@ -8,6 +8,12 @@ import FormatDatetime from "@/hooks/FormatDatetime";
 const BrandManagement = () => {
     const brands = useLoaderData();
     const navigate = useNavigate();
+
+    // State để quản lý sắp xếp
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: "asc",
+    });
 
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this brand?")) {
@@ -19,6 +25,84 @@ const BrandManagement = () => {
                 toast.error(`Error deleting brand: ${error.message}`);
             }
         }
+    };
+
+    // Hàm xử lý sắp xếp
+    const handleSort = (key) => {
+        let direction = "asc";
+        if (sortConfig.key === key && sortConfig.direction === "asc") {
+            direction = "desc";
+        }
+        setSortConfig({ key, direction });
+    };
+
+    // Hàm sắp xếp dữ liệu
+    const sortedBrands = useMemo(() => {
+        if (!sortConfig.key) return brands;
+
+        return [...brands].sort((a, b) => {
+            let aVal = a[sortConfig.key];
+            let bVal = b[sortConfig.key];
+
+            // Xử lý đặc biệt cho từng loại dữ liệu
+            switch (sortConfig.key) {
+                case "id":
+                    aVal = Number(aVal);
+                    bVal = Number(bVal);
+                    break;
+                case "brandName":
+                    aVal = String(aVal).toLowerCase();
+                    bVal = String(bVal).toLowerCase();
+                    break;
+                case "isActive":
+                    aVal = aVal ? 1 : 0;
+                    bVal = bVal ? 1 : 0;
+                    break;
+                case "createdDate":
+                case "updatedDate":
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                    break;
+                default:
+                    aVal = String(aVal).toLowerCase();
+                    bVal = String(bVal).toLowerCase();
+            }
+
+            if (aVal < bVal) {
+                return sortConfig.direction === "asc" ? -1 : 1;
+            }
+            if (aVal > bVal) {
+                return sortConfig.direction === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+    }, [brands, sortConfig]);
+
+    // Component cho header có thể sắp xếp
+    const SortableHeader = ({ children, sortKey, className = "" }) => {
+        const isActive = sortConfig.key === sortKey;
+        const direction = sortConfig.direction;
+
+        return (
+            <th
+                className={`table-head cursor-pointer whitespace-nowrap transition-all select-none hover:bg-gray-100 dark:hover:bg-gray-700 ${className}`}
+                onClick={() => handleSort(sortKey)}
+            >
+                <div className="flex items-center justify-between">
+                    <span>{children}</span>
+                    <div className="ml-1 flex flex-col">
+                        <ChevronUp
+                            size={15}
+                            className={`stroke-3 ${isActive && direction === "asc" ? "text-blue-600" : "text-gray-400"}`}
+                        />
+                        <ChevronDown
+                            size={15}
+                            className={`stroke-3 ${isActive && direction === "desc" ? "text-blue-600" : "text-gray-400"} -mt-1`}
+                        />
+                    </div>
+                </div>
+            </th>
+        );
     };
 
     return (
@@ -35,23 +119,28 @@ const BrandManagement = () => {
             <div className="card">
                 <div className="card-header">
                     <div className="card-title">All Brands</div>
+                    {sortConfig.key && (
+                        <div className="text-sm text-gray-500">
+                            Sorted by {sortConfig.key} ({sortConfig.direction === "asc" ? "ascending" : "descending"})
+                        </div>
+                    )}
                 </div>
                 <div className="card-body p-0">
                     <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
                         <table className="table">
                             <thead className="table-header">
                                 <tr className="table-row">
-                                    <th className="table-head whitespace-nowrap">#</th>
+                                    <SortableHeader sortKey="id">#</SortableHeader>
                                     <th className="table-head whitespace-nowrap">Image</th>
-                                    <th className="table-head whitespace-nowrap">Brand Name</th>
-                                    <th className="table-head whitespace-nowrap">Status</th>
-                                    <th className="table-head whitespace-nowrap">Created Date </th>
-                                    <th className="table-head whitespace-nowrap">Updated Date </th>
+                                    <SortableHeader sortKey="brandName">Brand Name</SortableHeader>
+                                    <SortableHeader sortKey="isActive">Status</SortableHeader>
+                                    <SortableHeader sortKey="createdDate">Created Date</SortableHeader>
+                                    <SortableHeader sortKey="updatedDate">Updated Date</SortableHeader>
                                     <th className="table-head whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="table-body">
-                                {brands.map((brand) => (
+                                {sortedBrands.map((brand) => (
                                     <tr
                                         key={brand.id}
                                         className="table-row"

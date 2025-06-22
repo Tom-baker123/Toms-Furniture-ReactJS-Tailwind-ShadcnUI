@@ -78,12 +78,12 @@ export const navbarLinks = [
 
     // Trang quản lý khách hàng
     {
-        title: "Customers",
+        title: "Users",
         links: [
             {
-                label: "Customers",
+                label: "Users",
                 icon: Users,
-                path: "/admin/customers",
+                path: "/admin/users",
             },
             {
                 label: "New customer",
