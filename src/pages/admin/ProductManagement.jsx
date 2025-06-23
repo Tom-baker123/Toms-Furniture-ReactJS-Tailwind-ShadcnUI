@@ -39,7 +39,7 @@ const ProductManagement = () => {
             </div>
             {/* Bảng hiển thị danh sách sản phẩm */}
             <div className="card overflow-hidden rounded-sm bg-white shadow-xs">
-                <div className="card-header p-4">
+                <div className="card-header">
                     <div className="card-title text-lg font-bold text-slate-800">All Products</div>
                 </div>
                 <div className="card-body p-0">

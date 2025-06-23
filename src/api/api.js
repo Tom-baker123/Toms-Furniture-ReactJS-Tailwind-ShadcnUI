@@ -748,7 +748,7 @@ export const deleteSlider = async (id) => {
 
 
 // ------------------------------------------------------------------
-// [3.] API lấy tất cả user
+// [3.1] API lấy tất cả user
 export const getAllUsers = async () => {
     try {
         // Gửi yêu cầu đến API để kiểm tra trạng thái đăng nhập + cookie
@@ -764,8 +764,127 @@ export const getAllUsers = async () => {
     } catch (error) {
         console.log("Error fetching users: ", error);
         return { message: "Can't get all users!" };
-            }
+    }
 }
+
+// [3.2] Lấy thông tin người dùng theo ID
+export const getUserById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Auth/users/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch user with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching user with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [3.3] Thêm người dùng
+export const createUser = async (userData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Auth/users/add`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create user';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating user:", error.message);
+        throw error;
+    }
+};
+
+// [3.4] Cập nhật người dùng
+export const updateUser = async (id, userData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Auth/users/update/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update user';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating user:", error.message);
+        throw error;
+    }
+};
+
+// [3.5] Xóa người dùng
+export const deleteUser = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Auth/users/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete user with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting user:", error.message);
+        throw error;
+    }
+};
 
 
 // ------------------------------------------------------------------

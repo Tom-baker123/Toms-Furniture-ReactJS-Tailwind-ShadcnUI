@@ -88,13 +88,13 @@ export const navbarLinks = [
             {
                 label: "New customer",
                 icon: UserPlus,
-                path: "/admin/new-customer",
+                path: "/admin/users/New_User",
             },
-            {
-                label: "Verified customers",
-                icon: UserCheck,
-                path: "/admin/verified-customers",
-            },
+            // {
+            //     label: "Verified customers",
+            //     icon: UserCheck,
+            //     path: "/admin/verified-customers",
+            // },
         ],
     },
 
