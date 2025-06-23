@@ -29,6 +29,7 @@ import {
     ColorManagement,
     MaterialManagement,
     UnitManagement, // Thêm mới
+    UserManagement,
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
@@ -53,6 +54,8 @@ import {
     getSizeById,
     getSupplierById,
     getUnitById,
+    getAllUsers, // Thêm import
+    getUserById, // Thêm import
 } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
@@ -64,6 +67,7 @@ import SizeForm from "@/components/Admin/Form/SizeForm";
 import ColorForm from "@/components/Admin/Form/ColorForm";
 import MaterialForm from "@/components/Admin/Form/MaterialForm";
 import UnitForm from "@/components/Admin/Form/UnitForm";
+import UserForm from "@/components/Admin/Form/UserForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -309,7 +313,25 @@ const router = createBrowserRouter([
             // [14.]
             { path: "analyticsReport", element: <AnalyticsReport /> },
             // [15.]
-            { path: "customer", element: <CustomerManagement /> },
+            {
+                path: "users",
+                children: [
+                    {
+                        index: true,
+                        element: <UserManagement />,
+                        loader: async () => await getAllUsers(),
+                    },
+                    {
+                        path: "New_User",
+                        element: <UserForm />,
+                    },
+                    {
+                        path: "Edit_User/:id",
+                        element: <UserForm />,
+                        loader: async ({ params }) => await getUserById(params.id),
+                    },
+                ],
+            },
             // [16.]
             { path: "promotion", element: <PromotionManagement /> },
 

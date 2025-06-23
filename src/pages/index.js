@@ -31,7 +31,7 @@ export { default as PromotionManagement } from "./admin/PromotionManagement";
 export { default as SizeManagement } from "./admin/SizeManagement";
 export { default as SupplierManagement } from "./admin/SupplierManagement";
 export { default as UnitManagement } from "./admin/UnitManagement"
-
+export { default as UserManagement } from "./admin/UserManagement"
 // [ADMIN Page - END]------------------------------------------
 
 
