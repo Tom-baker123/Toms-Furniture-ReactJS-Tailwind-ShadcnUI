@@ -16,6 +16,7 @@ const LoginForm = () => {
         formState: { errors },
     } = useForm();
 
+    // Xử lý submit form
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         await handleLogin(data);
@@ -32,17 +33,15 @@ const LoginForm = () => {
 
     return (
         <div className="my-5 flex flex-col">
+            {/* Tiêu đề form */}
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Login</h2>
             <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">If you have an account with us, please log in.</p>
-            <form
-                className="mt-6 flex flex-col"
-                onSubmit={handleSubmit(onSubmit)}
-            >
+
+            {/* Form đăng nhập */}
+            <form className="mt-6 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+                {/* Trường Email */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor="email"
-                        className="Form-Label"
-                    >
+                    <label htmlFor="email" className="Form-Label">
                         Email
                     </label>
                     <input
@@ -54,17 +53,16 @@ const LoginForm = () => {
                             required: "Email is required",
                             pattern: {
                                 value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                message: "Email format not support",
+                                message: "Invalid email format",
                             },
                         })}
                     />
                     {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
                 </div>
+
+                {/* Trường Password */}
                 <div className="Form-Field">
-                    <label
-                        htmlFor="password"
-                        className="Form-Label"
-                    >
+                    <label htmlFor="password" className="Form-Label">
                         Password
                     </label>
                     <input
@@ -73,11 +71,13 @@ const LoginForm = () => {
                         type="password"
                         placeholder="Password"
                         {...register("password", {
-                            required: "Mật khẩu là bắt buộc",
+                            required: "Password is required",
                         })}
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
                 </div>
+
+                {/* Nút quên mật khẩu */}
                 <button
                     type="button"
                     onClick={() => switchForm("forgot-password")}
@@ -85,6 +85,8 @@ const LoginForm = () => {
                 >
                     Forgot Password
                 </button>
+
+                {/* Nút submit */}
                 <ButtonHovCT
                     className={cn("mt-6", isSubmitting ? "!border-gray-300 !bg-gray-300" : "!border-black")}
                     bgColor="bg-black"
@@ -97,6 +99,7 @@ const LoginForm = () => {
                 </ButtonHovCT>
             </form>
 
+            {/* Liên kết đến form đăng ký */}
             <Link
                 to={"/"}
                 className="mt-2 text-center font-semibold underline"

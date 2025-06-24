@@ -1,8 +1,8 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkAuthStatus, login, logout, register as registerAPI, forgotPassword, verifyOtp, resendOtp, resetPassword } from "@/api/api";
+import { checkAuthStatus, login, logout, register, forgotPassword, verifyOtp, resendOtp, resetPassword } from "@/api/api";
 import toast from "react-hot-toast";
-
 import { VerifyOtpForm } from "@/components/Home/AuthComponents/VerifyOtpForm";
 import ResetPasswordForm from "@/components/Home/Form/ResetPasswordForm";
 import { useModal } from "./ModalContext";
@@ -10,6 +10,7 @@ import { useModal } from "./ModalContext";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    // Khởi tạo trạng thái xác thực
     const [authStatus, setAuthStatus] = useState({ isAuthenticated: false });
     const [currentForm, setCurrentForm] = useState("login");
     const [email, setEmail] = useState("");
@@ -32,11 +33,16 @@ export const AuthProvider = ({ children }) => {
 
     // Hàm xử lý đăng nhập
     const handleLogin = async (data) => {
+        // Gửi yêu cầu đăng nhập
         const result = await login(data.email, data.password);
-        if (result.message === "Đăng nhập thành công.") {
-            toast.success("Login successful!");
+        console.log(result.message);
+        if (result?.message === "Login successful.") {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
+            // Cập nhật trạng thái xác thực
             const authStatus = await checkAuthStatus();
             setAuthStatus(authStatus);
+            // Điều hướng dựa trên vai trò
             if (authStatus.role === "Admin") {
                 navigate("/admin");
             } else {
@@ -45,6 +51,7 @@ export const AuthProvider = ({ children }) => {
             closeModal();
             window.location.reload();
         } else {
+            // Hiển thị thông báo lỗi
             toast.error(result.message);
         }
         return result;
@@ -52,7 +59,8 @@ export const AuthProvider = ({ children }) => {
 
     // Hàm xử lý đăng ký
     const handleRegister = async (data) => {
-        const result = await registerAPI({
+        // Gửi yêu cầu đăng ký
+        const result = await register({
             userName: data.userName,
             email: data.email,
             password: data.password,
@@ -60,22 +68,28 @@ export const AuthProvider = ({ children }) => {
             phoneNumber: data.phoneNumber,
             userAddress: data.userAddress,
         });
-        if (result?.message === "Đăng ký thành công. Vui lòng kiểm tra email để nhận mã OTP.") {
-            toast.success("Registration successful! Please check your email for the OTP code.");
+        if (result.success) {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
             setEmail(data.email);
+            // Mở form xác thực OTP
             openModal(<VerifyOtpForm email={data.email} />, { className: "max-w-md" });
         } else {
-            toast.error(result?.message || "Registration failed.");
+            // Hiển thị thông báo lỗi
+            toast.error(result.message);
         }
         return result;
     };
 
     // Hàm xử lý quên mật khẩu
     const handleForgotPassword = async (data) => {
+        // Gửi yêu cầu quên mật khẩu
         const result = await forgotPassword(data.email);
-        if (result.message === "OTP code sent successfully. Please check your email.") {
-            toast.success("OTP sent successfully! Please check your email.");
+        if (result?.success) {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
             setEmail(data.email);
+            // Mở form xác thực OTP cho quên mật khẩu
             openModal(
                 <VerifyOtpForm
                     email={data.email}
@@ -84,6 +98,7 @@ export const AuthProvider = ({ children }) => {
                 { className: "max-w-md" },
             );
         } else {
+            // Hiển thị thông báo lỗi
             toast.error(result.message);
         }
         return result;
@@ -91,16 +106,20 @@ export const AuthProvider = ({ children }) => {
 
     // Hàm xử lý xác minh OTP
     const handleVerifyOtp = async (email, otp, context) => {
+        // Gửi yêu cầu xác thực OTP
         const result = await verifyOtp(email, otp);
-        if (result.message === "Kích hoạt tài khoản thành công.") {
-            toast.success("Account activated successfully!");
+        if (result.success) {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
             if (context === "forgot-password") {
+                // Mở form đặt lại mật khẩu
                 openModal(<ResetPasswordForm email={email} />, { className: "max-w-md" });
             } else {
                 closeModal();
                 window.location.reload();
             }
         } else {
+            // Hiển thị thông báo lỗi
             toast.error(result.message);
         }
         return result;
@@ -108,10 +127,13 @@ export const AuthProvider = ({ children }) => {
 
     // Hàm gửi lại OTP
     const handleResendOtp = async (email) => {
+        // Gửi yêu cầu gửi lại OTP
         const result = await resendOtp(email);
-        if (result.message === "Gửi mã OTP mới thành công. Vui lòng kiểm tra email của bạn.") {
-            toast.success("A new OTP has been sent to your email.");
+        if (result.success) {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
         } else {
+            // Hiển thị thông báo lỗi
             toast.error(result.message);
         }
         return result;
@@ -119,12 +141,15 @@ export const AuthProvider = ({ children }) => {
 
     // Hàm xử lý đặt lại mật khẩu
     const handleResetPassword = async (email, newPassword) => {
+        // Gửi yêu cầu đặt lại mật khẩu
         const result = await resetPassword(email, newPassword);
-        if (result.message === "Password has been reset successfully.") {
-            toast.success("Password reset successfully! Please login.");
+        if (result.success) {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
             closeModal();
             setCurrentForm("login");
         } else {
+            // Hiển thị thông báo lỗi
             toast.error(result.message);
         }
         return result;
@@ -132,12 +157,16 @@ export const AuthProvider = ({ children }) => {
 
     // Hàm xử lý đăng xuất
     const handleLogout = async () => {
+        // Gửi yêu cầu đăng xuất
         const result = await logout();
-        if (result.message === "Đăng xuất thành công.") {
-            toast.success("Logout successfully!");
+        if (result.success) {
+            // Hiển thị thông báo thành công
+            toast.success(result.message);
             setAuthStatus({ isAuthenticated: false });
             navigate("/");
+            window.location.reload();
         } else {
+            // Hiển thị thông báo lỗi
             toast.error(result.message);
         }
     };
