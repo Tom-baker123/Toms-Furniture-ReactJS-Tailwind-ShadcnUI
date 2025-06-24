@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
 const RegisterForm = () => {
+    // Trạng thái để kiểm soát khi đang gửi form
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { handleRegister, switchForm } = useAuth();
 
+    // Sử dụng react-hook-form để quản lý form
     const {
         register,
         handleSubmit,
@@ -18,6 +20,7 @@ const RegisterForm = () => {
 
     const password = watch("password");
 
+    // Xử lý submit form
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         await handleRegister(data);
@@ -28,7 +31,7 @@ const RegisterForm = () => {
         <div className="my-5 flex flex-col">
             {/* [1.] Tiêu đề */}
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Register</h2>
-            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">If you have an account with us, please log in.</p>
+            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">Create your account to start shopping.</p>
 
             {/* [2.] Form đăng ký */}
             <form
@@ -106,8 +109,8 @@ const RegisterForm = () => {
                         {...register("gender", { required: "Please select a gender" })}
                     >
                         <option value="">Select Gender</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
+                        <option value="true">Male</option>
+                        <option value="false">Female</option>
                     </select>
                     {errors.gender && <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>}
                 </div>
@@ -140,6 +143,7 @@ const RegisterForm = () => {
                     />
                 </div>
 
+                {/* Nút submit */}
                 <ButtonHovCT
                     className={cn("mt-8", isSubmitting ? "!border-gray-300 !bg-gray-300" : "!border-black")}
                     bgColor="bg-black"

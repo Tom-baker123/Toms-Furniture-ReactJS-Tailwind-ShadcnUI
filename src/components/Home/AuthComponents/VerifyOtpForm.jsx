@@ -1,3 +1,4 @@
+// src/components/Home/AuthComponents/VerifyOtpForm.jsx
 import React, { useEffect, useRef, useState } from "react";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import { toast } from "react-hot-toast";
@@ -5,10 +6,14 @@ import { useAuth } from "@/context/AuthContext";
 
 export const VerifyOtpForm = ({ email, context = "register" }) => {
     const OTP_LENGTH = 6;
+    // Trạng thái để quản lý các chữ số OTP
     const [otpDigits, setOtpDigits] = useState(Array(OTP_LENGTH).fill(""));
+    // Trạng thái để kiểm soát khi đang xác thực
     const [isVerifying, setIsVerifying] = useState(false);
+    // Trạng thái để kiểm soát khi đang gửi lại OTP
     const [isResending, setIsResending] = useState(false);
-    const [timer, setTimer] = useState(0); // 🛠 Ban đầu không đếm ngược
+    // const [timer, setTimer] = useState(0); // 🛠 Ban đầu không đếm ngược
+    const [timer, setTimer] = useState(60); // 🛠 Ban đầu không đếm ngược
     const inputsRef = useRef([]);
     const { handleVerifyOtp, handleResendOtp } = useAuth();
 
@@ -24,7 +29,7 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
     // ✍️ Nhập từng số
     const handleChange = (e, index) => {
         const value = e.target.value;
-        if (!/^\d*$/.test(value)) return; // Chỉ cho số
+        if (!/^\d*$/.test(value)) return; // Chỉ cho phép số
 
         const newOtp = [...otpDigits];
         newOtp[index] = value.slice(-1);
@@ -77,18 +82,23 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
         if (timer > 0) return;
 
         setIsResending(true);
-        await handleResendOtp(email);
+        const result = await handleResendOtp(email);
+        if (result?.success) {
+            setOtpDigits(Array(OTP_LENGTH).fill(""));
+            setTimer(60);
+        }
         setIsResending(false);
-        setOtpDigits(Array(OTP_LENGTH).fill(""));
-        setTimer(60);
     };
 
     return (
         <div className="my-6 flex flex-col items-center">
+            {/* Tiêu đề */}
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Verify OTP</h2>
             <p className="text-md mt-2 text-center font-semibold text-gray-500">
                 Enter the 6-digit OTP sent to <span className="text-black">{email}</span>
             </p>
+
+            {/* Form nhập OTP */}
             <form
                 className="mt-6 flex flex-col items-center"
                 onSubmit={handleVerify}

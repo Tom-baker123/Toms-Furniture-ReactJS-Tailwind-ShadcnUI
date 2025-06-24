@@ -13,7 +13,7 @@ const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
 
 
 //#region [Global API🌐]-----------------------------------------------
-//[1.] Kiểm tra trạng thái đăng nhập của người dùng
+// [1.] Kiểm tra trạng thái đăng nhập của người dùng
 export const checkAuthStatus = async () => {
     try {
         // Gửi yêu cầu đến API để kiểm tra trạng thái đăng nhập + cookie
@@ -24,19 +24,28 @@ export const checkAuthStatus = async () => {
         console.log("Auth status response:", response);
         // Kiểm tra phản hồi từ server
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Failed to check auth status: ${response.status} ${errorText}`);
+            const errorData = await response.json();
+            throw new Error(errorData.message || `Failed to check auth status: ${response.status}`);
         }
 
         const data = await response.json();
         console.log("Auth status data:", data);
-        return data;
+        // Chuyển đổi dữ liệu từ API sang định dạng phù hợp
+        return {
+            isAuthenticated: data.isAuthenticated,
+            userName: data.userName || null,
+            email: data.email || null,
+            role: data.role || null,
+            message: data.message || null,
+            redirectUrl: data.redirectUrl || "/"
+        };
     } catch (error) {
-        console.log("Error checking authentication status: ", error);
-        return { isAuthenticated: false, message: "Can't check authentication status!" };
+        // Ghi log lỗi và trả về trạng thái mặc định
+        console.error("Lỗi khi kiểm tra trạng thái xác thực:", error);
+        return { isAuthenticated: false, message: "Unable to check authentication status." };
     }
-}
-//[2.] Đăng nhập.
+};
+// [2.] Đăng nhập
 export const login = async (email, password) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Auth/login`, {
@@ -46,31 +55,56 @@ export const login = async (email, password) => {
             body: JSON.stringify({ email, password }),
         });
 
-        return await response.json();
-    }
-    catch (error) {
-        console.log("Error during Login:", error);
-        return { message: "Error Logging" };
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Login failed.");
+        }
+
+        // Trả về dữ liệu từ API
+        return {
+            success: data.success || false,
+            message: data.message || "Login successful.",
+            userName: data.userName,
+            role: data.role,
+            redirectUrl: data.redirectUrl
+        };
+    } catch (error) {
+        console.error("Lỗi khi đăng nhập:", error);
+        return { success: false, message: error.message || "An error occurred during login." };
     }
 };
-//[3.] Đăng ký.
+// [3.] Đăng ký
 export const register = async (userData) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify(userData),
+            body: JSON.stringify({
+                userName: userData.userName,
+                email: userData.email,
+                password: userData.password,
+                gender: userData.gender === "true", // Chuyển đổi string thành boolean
+                phoneNumber: userData.phoneNumber || null,
+                userAddress: userData.userAddress || null
+            }),
         });
 
-        return await response.json();
-    }
-    catch (error) {
-        console.log("Error during Login:", error);
-        return { message: "Error when Register!" };
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Registration failed.");
+        }
+
+        return {
+            success: data.success || false,
+            message: data.message || "Registration successful."
+        };
+    } catch (error) {
+        console.error("Lỗi khi đăng ký:", error);
+        return { success: false, message: error.message || "An error occurred during registration." };
     }
 };
-//[4.] Xác thực OTP.
+// [4.] Xác thực OTP
 export const verifyOtp = async (email, otp) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Auth/verify-otp`, {
@@ -80,14 +114,21 @@ export const verifyOtp = async (email, otp) => {
             body: JSON.stringify({ email, otp }),
         });
 
-        return await response.json();
-    }
-    catch (error) {
-        console.log("Error during OTP verification:", error);
-        return { message: "Error when verification OTP!" };
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "OTP verification failed.");
+        }
+
+        return {
+            success: data.success || false,
+            message: data.message || "OTP verification successful."
+        };
+    } catch (error) {
+        console.error("Lỗi khi xác thực OTP:", error);
+        return { success: false, message: error.message || "An error occurred during OTP verification." };
     }
 };
-//[5.] Gửi lại mã OTP.
+// [5.] Gửi lại mã OTP
 export const resendOtp = async (email) => {
     try {
         const response = await fetch(`${API_BASE_URL}/Auth/resend-otp`, {
@@ -97,14 +138,21 @@ export const resendOtp = async (email) => {
             body: JSON.stringify({ email }),
         });
 
-        return await response.json();
-    }
-    catch (error) {
-        console.log("Error during OTP resend:", error);
-        return { message: "Error when resending OTP!" };
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "OTP resend failed.");
+        }
+
+        return {
+            success: data.success || false,
+            message: data.message || "New OTP sent successfully."
+        };
+    } catch (error) {
+        console.error("Lỗi khi gửi lại OTP:", error);
+        return { success: false, message: error.message || "An error occurred during OTP resend." };
     }
 };
-//[6.] Đăng xuất 
+// [6.] Đăng xuất
 export const logout = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/Auth/logout`, {
@@ -112,11 +160,18 @@ export const logout = async () => {
             credentials: "include",
         });
 
-        return await response.json();
-    }
-    catch (error) {
-        console.log("Error during logout:", error);
-        return { message: "Error when logout!" };
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Logout failed.");
+        }
+
+        return {
+            success: data.success || false,
+            message: data.message || "Logout successful."
+        };
+    } catch (error) {
+        console.error("Lỗi khi đăng xuất:", error);
+        return { success: false, message: error.message || "An error occurred during logout." };
     }
 };
 // [7.] Yêu cầu quên mật khẩu
@@ -128,10 +183,19 @@ export const forgotPassword = async (email) => {
             credentials: "include",
             body: JSON.stringify({ email }),
         });
-        return await response.json();
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Forgot password request failed.");
+        }
+
+        return {
+            success: data.success || false,
+            message: data.message || "OTP sent successfully."
+        };
     } catch (error) {
-        console.log("Error during forgot password:", error);
-        return { message: "Error when requesting forgot password!" };
+        console.error("Lỗi khi yêu cầu quên mật khẩu:", error);
+        return { success: false, message: error.message || "An error occurred during forgot password request." };
     }
 };
 // [8.] Đặt lại mật khẩu
@@ -143,10 +207,19 @@ export const resetPassword = async (email, newPassword) => {
             credentials: "include",
             body: JSON.stringify({ email, newPassword }),
         });
-        return await response.json();
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Password reset failed.");
+        }
+
+        return {
+            success: data.success || false,
+            message: data.message || "Password reset successfully."
+        };
     } catch (error) {
-        console.log("Error during reset password:", error);
-        return { message: "Error when resetting password!" };
+        console.error("Lỗi khi đặt lại mật khẩu:", error);
+        return { success: false, message: error.message || "An error occurred during password reset." };
     }
 };
 //#endregion [Global API🌐 - End]--------------------------------------

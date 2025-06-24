@@ -6,9 +6,11 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
 const ResetPasswordForm = ({ email }) => {
+    // Trạng thái để kiểm soát khi đang gửi form
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { handleResetPassword, switchForm } = useAuth();
 
+    // Sử dụng react-hook-form để quản lý form
     const {
         register,
         handleSubmit,
@@ -18,6 +20,7 @@ const ResetPasswordForm = ({ email }) => {
 
     const password = watch("newPassword"); // Theo dõi giá trị của newPassword
 
+    // Xử lý submit form
     const onSubmit = async (data) => {
         setIsSubmitting(true);
         await handleResetPassword(email, data.newPassword);
@@ -26,14 +29,18 @@ const ResetPasswordForm = ({ email }) => {
 
     return (
         <div className="my-5 flex flex-col">
+            {/* Tiêu đề */}
             <h2 className="text-center text-2xl font-bold lg:text-3xl">Reset Password</h2>
             <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">
                 Enter your new password for <span className="text-black">{email}</span>
             </p>
+
+            {/* Form đặt lại mật khẩu */}
             <form
                 className="mt-6 flex flex-col"
                 onSubmit={handleSubmit(onSubmit)}
             >
+                {/* Trường New Password */}
                 <div className="Form-Field">
                     <label
                         htmlFor="newPassword"
@@ -56,6 +63,8 @@ const ResetPasswordForm = ({ email }) => {
                     />
                     {errors.newPassword && <p className="mt-1 text-sm text-red-500">{errors.newPassword.message}</p>}
                 </div>
+
+                {/* Trường Confirm Password */}
                 <div className="Form-Field">
                     <label
                         htmlFor="confirmPassword"
@@ -75,6 +84,8 @@ const ResetPasswordForm = ({ email }) => {
                     />
                     {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>}
                 </div>
+
+                {/* Nút submit */}
                 <ButtonHovCT
                     className={cn("mt-6", isSubmitting ? "!border-gray-300 !bg-gray-300" : "!border-black")}
                     bgColor="bg-black"
@@ -86,6 +97,8 @@ const ResetPasswordForm = ({ email }) => {
                     {isSubmitting ? "Resetting..." : "Reset Password"}
                 </ButtonHovCT>
             </form>
+
+            {/* Liên kết đến form đăng nhập */}
             <span className="mt-2 flex items-center justify-center gap-1 font-semibold">
                 <span className="text-gray-500">Back to</span>
                 <Link
