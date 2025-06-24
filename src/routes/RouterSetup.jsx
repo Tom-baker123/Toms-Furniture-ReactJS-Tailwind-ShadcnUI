@@ -30,6 +30,7 @@ import {
     MaterialManagement,
     UnitManagement, // Thêm mới
     UserManagement,
+    PromotionTypeManagement,
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
@@ -50,12 +51,16 @@ import {
     getCountryById,
     getMaterialById,
     getProductById,
-    getProductList,
+    getAllProducts,
     getSizeById,
     getSupplierById,
     getUnitById,
     getAllUsers, // Thêm import
-    getUserById, // Thêm import
+    getUserById,
+    getAllPromotions,
+    getPromotionById, // Thêm import
+    getAllPromotionTypes, // Thêm import
+    getPromotionTypeById, // Thêm import
 } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
@@ -68,6 +73,8 @@ import ColorForm from "@/components/Admin/Form/ColorForm";
 import MaterialForm from "@/components/Admin/Form/MaterialForm";
 import UnitForm from "@/components/Admin/Form/UnitForm";
 import UserForm from "@/components/Admin/Form/UserForm";
+import PromotionForm from "@/components/Admin/Form/PromotionForm";
+import PromotionTypeForm from "@/components/Admin/Form/PromotionTypeForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -150,7 +157,7 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <ProductManagement />,
-                        loader: async () => await getProductList(),
+                        loader: async () => await getAllProducts(),
                     },
                     {
                         path: "New_Product",
@@ -184,7 +191,7 @@ const router = createBrowserRouter([
                 ],
             },
             // [4.]
-            { path: "inventory", element: <InventoryManagement />, loader: async () => await getProductList() },
+            { path: "inventory", element: <InventoryManagement />, loader: async () => await getAllProducts() },
             // [5.] Vật liệu
             {
                 path: "materials",
@@ -312,7 +319,7 @@ const router = createBrowserRouter([
             { path: "draft_orders", element: <DraftOrders /> },
             // [14.]
             { path: "analyticsReport", element: <AnalyticsReport /> },
-            // [15.]
+            // [15.] Tài khoản
             {
                 path: "users",
                 children: [
@@ -332,8 +339,40 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            // [16.]
-            { path: "promotion", element: <PromotionManagement /> },
+            // [16.] Giảm giá
+            {
+                path: "promotions",
+                children: [
+                    {
+                        index: true,
+                        element: <PromotionManagement />,
+                        loader: async () => await getAllPromotions(),
+                    },
+                    { path: "new_promotion", element: <PromotionForm /> },
+                    {
+                        path: "edit_promotion/:id",
+                        element: <PromotionForm />,
+                        loader: async ({ params }) => await getPromotionById(params.id),
+                    },
+                ],
+            },
+            // [17.] Loại giảm giá
+            {
+                path: "promotiontypes",
+                children: [
+                    {
+                        index: true,
+                        element: <PromotionTypeManagement />,
+                        loader: async () => await getAllPromotionTypes(),
+                    },
+                    { path: "new_promotiontype", element: <PromotionTypeForm /> },
+                    {
+                        path: "edit_promotiontype/:id",
+                        element: <PromotionTypeForm />,
+                        loader: async ({ params }) => await getPromotionTypeById(params.id),
+                    },
+                ],
+            },
 
             // Không tìm thấy trang phù hợp
             { path: "*", element: <PageNotFound /> },
