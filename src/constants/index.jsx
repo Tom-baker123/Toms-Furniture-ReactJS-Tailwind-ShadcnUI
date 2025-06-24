@@ -18,6 +18,8 @@ import {
     Users,
     ScrollText,
     Globe,
+    TicketPercent,
+    DiamondPercent,
 } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
@@ -98,7 +100,24 @@ export const navbarLinks = [
         ],
     },
 
-    // Trang quản lý khách hàng
+    // Trang quản lý Giảm giá
+    {
+        title: "Promotions",
+        links: [
+            {
+                label: "Promotions",
+                icon: TicketPercent,
+                path: "/admin/promotions",
+            },
+            {
+                label: "Discount method",
+                icon: DiamondPercent,
+                path: "/admin/promotiontypes",
+            },
+        ],
+    },
+
+    // Trang quản lý thuộc tính biến thể
     {
         title: "Product Attribute",
         links: [

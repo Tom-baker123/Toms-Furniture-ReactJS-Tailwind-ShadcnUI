@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from "react";
 import { PencilLine, Trash, ChevronUp, ChevronDown } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { deletePromotion } from "@/api/api";
+import { deletePromotionType } from "@/api/api";
 import toast from "react-hot-toast";
 import FormatDatetime from "@/hooks/FormatDatetime";
 
-const PromotionManagement = () => {
-    const promotions = useLoaderData();
+const PromotionTypeManagement = () => {
+    const promotionTypes = useLoaderData();
     const navigate = useNavigate();
 
     // State để quản lý sắp xếp
@@ -16,13 +16,13 @@ const PromotionManagement = () => {
     });
 
     const handleDelete = async (id) => {
-        if (window.confirm("Bạn có chắc chắn muốn xóa khuyến mãi này?")) {
+        if (window.confirm("Bạn có chắc chắn muốn xóa loại khuyến mãi này?")) {
             try {
-                await deletePromotion(id);
-                toast.success("Xóa khuyến mãi thành công!");
+                await deletePromotionType(id);
+                toast.success("Xóa loại khuyến mãi thành công!");
                 navigate(0); // Reload trang
             } catch (error) {
-                toast.error(`Lỗi khi xóa khuyến mãi: ${error.message}`);
+                toast.error(`Lỗi khi xóa loại khuyến mãi: ${error.message}`);
             }
         }
     };
@@ -37,23 +37,21 @@ const PromotionManagement = () => {
     };
 
     // Hàm sắp xếp dữ liệu
-    const sortedPromotions = useMemo(() => {
-        if (!sortConfig.key) return promotions;
+    const sortedPromotionTypes = useMemo(() => {
+        if (!sortConfig.key) return promotionTypes;
 
-        return [...promotions].sort((a, b) => {
+        return [...promotionTypes].sort((a, b) => {
             let aVal = a[sortConfig.key];
             let bVal = b[sortConfig.key];
 
             switch (sortConfig.key) {
                 case "id":
-                case "discountValue":
-                case "orderMinimum":
-                case "maximumDiscountAmount":
-                case "couponUsage":
+                case "promotionUnit":
                     aVal = Number(aVal);
                     bVal = Number(bVal);
                     break;
-                case "promotionCode":
+                case "promotionTypeName":
+                case "description":
                     aVal = String(aVal).toLowerCase();
                     bVal = String(bVal).toLowerCase();
                     break;
@@ -61,8 +59,6 @@ const PromotionManagement = () => {
                     aVal = aVal ? 1 : 0;
                     bVal = bVal ? 1 : 0;
                     break;
-                case "startDate":
-                case "endDate":
                 case "createdDate":
                 case "updatedDate":
                     aVal = new Date(aVal);
@@ -81,7 +77,7 @@ const PromotionManagement = () => {
             }
             return 0;
         });
-    }, [promotions, sortConfig]);
+    }, [promotionTypes, sortConfig]);
 
     // Component cho header có thể sắp xếp
     const SortableHeader = ({ children, sortKey, className = "" }) => {
@@ -113,17 +109,17 @@ const PromotionManagement = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <div className="flex justify-between">
-                <div className="title">Quản lý khuyến mãi</div>
+                <div className="title">Quản lý loại khuyến mãi</div>
                 <button
                     className="rounded-lg bg-blue-600 px-4 py-2 text-white"
-                    onClick={() => navigate("/admin/promotions/new_promotion")}
+                    onClick={() => navigate("/admin/promotiontypes/new_promotiontype")}
                 >
-                    Thêm khuyến mãi
+                    Thêm loại khuyến mãi
                 </button>
             </div>
             <div className="card">
                 <div className="card-header">
-                    <div className="card-title">Tất cả khuyến mãi</div>
+                    <div className="card-title">Tất cả loại khuyến mãi</div>
                     {sortConfig.key && (
                         <div className="text-sm text-gray-500">
                             Sắp xếp theo {sortConfig.key} ({sortConfig.direction === "asc" ? "tăng dần" : "giảm dần"})
@@ -135,14 +131,10 @@ const PromotionManagement = () => {
                         <table className="table">
                             <thead className="table-header">
                                 <tr className="table-row">
-                                    <SortableHeader sortKey="id">#</SortableHeader>
-                                    <SortableHeader sortKey="promotionCode">Mã khuyến mãi</SortableHeader>
-                                    <SortableHeader sortKey="discountValue">Giá trị giảm</SortableHeader>
-                                    <SortableHeader sortKey="orderMinimum">Đơn hàng tối thiểu</SortableHeader>
-                                    <SortableHeader sortKey="maximumDiscountAmount">Giảm tối đa</SortableHeader>
-                                    <SortableHeader sortKey="startDate">Ngày bắt đầu</SortableHeader>
-                                    <SortableHeader sortKey="endDate">Ngày kết thúc</SortableHeader>
-                                    <SortableHeader sortKey="couponUsage">Số lần sử dụng</SortableHeader>
+                                    <SortableHeader sortKey="id">ID</SortableHeader>
+                                    <SortableHeader sortKey="promotionTypeName">Tên loại</SortableHeader>
+                                    <SortableHeader sortKey="description">Mô tả</SortableHeader>
+                                    <SortableHeader sortKey="promotionUnit">Đơn vị</SortableHeader>
                                     <SortableHeader sortKey="isActive">Trạng thái</SortableHeader>
                                     <SortableHeader sortKey="createdDate">Ngày tạo</SortableHeader>
                                     <SortableHeader sortKey="updatedDate">Ngày cập nhật</SortableHeader>
@@ -150,18 +142,14 @@ const PromotionManagement = () => {
                                 </tr>
                             </thead>
                             <tbody className="table-body">
-                                {sortedPromotions.map((promotion) => (
-                                    <tr key={promotion.id} className="table-row">
-                                        <td className="table-cell">{promotion.id}</td>
-                                        <td className="table-cell">{promotion.promotionCode}</td>
-                                        <td className="table-cell">{promotion.discountValue}</td>
-                                        <td className="table-cell">{promotion.orderMinimum}</td>
-                                        <td className="table-cell">{promotion.maximumDiscountAmount}</td>
-                                        <td className="table-cell">{FormatDatetime(promotion.startDate)}</td>
-                                        <td className="table-cell">{FormatDatetime(promotion.endDate)}</td>
-                                        <td className="table-cell">{promotion.couponUsage}</td>
+                                {sortedPromotionTypes.map((type) => (
+                                    <tr key={type.id} className="table-row">
+                                        <td className="table-cell">{type.id}</td>
+                                        <td className="table-cell">{type.promotionTypeName}</td>
+                                        <td className="table-cell">{type.description || "N/A"}</td>
+                                        <td className="table-cell">{type.promotionUnit === 0 ? "Phần trăm" : "Số tiền cố định"}</td>
                                         <td className="table-cell">
-                                            {promotion.isActive ? (
+                                            {type.isActive ? (
                                                 <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">
                                                     Hoạt động
                                                 </div>
@@ -171,21 +159,19 @@ const PromotionManagement = () => {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="table-cell">{FormatDatetime(promotion.createdDate) || "N/A"}</td>
-                                        <td className="table-cell">
-                                            {FormatDatetime(promotion.updatedDate) || "N/A"}
-                                        </td>
+                                        <td className="table-cell">{FormatDatetime(type.createdDate) || "N/A"}</td>
+                                        <td className="table-cell">{FormatDatetime(type.updatedDate) || "N/A"}</td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button
                                                     className="cursor-pointer text-blue-500 dark:text-blue-600"
-                                                    onClick={() => navigate(`/admin/promotions/edit_promotion/${promotion.id}`)}
+                                                    onClick={() => navigate(`/admin/promotiontypes/edit_promotiontype/${type.id}`)}
                                                 >
                                                     <PencilLine size={20} />
                                                 </button>
                                                 <button
                                                     className="cursor-pointer text-red-500"
-                                                    onClick={() => handleDelete(promotion.id)}
+                                                    onClick={() => handleDelete(type.id)}
                                                 >
                                                     <Trash size={20} />
                                                 </button>
@@ -202,4 +188,4 @@ const PromotionManagement = () => {
     );
 };
 
-export default PromotionManagement;
+export default PromotionTypeManagement;

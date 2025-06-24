@@ -446,7 +446,7 @@ export const deleteCategory = async (id) => {
 // [2.1] API lấy tất cả danh sách sản phẩm
 // - Gọi API GET /api/Product để lấy toàn bộ danh sách sản phẩm
 // - Trả về danh sách sản phẩm dưới dạng JSON
-export const getProductList = async () => {
+export const getAllProducts = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/Product`, {
             method: "GET",
@@ -468,7 +468,8 @@ export const getProductList = async () => {
             throw new Error(errorMessage);
         }
 
-        return await response.json();
+        var data = await response.json();
+        return data?.items;
     } catch (error) {
         console.error("Error fetching products:", error.message);
         throw error;
@@ -2028,6 +2029,339 @@ export const deleteUnit = async (id) => {
         throw error;
     }
 };
+
+
+// ------------------------------------------------------------------
+// [11.1] API lấy tất cả danh sách khuyến mãi
+export const getAllPromotions = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Promotion`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch promotions';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching promotions: ${error.message}`);
+        throw error;
+    }
+};
+
+// [11.2] API lấy khuyến mãi theo ID
+export const getPromotionById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Promotion/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch promotion with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching promotion with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [11.3] API thêm khuyến mãi
+export const createPromotion = async (promotionData) => {
+    try {
+        const formData = new FormData();
+        formData.append("PromotionCode", promotionData.PromotionCode);
+        formData.append("DiscountValue", promotionData.DiscountValue);
+        formData.append("OrderMinimum", promotionData.OrderMinimum);
+        formData.append("MaximumDiscountAmount", promotionData.MaximumDiscountAmount);
+        formData.append("StartDate", promotionData.StartDate);
+        formData.append("EndDate", promotionData.EndDate);
+        formData.append("CouponUsage", promotionData.CouponUsage);
+        if (promotionData.PromotionTypeId) {
+            formData.append("PromotionTypeId", promotionData.PromotionTypeId);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Promotion`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create promotion';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating promotion:", error.message);
+        throw error;
+    }
+};
+
+// [11.4] API cập nhật khuyến mãi
+export const updatePromotion = async (promotionData) => {
+    try {
+        const formData = new FormData();
+        formData.append("Id", promotionData.Id);
+        formData.append("PromotionCode", promotionData.PromotionCode);
+        formData.append("DiscountValue", promotionData.DiscountValue);
+        formData.append("OrderMinimum", promotionData.OrderMinimum);
+        formData.append("MaximumDiscountAmount", promotionData.MaximumDiscountAmount);
+        formData.append("StartDate", promotionData.StartDate);
+        formData.append("EndDate", promotionData.EndDate);
+        formData.append("CouponUsage", promotionData.CouponUsage);
+        formData.append("IsActive", promotionData.IsActive);
+        if (promotionData.PromotionTypeId) {
+            formData.append("PromotionTypeId", promotionData.PromotionTypeId);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Promotion`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update promotion';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating promotion:", error.message);
+        throw error;
+    }
+};
+
+// [11.5] API xóa khuyến mãi
+export const deletePromotion = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Promotion/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete promotion with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting promotion:", error.message);
+        throw error;
+    }
+};
+
+
+// ------------------------------------------------------------------
+// [2.1] API lấy tất cả danh sách loại khuyến mãi
+export const getAllPromotionTypes = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/PromotionType`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to fetch promotion types';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching promotion types: ${error.message}`);
+        throw error;
+    }
+};
+
+// [2.2] API lấy loại khuyến mãi theo ID
+export const getPromotionTypeById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/PromotionType/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to fetch promotion type with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching promotion type with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [2.3] API thêm loại khuyến mãi
+export const createPromotionType = async (promotionTypeData) => {
+    try {
+        const formData = new FormData();
+        formData.append("PromotionTypeName", promotionTypeData.PromotionTypeName);
+        formData.append("PromotionUnit", promotionTypeData.PromotionUnit);
+        if (promotionTypeData.Description) {
+            formData.append("Description", promotionTypeData.Description);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/PromotionType`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to create promotion type';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating promotion type:", error.message);
+        throw error;
+    }
+};
+
+// [2.4] API cập nhật loại khuyến mãi
+export const updatePromotionType = async (promotionTypeData) => {
+    try {
+        const formData = new FormData();
+        formData.append("Id", promotionTypeData.Id);
+        formData.append("PromotionTypeName", promotionTypeData.PromotionTypeName);
+        formData.append("PromotionUnit", promotionTypeData.PromotionUnit);
+        formData.append("IsActive", promotionTypeData.IsActive);
+        if (promotionTypeData.Description) {
+            formData.append("Description", promotionTypeData.Description);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/PromotionType`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = 'Failed to update promotion type';
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating promotion type:", error.message);
+        throw error;
+    }
+};
+
+// [2.5] API xóa loại khuyến mãi
+export const deletePromotionType = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/PromotionType/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get('content-type');
+            let errorMessage = `Failed to delete promotion type with ID ${id}`;
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting promotion type:", error.message);
+        throw error;
+    }
+};
+
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
 
 
