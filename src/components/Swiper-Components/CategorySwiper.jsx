@@ -1,21 +1,39 @@
 // CategorySwiper.jsx
-import { useRef } from "react"; // Hook useRef để giữ tham chiếu đến button
+import { useContext, useRef } from "react"; // Hook useRef để giữ tham chiếu đến button
 import { Swiper, SwiperSlide } from "swiper/react"; // Component Swiper & SwiperSlide
 import { Navigation, Pagination } from "swiper/modules"; // Module cho Navigation và Pagination
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Icon mũi tên từ Lucide
 import "swiper/css"; // Import CSS cơ bản của Swiper
 import "swiper/css/navigation"; // Import CSS cho Navigation
 import "swiper/css/pagination"; // Import CSS cho Pagination
-import { categoryList } from "@/assets/FakeData";
+// import { categoryList } from "@/assets/FakeData";
 import { Link } from "react-router-dom";
+// import useApi from "@/hooks/useApi";
+import { getAllCategories } from "@/api/api";
+import { CategoryContext } from "@/context/CategoryContext";
 
 const CategorySwiper = () => {
     // Tạo ref cho nút prev và next
     const prevRef = useRef(null);
     const nextRef = useRef(null);
 
+    // Lấy dữ liệu từ Context
+    const { categories, loading, error } = useContext(CategoryContext);
+
+    if (loading) {
+        return <div className="py-5 text-center">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="py-5 text-center text-red-500">Error: {error}</div>;
+    }
+
+    if (!categories || categories.length === 0) {
+        return <div className="py-5 text-center">No categories available</div>;
+    }
+
     return (
-        <div className="relative mx-auto block overflow-hidden px-[15px] py-5 2xl:max-w-7xl">
+        <div className="group relative mx-auto block overflow-hidden px-[15px] py-5 2xl:max-w-7xl">
             {/* Container tổng cho Swiper */}
             <Swiper
                 modules={[Navigation, Pagination]} // Kích hoạt các modules cần dùng
@@ -25,10 +43,11 @@ const CategorySwiper = () => {
                 slideToClickedSlide={true} // 👈 Click vào slide sẽ tự lướt tới nó
                 // pagination={{ type: 'progressbar' }}// 👈 Thanh progressbar dưới swiper
                 breakpoints={{
-                    0: { slidesPerView: 3 }, // 👈 Dưới 768px hiển thị 5 card
+                    0: { slidesPerView: 3 }, // 👈 Dưới 768px hiển thị 3 card
+                    640: { slidesPerView: 5 }, // 👈 Dưới 768px hiển thị 3 card
                     768: { slidesPerView: 6 }, // 👈 Từ 768px trở lên dùng auto
                     1024: { slidesPerView: 8 }, // 👈 Từ 768px trở lên dùng auto
-                    1280: { slidesPerView: 10 }, // 👈 Từ 768px trở lên dùng auto
+                    1280: { slidesPerView: 9 }, // 👈 Từ 768px trở lên dùng auto
                 }}
                 navigation={{
                     // 👈 Gán button điều hướng custom
@@ -47,7 +66,7 @@ const CategorySwiper = () => {
                     });
                 }}
             >
-                {categoryList.map((t, index) => (
+                {categories.map((category, index) => (
                     <SwiperSlide
                         key={index}
                         className="flex"
@@ -56,15 +75,15 @@ const CategorySwiper = () => {
                     >
                         <span className="flex h-full w-full shrink-0 items-start justify-center">
                             <Link
-                                to={t.linkWebsite}
+                                to={`/products?category=${category.id}`}
                                 className="relative flex flex-col items-center justify-start text-center decoration-0"
                             >
                                 {/* Logo Category */}
                                 <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-transparent select-none max-md:w-15">
                                     <img
                                         className="mx-auto block rounded-full object-cover max-sm:w-20"
-                                        src={`/img/category-menu/${t.url}`}
-                                        alt=""
+                                        src={category.imageUrl || `/img/category-menu/default.jpg`}
+                                        alt={category.name}
                                         width={800}
                                         height={800}
                                     />
@@ -73,7 +92,7 @@ const CategorySwiper = () => {
                                 <div className="pointer-events-none w-full pt-3">
                                     <h3 className="relative inline-block flex-1 px-4 text-base text-[15px]">
                                         <span>
-                                            <span className="whitespace-nowrap">{t.name}</span>
+                                            <span className="whitespace-nowrap">{category.categoryName}</span>
                                             <svg
                                                 className="icon-custom icon-caret-right rtl-flip-x icon--medium icon--thick hidden md:block"
                                                 viewBox="0 0 20 20"
@@ -86,7 +105,7 @@ const CategorySwiper = () => {
                                                     strokeWidth="2"
                                                     strokeLinecap="round"
                                                     strokeLinejoin="round"
-                                                ></path>
+                                                />
                                             </svg>
                                         </span>
                                     </h3>
@@ -97,19 +116,29 @@ const CategorySwiper = () => {
                 ))}
             </Swiper>
             {/* Nút Prev (Trái) */}
-            <button
-                ref={prevRef}
-                className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-full border border-gray-200 bg-white p-2 transition select-none"
-            >
-                <ChevronLeft className="h-3 w-3 text-black" /> {/* Icon trái màu trắng */}
-            </button>
+            <div className="absolute top-1/2 left-0 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <button
+                    ref={prevRef}
+                    className="group/btn relative cursor-pointer overflow-hidden rounded-full border border-gray-200 bg-white p-2 transition-all duration-300 ease-in-out select-none"
+                >
+                    {/* Lớp nền slide màu đen */}
+                    <div className="absolute inset-0 -translate-x-full transform rounded-full bg-black transition-transform duration-300 ease-in-out group-hover/btn:translate-x-0"></div>
+                    <ChevronLeft className="relative z-10 h-3 w-3 transition-colors duration-300 group-hover/btn:text-white" />{" "}
+                    {/* Icon trái màu trắng */}
+                </button>
+            </div>
             {/* Nút Next (Phải) */}
-            <button
-                ref={nextRef}
-                className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-full border border-gray-200 bg-white p-2 transition select-none"
-            >
-                <ChevronRight className="h-3 w-3 text-black" /> {/* Icon phải màu trắng */}
-            </button>
+            <div className="absolute top-1/2 right-0 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <button
+                    ref={nextRef}
+                    className="group/btn relative cursor-pointer overflow-hidden rounded-full border border-gray-200 bg-white p-2 transition-all duration-300 ease-in-out select-none"
+                >
+                    {/* Lớp nền slide màu đen */}
+                    <div className="absolute inset-0 -translate-x-full transform rounded-full bg-black transition-transform duration-300 ease-in-out group-hover/btn:translate-x-0"></div>
+                    <ChevronRight className="relative z-10 h-3 w-3 transition-colors duration-300 group-hover/btn:text-white" />{" "}
+                    {/* Icon phải màu trắng */}
+                </button>
+            </div>
         </div>
     );
 };
