@@ -105,12 +105,13 @@ const Header = ({ onOpenCartModal }) => {
                                             id="profile"
                                             className="cursor-pointer px-4 py-1 hover:bg-gray-100"
                                         >
-                                            <Link
-                                                to="/admin"
+                                            <a
+                                                href="/admin"
+                                                target="_blank"
                                                 className="hover:text-gray-600"
                                             >
                                                 Admin
-                                            </Link>
+                                            </a>
                                         </li>
                                     )}
 

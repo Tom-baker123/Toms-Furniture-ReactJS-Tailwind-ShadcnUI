@@ -33,6 +33,7 @@ export { default as SupplierManagement } from "./admin/SupplierManagement";
 export { default as UnitManagement } from "./admin/UnitManagement"
 export { default as UserManagement } from "./admin/UserManagement"
 export { default as PromotionTypeManagement } from "./admin/PromotionTypeManagement"
+export { default as WebsiteManagement } from "./admin/WebsiteManagement"
 // [ADMIN Page - END]------------------------------------------
 
 

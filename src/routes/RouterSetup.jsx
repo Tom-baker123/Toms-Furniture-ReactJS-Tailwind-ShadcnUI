@@ -31,6 +31,7 @@ import {
     UnitManagement, // Thêm mới
     UserManagement,
     PromotionTypeManagement,
+    WebsiteManagement,
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
@@ -75,6 +76,7 @@ import UnitForm from "@/components/Admin/Form/UnitForm";
 import UserForm from "@/components/Admin/Form/UserForm";
 import PromotionForm from "@/components/Admin/Form/PromotionForm";
 import PromotionTypeForm from "@/components/Admin/Form/PromotionTypeForm";
+import { storeInformationLoader } from "@/components/Admin/Form/StoreInformationForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -370,6 +372,17 @@ const router = createBrowserRouter([
                         path: "edit_promotiontype/:id",
                         element: <PromotionTypeForm />,
                         loader: async ({ params }) => await getPromotionTypeById(params.id),
+                    },
+                ],
+            },
+            // [18.] Thông tin cửa hàng
+            {
+                path: "store_information",
+                children: [
+                    {
+                        index: true,
+                        element: <WebsiteManagement />,
+                        loader: storeInformationLoader,
                     },
                 ],
             },

@@ -12,6 +12,29 @@ import { Link } from "react-router-dom";
 import { getAllCategories } from "@/api/api";
 import { CategoryContext } from "@/context/CategoryContext";
 
+// Component Loading Skeleton
+const CategorySkeleton = () => {
+    return (
+        <div className="relative mx-auto block overflow-hidden px-[15px] py-5 2xl:max-w-7xl">
+            <div className="flex space-x-4">
+                {/* Tạo 10 skeleton items để match với breakpoint lớn nhất */}
+                {Array.from({ length: 10 }).map((_, index) => (
+                    <div key={index} className="flex flex-col items-center justify-start text-center animate-pulse">
+                        {/* Logo Category Skeleton */}
+                        <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-gray-200 select-none max-md:w-15">
+                            <div className="mx-auto block rounded-full object-cover max-sm:w-20 aspect-square bg-gray-300"></div>
+                        </div>
+                        {/* Category Title Skeleton */}
+                        <div className="w-full pt-3">
+                            <div className="h-4 bg-gray-200 rounded mx-auto" style={{ width: '60px' }}></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const CategorySwiper = () => {
     // Tạo ref cho nút prev và next
     const prevRef = useRef(null);
@@ -21,7 +44,7 @@ const CategorySwiper = () => {
     const { categories, loading, error } = useContext(CategoryContext);
 
     if (loading) {
-        return <div className="py-5 text-center">Loading...</div>;
+        return <CategorySkeleton />; // Sử dụng skeleton thay vì text loading
     }
 
     if (error) {
@@ -29,7 +52,18 @@ const CategorySwiper = () => {
     }
 
     if (!categories || categories.length === 0) {
-        return <div className="py-5 text-center">No categories available</div>;
+        return (
+            <div className="py-5 text-center">
+                <img
+                    src="/img/sub-icon/Empty_List.png"
+                    alt=""
+                    width={120}
+                    className="mx-auto"
+                />
+                <span className="text-xl font-extrabold text-slate-500">NO RESULT FOUND</span>
+                <p className="text-sm font-semibold text-slate-500">Please try again later</p>
+            </div>
+        );
     }
 
     return (
