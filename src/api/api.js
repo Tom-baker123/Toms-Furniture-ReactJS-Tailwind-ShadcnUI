@@ -2276,7 +2276,7 @@ export const deletePromotion = async (id) => {
 
 
 // ------------------------------------------------------------------
-// [2.1] API lấy tất cả danh sách loại khuyến mãi
+// [12.1] API lấy tất cả danh sách loại khuyến mãi
 export const getAllPromotionTypes = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/PromotionType`, {
@@ -2306,7 +2306,7 @@ export const getAllPromotionTypes = async () => {
     }
 };
 
-// [2.2] API lấy loại khuyến mãi theo ID
+// [12.2] API lấy loại khuyến mãi theo ID
 export const getPromotionTypeById = async (id) => {
     try {
         const response = await fetch(`${API_BASE_URL}/PromotionType/${id}`, {
@@ -2336,7 +2336,7 @@ export const getPromotionTypeById = async (id) => {
     }
 };
 
-// [2.3] API thêm loại khuyến mãi
+// [12.3] API thêm loại khuyến mãi
 export const createPromotionType = async (promotionTypeData) => {
     try {
         const formData = new FormData();
@@ -2371,7 +2371,7 @@ export const createPromotionType = async (promotionTypeData) => {
     }
 };
 
-// [2.4] API cập nhật loại khuyến mãi
+// [12.4] API cập nhật loại khuyến mãi
 export const updatePromotionType = async (promotionTypeData) => {
     try {
         const formData = new FormData();
@@ -2408,7 +2408,7 @@ export const updatePromotionType = async (promotionTypeData) => {
     }
 };
 
-// [2.5] API xóa loại khuyến mãi
+// [12.5] API xóa loại khuyến mãi
 export const deletePromotionType = async (id) => {
     try {
         const response = await fetch(`${API_BASE_URL}/PromotionType/${id}`, {
@@ -2435,6 +2435,171 @@ export const deletePromotionType = async (id) => {
     }
 };
 
+
+// [13.1] API lấy tất cả thông tin cửa hàng
+export const getAllStoreInformations = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/StoreInformation`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include", // Gửi cookie xác thực
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Không thể lấy danh sách thông tin cửa hàng";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Lỗi khi lấy danh sách thông tin cửa hàng: ${error.message}`);
+        throw error;
+    }
+};
+
+// [13.2] API lấy thông tin cửa hàng theo ID
+export const getStoreInformationById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/StoreInformation/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Không thể lấy thông tin cửa hàng với ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Lỗi khi lấy thông tin cửa hàng với ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [13.3] API tạo mới thông tin cửa hàng
+export const createStoreInformation = async (storeData, logoFile) => {
+    try {
+        const formData = new FormData();
+        // Thêm các trường của storeData vào FormData
+        Object.keys(storeData).forEach((key) => {
+            if (storeData[key] !== null && storeData[key] !== undefined) {
+                formData.append(`storeInformationVModel.${key}`, storeData[key]);
+            }
+        });
+        if (logoFile) {
+            formData.append("logoFile", logoFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/StoreInformation`, {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Không thể tạo thông tin cửa hàng";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Lỗi khi tạo thông tin cửa hàng:", error.message);
+        throw error;
+    }
+};
+
+// [13.4] API cập nhật thông tin cửa hàng
+export const updateStoreInformation = async (storeData, logoFile) => {
+    try {
+        const formData = new FormData();
+        // Thêm các trường của storeData vào FormData
+        Object.keys(storeData).forEach((key) => {
+            if (storeData[key] !== null && storeData[key] !== undefined) {
+                formData.append(`storeInformationVModel.${key}`, storeData[key]);
+            }
+        });
+        if (logoFile) {
+            formData.append("logoFile", logoFile);
+        }
+
+        const response = await fetch(`${API_BASE_URL}/StoreInformation/${storeData.Id}`, {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Không thể cập nhật thông tin cửa hàng";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Lỗi khi cập nhật thông tin cửa hàng:", error.message);
+        throw error;
+    }
+};
+
+// [13.5] API xóa thông tin cửa hàng
+export const deleteStoreInformation = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/StoreInformation/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Không thể xóa thông tin cửa hàng với ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Lỗi khi xóa thông tin cửa hàng với ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
 
 

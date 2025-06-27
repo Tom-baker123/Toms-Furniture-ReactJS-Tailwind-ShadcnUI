@@ -20,6 +20,8 @@ import {
     Globe,
     TicketPercent,
     DiamondPercent,
+    Store,
+    StoreIcon,
 } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
@@ -155,6 +157,18 @@ export const navbarLinks = [
                 label: "Countries",
                 icon: Globe,
                 path: "/admin/countries",
+            },
+        ],
+    },
+
+    // Trang Quản lý thông tin website
+    {
+        title: "Website Config",
+        links: [
+            {
+                label: "Store Information",
+                icon: StoreIcon,
+                path: "/admin/store_information",
             },
         ],
     },
