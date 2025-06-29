@@ -9,7 +9,7 @@ const WebsiteManagement = () => {
     // Tab configuration - Chỉ giữ tab "Web Info"
     const tabs = [
         { id: "StoreInformationForm", label: "Store Information", icon: "" },
-        { id: "BannerForm", label: "Web Info", icon: "" },
+        { id: "BannerForm", label: "Banner", icon: "" },
     ];
 
     const contentComponents = {

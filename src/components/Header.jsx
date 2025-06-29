@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import showHeader from "../hooks/showHeader";
 import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
@@ -11,10 +11,12 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DropdownCT from "./tailwind-custom/DropdownCT";
 import { CartIconSvgCT, FindLocationSvgCT, UserIconSvgCT } from "@/assets/SVG/svg";
+import { APIContext } from "@/context/APIContext";
 
 const Header = ({ onOpenCartModal }) => {
     const { openModal } = useModal(); // Gọi hàm modal
-    const { authStatus, handleLogout } = useAuth();
+    const { authStatus, handleLogout } = useAuth(); // Kiểm tra trạng thái
+    const { storeInformation, loading, error } = useContext(APIContext); // Lấy thông tin cửa hàng
 
     const showHead = showHeader();
     // [1.] Xử lý scroll xuống và scroll lên đầu
@@ -60,10 +62,12 @@ const Header = ({ onOpenCartModal }) => {
                         >
                             <img
                                 className="flex w-5 sm:w-5 lg:w-12 xl:w-9"
-                                src="/img/main-logo/T-Logo.png"
+                                src={storeInformation?.logo || "/img/main-logo/T-Logo.png"}
                                 alt=""
                             />
-                            <span className="font-bold md:text-xl lg:hidden xl:block xl:text-xl">Tom's Furniture</span>
+                            <span className="font-bold md:text-xl lg:hidden xl:block xl:text-xl">
+                                {storeInformation?.storeName || "Tom's Furniture"}
+                            </span>
                         </a>
                     </div>
 

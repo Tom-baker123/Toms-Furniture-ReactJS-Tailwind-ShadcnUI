@@ -9,8 +9,7 @@ import "swiper/css/pagination"; // Import CSS cho Pagination
 // import { categoryList } from "@/assets/FakeData";
 import { Link } from "react-router-dom";
 // import useApi from "@/hooks/useApi";
-import { getAllCategories } from "@/api/api";
-import { CategoryContext } from "@/context/CategoryContext";
+import { APIContext } from "@/context/APIContext";
 
 // Component Loading Skeleton
 const CategorySkeleton = () => {
@@ -19,14 +18,20 @@ const CategorySkeleton = () => {
             <div className="flex space-x-4">
                 {/* Tạo 10 skeleton items để match với breakpoint lớn nhất */}
                 {Array.from({ length: 10 }).map((_, index) => (
-                    <div key={index} className="flex flex-col items-center justify-start text-center animate-pulse">
+                    <div
+                        key={index}
+                        className="flex animate-pulse flex-col items-center justify-start text-center"
+                    >
                         {/* Logo Category Skeleton */}
                         <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-gray-200 select-none max-md:w-15">
-                            <div className="mx-auto block rounded-full object-cover max-sm:w-20 aspect-square bg-gray-300"></div>
+                            <div className="mx-auto block aspect-square rounded-full bg-gray-300 object-cover max-sm:w-20"></div>
                         </div>
                         {/* Category Title Skeleton */}
                         <div className="w-full pt-3">
-                            <div className="h-4 bg-gray-200 rounded mx-auto" style={{ width: '60px' }}></div>
+                            <div
+                                className="mx-auto h-4 rounded bg-gray-200"
+                                style={{ width: "60px" }}
+                            ></div>
                         </div>
                     </div>
                 ))}
@@ -41,14 +46,14 @@ const CategorySwiper = () => {
     const nextRef = useRef(null);
 
     // Lấy dữ liệu từ Context
-    const { categories, loading, error } = useContext(CategoryContext);
+    const { categories, loading, error } = useContext(APIContext);
 
     if (loading) {
         return <CategorySkeleton />; // Sử dụng skeleton thay vì text loading
     }
 
     if (error) {
-        return <div className="py-5 text-center text-red-500">Error: {error}</div>;
+        return <div className="py-5 text-center text-red-500">🤒 {error}</div>;
     }
 
     if (!categories || categories.length === 0) {
