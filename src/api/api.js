@@ -789,9 +789,7 @@ export const updateProductVariant = async (variantData) => {
         throw error;
     }
 };
-// #endregion [Product APIs 🛒 - End] ---------------------------------------
 
-// #region [Slider APIs 🖼️] -----------------------------------------------
 // [2.6] API xóa Slider
 // - Gọi API DELETE /api/Slider/{id} để xóa một Slider
 export const deleteSlider = async (id) => {
