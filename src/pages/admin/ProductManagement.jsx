@@ -9,7 +9,7 @@ import FormatDatetime from "@/hooks/FormatDatetime";
 // - Hiển thị bảng với thông tin sản phẩm và số lượng biến thể
 // - Các cột: ID, Image, Product Name, Variants Count, Status, Created Date, Updated Date, Actions
 const ProductManagement = () => {
-    const products = useLoaderData(); // Lấy dữ liệu từ loader
+    const products = useLoaderData()?.items; // Lấy dữ liệu từ loader
     const navigate = useNavigate();
 
     // Hàm xử lý xóa sản phẩm
@@ -60,7 +60,7 @@ const ProductManagement = () => {
                             <tbody className="table-body">
                                 {products.map((product, index) => (
                                     <tr
-                                        key={product.id}
+                                        key={index}
                                         className="table-row hover:bg-gray-50"
                                     >
                                         <td className="table-cell px-4 py-2">{product.id}</td>
