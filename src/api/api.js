@@ -1088,6 +1088,63 @@ export const deleteSlider = async (id) => {
     }
 };
 
+// [2.12] API xóa product variant theo id
+export const deleteProductVariant = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product/variant/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to delete Product Variant with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.Message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting Product Variant:", error.message);
+        throw error;
+    }
+};
+
+// [2.13] API kiếm Productvariant theo id
+export const getProductVariantById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Product/variant/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to fetch Product variant with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching Product Variant with ID ${id}:`, error.message);
+        throw error;
+    }
+};
+
 
 // ------------------------------------------------------------------
 // [3.1] API lấy tất cả user
