@@ -1,8 +1,7 @@
-// ProductForm.jsx
 import React, { useState, useEffect, useContext } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { createProduct, updateProduct, deleteSlider } from "@/api/api";
+import { createProduct, updateProduct, deleteSlider, deleteProductVariant } from "@/api/api";
 import { MoveLeft, Plus, Save, RotateCcw, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import ProductImages from "./FormComponents/ProductImages";
@@ -19,6 +18,7 @@ const ProductForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState([]);
     const [imageErrors, setImageErrors] = useState({});
+    const [deletingVariant, setDeletingVariant] = useState(null); // Trạng thái xóa biến thể
 
     const {
         control,
@@ -108,6 +108,35 @@ const ProductForm = () => {
         }
         setImageErrors(newErrors);
         return Object.keys(newErrors).length === 0;
+    };
+
+    // Hàm xử lý xóa biến thể
+    const handleDeleteVariant = async (index) => {
+        const variantId = watch(`ProductVariants[${index}].Id`);
+        
+        if (variantId > 0) {
+            // Yêu cầu xác nhận trước khi xóa biến thể đã lưu
+            if (!window.confirm("Are you sure you want to delete this variant?")) {
+                return;
+            }
+
+            // Biến thể đã tồn tại trong backend, gọi API để xóa
+            setDeletingVariant(index); // Đặt trạng thái đang xóa
+            try {
+                await deleteProductVariant(variantId);
+                remove(index); // Xóa khỏi danh sách form sau khi xóa thành công
+                toast.success("Product variant deleted successfully.");
+            } catch (error) {
+                console.error(`Error deleting variant with ID ${variantId}:`, error.message);
+                toast.error(`Error: ${error.message}`);
+            } finally {
+                setDeletingVariant(null); // Reset trạng thái
+            }
+        } else {
+            // Biến thể chưa được lưu, chỉ xóa khỏi form
+            remove(index);
+            toast.success("Product variant removed from form.");
+        }
     };
 
     const onSubmit = async (data) => {
@@ -397,9 +426,14 @@ const ProductForm = () => {
                                     <button
                                         type="button"
                                         className="absolute top-2 right-2 text-red-500 transition-colors duration-200 hover:text-red-600"
-                                        onClick={() => remove(index)}
+                                        onClick={() => handleDeleteVariant(index)}
+                                        disabled={deletingVariant === index}
                                     >
-                                        <Trash size={20} />
+                                        {deletingVariant === index ? (
+                                            <span className="animate-spin">⌛</span>
+                                        ) : (
+                                            <Trash size={20} />
+                                        )}
                                     </button>
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                         {/* Original Price */}
