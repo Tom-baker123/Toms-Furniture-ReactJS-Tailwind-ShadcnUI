@@ -5,7 +5,7 @@ import { deleteProduct, updateProductVariant, getColorById, getSizeById, getMate
 import FormatDatetime from "@/hooks/FormatDatetime";
 
 const InventoryManagement = () => {
-    const inventories = useLoaderData(); // Lấy dữ liệu sản phẩm từ loader
+    const inventories = useLoaderData()?.items; // Lấy dữ liệu sản phẩm từ loader
     const navigate = useNavigate();
     const [stockUpdates, setStockUpdates] = useState({}); // Lưu trữ thay đổi tồn kho theo variantId
 
