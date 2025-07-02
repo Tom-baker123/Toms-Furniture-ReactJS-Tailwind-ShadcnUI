@@ -690,10 +690,16 @@ export const updateProduct = async (productData, sliders) => {
         // Bước 2: Kiểm tra và chuẩn hóa ProductVariants
         if (productData.ProductVariants && Array.isArray(productData.ProductVariants)) {
             productData.ProductVariants = productData.ProductVariants.map((variant, index) => {
-                if (variant.Id !== undefined && !Number.isInteger(variant.Id)) {
+                // Kiểm tra Id của biến thể (từ API hoặc form)
+                const variantId = variant.Id !== undefined ? variant.Id : variant.id || 0;
+
+                if (variantId !== 0 && !Number.isInteger(variantId)) {
                     throw new Error(`Invalid variant Id at index ${index}`);
                 }
-                if (!variant.Id || variant.Id === 0) {
+
+                // Validation cho biến thể
+                if (variantId === 0) {
+                    // Biến thể mới
                     if (variant.OriginalPrice === undefined || variant.OriginalPrice < 0) {
                         throw new Error(`Original price is required and cannot be negative for variant at index ${index}`);
                     }
@@ -716,9 +722,16 @@ export const updateProduct = async (productData, sliders) => {
                         throw new Error(`Valid UnitId is required for variant at index ${index}`);
                     }
                 }
+
                 return {
-                    ...variant,
-                    Id: variant.Id || 0,
+                    Id: variantId, // Sử dụng variantId (từ Id hoặc id)
+                    OriginalPrice: Number(variant.OriginalPrice),
+                    DiscountedPrice: variant.DiscountedPrice ? Number(variant.DiscountedPrice) : null,
+                    StockQty: Number(variant.StockQty),
+                    ColorId: Number(variant.ColorId),
+                    SizeId: Number(variant.SizeId),
+                    MaterialId: Number(variant.MaterialId),
+                    UnitId: Number(variant.UnitId),
                     IsActive: variant.IsActive !== undefined ? variant.IsActive : true,
                 };
             });
@@ -810,7 +823,7 @@ export const updateProduct = async (productData, sliders) => {
                         const errorData = await sliderResponse.json();
                         errorMessage = errorData.Message || errorMessage;
                     } else {
-                        errorMessage = await sliderResponse.text();
+                        errorMessage = await response.text();
                     }
                     console.warn(`Warning: ${errorMessage}`);
                     sliderResults.push({ success: false, message: errorMessage });

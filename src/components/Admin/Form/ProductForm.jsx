@@ -38,6 +38,7 @@ const ProductForm = () => {
                   SupplierId: productData.supplierId || "",
                   IsActive: productData.isActive || true,
                   ProductVariants: productData.productVariants?.map((pv) => ({
+                      Id: pv.id || 0, // Ánh xạ id từ API sang Id trong form
                       OriginalPrice: pv.originalPrice || 0,
                       DiscountedPrice: pv.discountedPrice || null,
                       StockQty: pv.stockQty || 0,
@@ -47,6 +48,7 @@ const ProductForm = () => {
                       UnitId: pv.unitId || "",
                   })) || [
                       {
+                          Id: 0,
                           OriginalPrice: 0,
                           StockQty: 0,
                           ColorId: "",
@@ -66,6 +68,7 @@ const ProductForm = () => {
                   IsActive: true,
                   ProductVariants: [
                       {
+                          Id: 0,
                           OriginalPrice: 0,
                           StockQty: 0,
                           ColorId: "",
