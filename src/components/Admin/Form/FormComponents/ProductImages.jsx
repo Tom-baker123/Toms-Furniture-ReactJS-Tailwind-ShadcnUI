@@ -76,6 +76,19 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
         });
     };
 
+    const removeImageField = async (index, sliderId) => {
+        if (sliderId && isEditing) {
+            try {
+                await deleteSlider(sliderId);
+                toast.success("Image removed successfully!");
+            } catch (error) {
+                toast.error(`Error removing image: ${error.message}`);
+                return;
+            }
+        }
+        setImages((prev) => prev.filter((_, i) => i !== index));
+    };
+
     // Hàm validateImages và removeImageField không thay đổi, giữ nguyên logic
     const validateImages = () => {
         const newErrors = {};
