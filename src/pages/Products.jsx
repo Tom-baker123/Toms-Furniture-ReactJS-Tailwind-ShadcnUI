@@ -6,7 +6,7 @@ import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
 import ButtonHov from "@/components/tailwind-custom/ButtonHov";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
-import ButtonHovCustom from "@/components/tailwind-custom/ButtonHovCustom";
+// import ButtonHovCustom from "@/components/tailwind-custom/ButtonHovCustom";
 import showHeader from "@/hooks/showHeader";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Funnel, Grid2x2, List } from "lucide-react";
@@ -30,12 +30,17 @@ const Products = () => {
             </div>
 
             {/* [3.] Toolbar + Product List*/}
-            <div className="pt-7 pb-[60px] scroll-smooth">
+            <div className="scroll-smooth pt-7 pb-[60px]">
                 {/* [3.1] Toolbar */}
-                <div className={cn(`container-custom sticky z-10 bg-white py-3 transition-all duration-500`, showHead ? `top-[133.5px] md:top-[157px] lg:top-[138px] z-10` : `top-0 z-10`)}>
+                <div
+                    className={cn(
+                        `container-custom sticky z-10 bg-white py-3 transition-all duration-500`,
+                        showHead ? `top-[133.5px] z-10 md:top-[157px] lg:top-[138px]` : `top-0 z-10`,
+                    )}
+                >
                     {/* Đảm bảo toolbar ở trên cùng */}
                     <div className="flex items-center justify-between">
-                        <div className="flex flex-col-reverse items-center h-full gap-6 max-md:justify-between md:flex-row md:gap-3">
+                        <div className="flex h-full flex-col-reverse items-center gap-6 max-md:justify-between md:flex-row md:gap-3">
                             <ProductCategoryToolbar />
                             <span className="text-md font-semibold text-gray-500">{106} products</span>
                         </div>
@@ -110,16 +115,25 @@ const Products = () => {
 
                 {/* [3.2] Danh sách sản phẩm */}
                 <div className="container-custom mt-4">
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[12rem_1fr]">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_1fr]">
                         {/* [4.1] Filter */}
                         <div className={cn(`sticky self-start transition-[top] max-lg:hidden`, showHead ? `top-[230px]` : `top-[90px]`)}>
                             <FilterComponents
                                 showHead={showHead}
                                 title="Availability"
                             />
-                            <FilterComponents showHead={showHead} />
-                            <FilterComponents showHead={showHead} />
-                            <FilterComponents showHead={showHead} />
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Price"
+                            />
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Availability"
+                            />
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Brand"
+                            />
                         </div>
                         {/* [4.2] Product List */}
 
@@ -155,6 +169,7 @@ const Products = () => {
                                             </div>
                                         </div>
                                     )}
+
                                     {/* pt-[12px] cho box title */}
                                     {Array.isArray(image.info) && image.info.length > 0 && (
                                         <div className="flex-1 pt-3">
@@ -182,7 +197,7 @@ const Products = () => {
             </div>
 
             <div className="">
-                <AboutMaterial/>
+                <AboutMaterial />
             </div>
         </>
     );

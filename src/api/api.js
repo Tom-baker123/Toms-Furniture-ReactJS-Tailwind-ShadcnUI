@@ -517,7 +517,7 @@ export const deleteCategory = async (id) => {
 
 // ------------------------------------------------------------------
 // [2.1] API lấy tất cả danh sách sản phẩm
-export const getAllProducts = async (pageNumber = 1, pageSize = 10, search = "") => {
+export const getAllProducts = async (pageNumber = 1, pageSize = 1000, search = "") => {
     try {
         const response = await fetch(
             `${API_BASE_URL}/Product?pageNumber=${pageNumber}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ""}`,

@@ -113,7 +113,7 @@ const ProductForm = () => {
     // Hàm xử lý xóa biến thể
     const handleDeleteVariant = async (index) => {
         const variantId = watch(`ProductVariants[${index}].Id`);
-        
+
         if (variantId > 0) {
             // Yêu cầu xác nhận trước khi xóa biến thể đã lưu
             if (!window.confirm("Are you sure you want to delete this variant?")) {
@@ -429,11 +429,7 @@ const ProductForm = () => {
                                         onClick={() => handleDeleteVariant(index)}
                                         disabled={deletingVariant === index}
                                     >
-                                        {deletingVariant === index ? (
-                                            <span className="animate-spin">⌛</span>
-                                        ) : (
-                                            <Trash size={20} />
-                                        )}
+                                        {deletingVariant === index ? <span className="animate-spin">⌛</span> : <Trash size={20} />}
                                     </button>
                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                                         {/* Original Price */}
