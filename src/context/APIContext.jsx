@@ -1,5 +1,16 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import { getAllCategories, getAllStoreInformations } from "@/api/api";
+import {
+    getAllCategories,
+    getAllStoreInformations,
+    getAllProducts,
+    getAllColors,
+    getAllUnits,
+    getAllMaterials,
+    getAllSizes,
+    getAllCountries,
+    getAllBrands,
+    getAllSuppliers,
+} from "@/api/api";
 
 // Tạo Context chung cho ứng dụng
 export const APIContext = createContext();
@@ -8,8 +19,18 @@ export const APIContext = createContext();
 export const APIProvider = ({ children }) => {
     const [categories, setCategories] = useState(null);
     const [storeInformation, setStoreInformation] = useState(null); // State cho thông tin cửa hàng
+    const [products, setProducts] = useState(null); // State cho thông tin cửa hàng
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // State cho Colors, Units, Materials, Sizes, Countries, Brands, Suppliers
+    const [colors, setColors] = useState(null);
+    const [units, setUnits] = useState(null);
+    const [materials, setMaterials] = useState(null);
+    const [sizes, setSizes] = useState(null);
+    const [countries, setCountries] = useState(null);
+    const [brands, setBrands] = useState(null);
+    const [suppliers, setSuppliers] = useState(null);
 
     // Hàm fetch danh mục
     const fetchCategories = useCallback(async () => {
@@ -40,17 +61,173 @@ export const APIProvider = ({ children }) => {
         }
     }, []);
 
+    // Hàm fetch danh mục
+    const fetchProducts = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllProducts();
+            setProducts(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Colors
+    const fetchColors = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllColors();
+            setColors(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Units
+    const fetchUnits = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllUnits();
+            setUnits(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Materials
+    const fetchMaterials = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllMaterials();
+            setMaterials(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Sizes
+    const fetchSizes = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllSizes();
+            setSizes(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Countries
+    const fetchCountries = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllCountries();
+            setCountries(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Brands
+    const fetchBrands = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllBrands();
+            setBrands(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Hàm fetch Suppliers
+    const fetchSuppliers = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllSuppliers();
+            setSuppliers(response);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     // Gọi API khi component mount
     useEffect(() => {
         fetchCategories();
         fetchStoreInformation();
-    }, [fetchCategories, fetchStoreInformation]);
+        fetchProducts();
+        fetchColors();
+        fetchUnits();
+        fetchMaterials();
+        fetchSizes();
+        fetchCountries();
+        fetchBrands();
+        fetchSuppliers();
+    }, [
+        fetchCategories,
+        fetchStoreInformation,
+        fetchProducts,
+        fetchColors,
+        fetchUnits,
+        fetchMaterials,
+        fetchSizes,
+        fetchCountries,
+        fetchBrands,
+        fetchSuppliers,
+    ]);
 
     // Hàm refetch để gọi lại API
     const refetch = useCallback(() => {
         fetchCategories();
         fetchStoreInformation();
-    }, [fetchCategories, fetchStoreInformation]);
+        fetchProducts();
+        fetchColors();
+        fetchUnits();
+        fetchMaterials();
+        fetchSizes();
+        fetchCountries();
+        fetchBrands();
+        fetchSuppliers();
+    }, [
+        fetchCategories,
+        fetchStoreInformation,
+        fetchProducts,
+        fetchColors,
+        fetchUnits,
+        fetchMaterials,
+        fetchSizes,
+        fetchCountries,
+        fetchBrands,
+        fetchSuppliers,
+    ]);
 
-    return <APIContext.Provider value={{ categories, storeInformation, loading, error, refetch }}>{children}</APIContext.Provider>;
+    return (
+        <APIContext.Provider
+            value={{ categories, storeInformation, products, colors, units, materials, sizes, countries, brands, suppliers, loading, error, refetch }}
+        >
+            {children}
+        </APIContext.Provider>
+    );
 };

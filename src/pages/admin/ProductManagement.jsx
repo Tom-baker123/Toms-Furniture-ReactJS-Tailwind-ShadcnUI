@@ -50,7 +50,7 @@ const ProductManagement = () => {
                                     <th className="table-head px-4 py-2 whitespace-nowrap">#</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Image</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Product Name</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Variants Count</th>
+                                    <th className="table-head px-4 py-2 text-right whitespace-nowrap">Variants Count</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Status</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Created Date</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Updated Date</th>
