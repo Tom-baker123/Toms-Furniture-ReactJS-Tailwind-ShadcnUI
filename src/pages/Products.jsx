@@ -10,11 +10,77 @@ import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import showHeader from "@/hooks/showHeader";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Funnel, Grid2x2, List } from "lucide-react";
-import React, { useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
+import { APIContext } from "@/context/APIContext";
 
 const Products = () => {
     // Sử dụng showHeader hook để lấy trạng thái hiển thị của header
     const showHead = showHeader();
+    const { products, loading, error, refetch } = useContext(APIContext);
+
+    const [filters, setFilters] = useState({
+        categoryNames: [],
+        brandNames: [],
+        countryNames: [],
+        colorNames: [],
+        sizeNames: [],
+        materialNames: [],
+        minPrice: null,
+        maxPrice: null,
+        inStock: null,
+        sortBy: "",
+        sortOrder: "",
+    });
+
+    // Xử lý thay đổi bộ lọc
+    const handleFilterChange = useCallback(
+        (filterType, value) => {
+            setFilters((prevFilters) => {
+                const newFilters = { ...prevFilters };
+
+                // Xử lý các bộ lọc dạng danh sách (checkbox)
+                if (["category", "brand", "country", "color", "size", "material"].includes(filterType)) {
+                    const key = `${filterType}Names`;
+                    if (newFilters[key].includes(value)) {
+                        newFilters[key] = newFilters[key].filter((item) => item !== value);
+                    } else {
+                        newFilters[key] = [...newFilters[key], value];
+                    }
+                }
+                // Xử lý khoảng giá
+                else if (filterType === "price") {
+                    newFilters.minPrice = value[0];
+                    newFilters.maxPrice = value[1];
+                }
+                // Xử lý trạng thái tồn kho
+                else if (filterType === "availability") {
+                    if (value === "In stock") {
+                        newFilters.inStock = true;
+                    } else if (value === "Out of stock") {
+                        newFilters.inStock = false;
+                    } else {
+                        newFilters.inStock = null;
+                    }
+                }
+                // Xử lý sắp xếp
+                else if (filterType === "sortBy") {
+                    newFilters.sortBy = value;
+                    newFilters.sortOrder = value.includes("descending") ? "desc" : "asc";
+                }
+
+                // Gọi lại API với bộ lọc mới
+                refetch(newFilters);
+                return newFilters;
+            });
+        },
+        [refetch],
+    );
+
+    // Xử lý thay đổi sort từ combobox
+    const handleSortChange = (e) => {
+        const value = e.target.value;
+        handleFilterChange("sortBy", value);
+    };
 
     return (
         <>
@@ -42,7 +108,8 @@ const Products = () => {
                     <div className="flex items-center justify-between">
                         <div className="flex h-full flex-col-reverse items-center gap-6 max-md:justify-between md:flex-row md:gap-3">
                             <ProductCategoryToolbar />
-                            <span className="text-md font-semibold text-gray-500">{106} products</span>
+                            {/* Hiển thị tổng số sản phẩm từ API */}
+                            <span className="text-md font-semibold text-gray-500">{products?.totalCount || 0} products</span>
                         </div>
 
                         {/* Right Toolbar */}
@@ -71,6 +138,7 @@ const Products = () => {
                                         id="sortBy"
                                         className="block appearance-none rounded-full border border-gray-300 bg-gray-100 px-4 py-2 pr-8 text-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                         defaultValue="best-selling"
+                                        onChange={handleSortChange}
                                     >
                                         <option value="manual">Featured</option>
                                         <option value="best-selling">Best selling</option>
@@ -118,77 +186,110 @@ const Products = () => {
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_1fr]">
                         {/* [4.1] Filter */}
                         <div className={cn(`sticky self-start transition-[top] max-lg:hidden`, showHead ? `top-[230px]` : `top-[90px]`)}>
+                            {/* Bộ lọc Availability */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Availability"
+                                onFilterChange={handleFilterChange}
                             />
+                            {/* Bộ lọc Price */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Price"
+                                onFilterChange={handleFilterChange}
                             />
+                            {/* Bộ lọc Category */}
                             <FilterComponents
                                 showHead={showHead}
-                                title="Availability"
+                                title="Category"
+                                onFilterChange={handleFilterChange}
                             />
+                            {/* Bộ lọc Brand */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Brand"
+                                onFilterChange={handleFilterChange}
+                            />
+                            {/* Bộ lọc Country */}
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Country"
+                                onFilterChange={handleFilterChange}
+                            />
+                            {/* Bộ lọc Color */}
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Color"
+                                onFilterChange={handleFilterChange}
+                            />
+                            {/* Bộ lọc Size */}
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Size"
+                                onFilterChange={handleFilterChange}
+                            />
+                            {/* Bộ lọc Material */}
+                            <FilterComponents
+                                showHead={showHead}
+                                title="Material"
+                                onFilterChange={handleFilterChange}
                             />
                         </div>
+
                         {/* [4.2] Product List */}
-
-                        <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
-                            {NewArrivalsPicture.map((image, index) => (
-                                <div key={index}>
-                                    {image.info?.length > 0 ? (
+                        <div className="grid h-fit grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+                            {/* Hiển thị trạng thái loading */}
+                            {loading && <p>Loading products...</p>}
+                            {/* Hiển thị lỗi nếu có */}
+                            {error && <p className="text-red-500">Error: {error}</p>}
+                            {/* Hiển thị danh sách sản phẩm từ API */}
+                            {products?.items?.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="group cursor-pointer"
+                                >
+                                    {/* Product Image */}
+                                    <div className="relative mb-3 overflow-hidden rounded-md">
                                         <img
-                                            className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
-                                            src={`/img/NewArrivals/${image.ImageURL}`}
-                                            alt="asdsa"
+                                            className="aspect-square w-full rounded-md object-cover transition-transform duration-300 group-hover:scale-105"
+                                            src={product.sliders[0]?.imageUrl || "/img/placeholder.jpg"}
+                                            alt={product.productName}
                                         />
-                                    ) : (
-                                        <div className="relative grid h-full grid-cols-[1fr] overflow-hidden">
-                                            <div className="block h-full w-full overflow-hidden">
-                                                <img
-                                                    className={cn(
-                                                        `w-full rounded-md object-cover`,
-                                                        image.info?.length > 0 ? "aspect-square" : "h-full",
-                                                    )}
-                                                    src={`/img/NewArrivals/${image.ImageURL}`}
-                                                    alt="asdsa"
-                                                />
+                                        {/* Hiển thị promotion nếu có giảm giá */}
+                                        {product.productVariants.some((pv) => pv.discountedPrice < pv.originalPrice) && (
+                                            <div className="absolute top-2 left-2 rounded bg-red-500 px-2 py-1 text-xs font-bold text-white">
+                                                Sale
                                             </div>
-                                            <div className="content-overlay">
-                                                <p className="mb-2 w-full text-left text-sm font-bold"> Promotion </p>
-                                                <p className="w-full text-left text-xl font-bold"> Soft Stools Design </p>
-                                                <div className="mt-8 flex w-full flex-1 items-end justify-start">
-                                                    <p className="w-full">
-                                                        <ButtonHov />
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
+                                        )}
+                                    </div>
 
-                                    {/* pt-[12px] cho box title */}
-                                    {Array.isArray(image.info) && image.info.length > 0 && (
-                                        <div className="flex-1 pt-3">
-                                            {image.info.map((info, idx) => (
+                                    {/* Product Info */}
+                                    <div className="space-y-1">
+                                        {/* Category */}
+                                        <p className="text-sm font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
+                                        {/* Product Name */}
+                                        <h3 className="line-clamp-2 text-lg font-bold text-gray-900">{product.productName}</h3>
+                                        {/* Price */}
+                                        <p className="text-lg font-bold text-gray-900">
+                                            $
+                                            {Math.min(
+                                                ...product.productVariants.map((pv) => pv.discountedPrice ?? pv.originalPrice),
+                                            ).toLocaleString()}
+                                        </p>
+                                        {/* Color Options */}
+                                        <div className="mt-2 flex items-center gap-2">
+                                            {[...new Set(product.productVariants.map((pv) => pv.colorName))].map((color, idx) => (
                                                 <div
-                                                    className="flex h-full w-full flex-col justify-between"
                                                     key={idx}
-                                                >
-                                                    <p className="text-sm font-semibold text-gray-700">{info.type}</p>
-                                                    <h3 className="text-[20px] font-bold">{info.proName}</h3>
-                                                    <p className="font-bold">{info.price}</p>
-                                                    <div className="flex gap-x-2">
-                                                        <div className="mt-1 h-5 w-5 bg-gray-600 md:mt-2"></div>
-                                                        <div className="mt-1 h-5 w-5 bg-gray-300 md:mt-2"></div>
-                                                    </div>
-                                                </div>
+                                                    className="h-5 w-5 cursor-pointer rounded-full border border-gray-300 transition-transform hover:scale-110"
+                                                    style={{
+                                                        backgroundColor:
+                                                            product.productVariants.find((pv) => pv.colorName === color)?.colorCode || "#000",
+                                                    }}
+                                                />
                                             ))}
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
                             ))}
                         </div>

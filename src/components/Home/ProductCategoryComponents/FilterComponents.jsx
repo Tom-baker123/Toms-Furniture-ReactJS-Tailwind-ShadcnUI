@@ -1,31 +1,81 @@
 import { cn } from "@/lib/utils";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
+import { APIContext } from "@/context/APIContext";
 
-const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filter Problem" }) => {
+const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
     const [AccordionOpen, setAccordionOpen] = useState(true);
     const [priceRange, setPriceRange] = useState([0, 3429]);
-    const maxPrice = 3429;
-    const minPrice = 0;
+    const maxPrice = 3429; // Giá tối đa cố định
+    const minPrice = 0; // Giá tối thiểu cố định
 
     const [isDragging, setIsDragging] = useState(false);
     const [dragIndex, setDragIndex] = useState(null);
+    const [pendingPriceRange, setPendingPriceRange] = useState(priceRange); // Lưu trữ tạm thời khoảng giá khi kéo
 
+    // Lấy dữ liệu từ APIContext
+    const { categories, colors, materials, sizes, brands, countries } = useContext(APIContext);
+
+    // Danh sách các tùy chọn lọc dựa trên title
+    const getFilterOptions = () => {
+        switch (title.toLowerCase()) {
+            case "category":
+                return categories?.map((category) => ({ value: category.categoryName, label: category.categoryName, count: 1 })) || [];
+            case "color":
+                return colors?.map((color) => ({ value: color.colorName, label: color.colorName, count: 1 })) || [];
+            case "material":
+                return materials?.map((material) => ({ value: material.materialName, label: material.materialName, count: 1 })) || [];
+            case "size":
+                return sizes?.map((size) => ({ value: size.sizeName, label: size.sizeName, count: 1 })) || [];
+            case "brand":
+                return brands?.map((brand) => ({ value: brand.brandName, label: brand.brandName, count: 1 })) || [];
+            case "country":
+                return countries?.map((country) => ({ value: country.countryName, label: country.countryName, count: 1 })) || [];
+            case "availability":
+                return [
+                    { value: "In stock", label: "In stock", count: 1 },
+                    { value: "Out of stock", label: "Out of stock", count: 1 },
+                ];
+            default:
+                return [];
+        }
+    };
+
+    // Xử lý thay đổi giá từ slider hoặc input
     const handleRangeChange = useCallback(
         (index, value) => {
-            const newRange = [...priceRange];
+            const newRange = [...pendingPriceRange];
             newRange[index] = Math.max(minPrice, Math.min(maxPrice, value));
 
-            // Ensure min doesn't exceed max and vice versa
+            // Đảm bảo min không vượt max và ngược lại
             if (index === 0 && newRange[0] > newRange[1]) {
                 newRange[0] = newRange[1];
             } else if (index === 1 && newRange[1] < newRange[0]) {
                 newRange[1] = newRange[0];
             }
 
-            setPriceRange(newRange);
+            // Cập nhật pendingPriceRange
+            setPendingPriceRange(newRange);
+            return newRange; // Trả về newRange để sử dụng ngay
         },
-        [priceRange, minPrice, maxPrice],
+        [pendingPriceRange, minPrice, maxPrice],
     );
+
+    // Xử lý khi thả chuột (mouse up)
+    const handleMouseUp = useCallback(() => {
+        setIsDragging(false);
+        setDragIndex(null);
+        // Chỉ gọi API nếu giá trị thay đổi
+        if (
+            pendingPriceRange[0] !== priceRange[0] ||
+            pendingPriceRange[1] !== priceRange[1]
+        ) {
+            setPriceRange(pendingPriceRange);
+            if (onFilterChange && title.toLowerCase().includes("price")) {
+                console.log("Calling API with price range (mouse up):", pendingPriceRange); // Debug
+                onFilterChange("price", pendingPriceRange); // Gọi API với khoảng giá cuối cùng
+            }
+        }
+    }, [pendingPriceRange, priceRange, onFilterChange, title]);
 
     const handleMouseDown = (index) => (e) => {
         e.preventDefault();
@@ -42,15 +92,12 @@ const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filt
             handleRangeChange(index, value);
         };
 
-        const handleMouseUp = () => {
-            setIsDragging(false);
-            setDragIndex(null);
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", () => {
+            handleMouseUp(); // Gọi handleMouseUp khi thả chuột
             document.removeEventListener("mousemove", handleMouseMove);
             document.removeEventListener("mouseup", handleMouseUp);
-        };
-
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", handleMouseUp);
+        });
     };
 
     const handleTrackClick = (e) => {
@@ -60,24 +107,54 @@ const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filt
         const percentage = ((e.clientX - rect.left) / rect.width) * 100;
         const value = Math.round((percentage / 100) * (maxPrice - minPrice) + minPrice);
 
-        // Determine which handle to move (closer one)
-        const distanceToMin = Math.abs(value - priceRange[0]);
-        const distanceToMax = Math.abs(value - priceRange[1]);
+        // Xác định thanh kéo gần nhất để di chuyển
+        const distanceToMin = Math.abs(value - pendingPriceRange[0]);
+        const distanceToMax = Math.abs(value - pendingPriceRange[1]);
         const indexToMove = distanceToMin <= distanceToMax ? 0 : 1;
 
-        handleRangeChange(indexToMove, value);
+        // Cập nhật và gọi API nếu giá trị thay đổi
+        const newRange = handleRangeChange(indexToMove, value);
+        if (
+            newRange[0] !== priceRange[0] ||
+            newRange[1] !== priceRange[1]
+        ) {
+            setPriceRange(newRange);
+            if (onFilterChange && title.toLowerCase().includes("price")) {
+                console.log("Calling API with price range (track click):", newRange); // Debug
+                onFilterChange("price", newRange);
+            }
+        }
     };
 
     const handleInputChange = useCallback(
         (index, value) => {
             const numValue = parseInt(value) || 0;
-            handleRangeChange(index, numValue);
+            // Cập nhật và gọi API nếu giá trị thay đổi
+            const newRange = handleRangeChange(index, numValue);
+            if (
+                newRange[0] !== priceRange[0] ||
+                newRange[1] !== priceRange[1]
+            ) {
+                setPriceRange(newRange);
+                if (onFilterChange && title.toLowerCase().includes("price")) {
+                    console.log("Calling API with price range (input):", newRange); // Debug
+                    onFilterChange("price", newRange);
+                }
+            }
         },
-        [handleRangeChange],
+        [handleRangeChange, priceRange, onFilterChange, title],
     );
 
     const getSliderPosition = (value) => {
         return ((value - minPrice) / (maxPrice - minPrice)) * 100;
+    };
+
+    // Xử lý thay đổi checkbox
+    const handleCheckboxChange = (value) => {
+        if (onFilterChange) {
+            console.log("Calling API with filter:", title, value); // Debug
+            onFilterChange(title.toLowerCase(), value);
+        }
     };
 
     const renderPriceSlider = () => (
@@ -95,22 +172,22 @@ const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filt
                     <div
                         className="pointer-events-none absolute h-2 rounded-full bg-black"
                         style={{
-                            left: `${getSliderPosition(priceRange[0])}%`,
-                            width: `${getSliderPosition(priceRange[1]) - getSliderPosition(priceRange[0])}%`,
+                            left: `${getSliderPosition(pendingPriceRange[0])}%`,
+                            width: `${getSliderPosition(pendingPriceRange[1]) - getSliderPosition(pendingPriceRange[0])}%`,
                         }}
                     />
 
                     {/* Min Handle */}
                     <div
                         className={`absolute top-1/2 z-10 h-5 w-5 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full border-2 border-black bg-white ${isDragging && dragIndex === 0 ? "scale-110 cursor-grabbing" : ""}`}
-                        style={{ left: `${getSliderPosition(priceRange[0])}%` }}
+                        style={{ left: `${getSliderPosition(pendingPriceRange[0])}%` }}
                         onMouseDown={handleMouseDown(0)}
                     />
 
                     {/* Max Handle */}
                     <div
                         className={`absolute top-1/2 z-10 h-5 w-5 -translate-x-1/2 -translate-y-1/2 transform cursor-grab rounded-full border-2 border-black bg-white ${isDragging && dragIndex === 1 ? "scale-110 cursor-grabbing" : ""}`}
-                        style={{ left: `${getSliderPosition(priceRange[1])}%` }}
+                        style={{ left: `${getSliderPosition(pendingPriceRange[1])}%` }}
                         onMouseDown={handleMouseDown(1)}
                     />
                 </div>
@@ -123,7 +200,7 @@ const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filt
                         <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500">$</span>
                         <input
                             type="number"
-                            value={priceRange[0]}
+                            value={pendingPriceRange[0]}
                             onChange={(e) => handleInputChange(0, e.target.value)}
                             className="w-full rounded-full border-0 bg-gray-100 py-2 pr-4 pl-8 text-center text-sm focus:ring-2 focus:ring-black focus:outline-none"
                             min={minPrice}
@@ -136,7 +213,7 @@ const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filt
                         <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500">$</span>
                         <input
                             type="number"
-                            value={priceRange[1]}
+                            value={pendingPriceRange[1]}
                             onChange={(e) => handleInputChange(1, e.target.value)}
                             className="w-full rounded-full border-0 bg-gray-100 py-2 pr-4 pl-8 text-center text-sm focus:ring-2 focus:ring-black focus:outline-none"
                             min={minPrice}
@@ -187,41 +264,31 @@ const FilterComponents = ({ showHead, title = "", json = "Please Check Your Filt
                     {/* Price Slider */}
                     {title.toLowerCase().includes("price") && renderPriceSlider()}
 
-                    {/* Original Filter Options for non-price filters */}
+                    {/* Checkbox Filter Options */}
                     {!title.toLowerCase().includes("price") && (
                         <ul className="grid w-full gap-3 pt-6">
-                            <li className="flex w-full items-center gap-2">
-                                <input
-                                    name="filter.v.availability"
-                                    value="1"
-                                    className="checkbox h-5 w-5"
-                                    id="vertical-filter.v.availability-1"
-                                    type="checkbox"
-                                />
-                                <label
-                                    htmlFor="vertical-filter.v.availability-1"
-                                    className="text-subtext reversed-link flex flex-grow items-center justify-between gap-1 text-gray-400"
+                            {getFilterOptions().map((option, index) => (
+                                <li
+                                    key={index}
+                                    className="flex w-full items-center gap-2"
                                 >
-                                    <span className="text-[15px] font-bold">In stock</span>
-                                    <span className="count">1</span>
-                                </label>
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <input
-                                    name="filter.v.availability"
-                                    value="1"
-                                    className="checkbox h-5 w-5"
-                                    id="vertical-filter.v.availability-2"
-                                    type="checkbox"
-                                />
-                                <label
-                                    htmlFor="vertical-filter.v.availability-2"
-                                    className="text-subtext reversed-link flex flex-grow items-center justify-between gap-1 text-gray-400"
-                                >
-                                    <span className="text-[15px] font-bold">Out of stock</span>
-                                    <span className="count">1</span>
-                                </label>
-                            </li>
+                                    <input
+                                        name={`filter.v.${title.toLowerCase()}`}
+                                        value={option.value}
+                                        className="checkbox h-5 w-5"
+                                        id={`vertical-filter.v.${title.toLowerCase()}-${index}`}
+                                        type="checkbox"
+                                        onChange={(e) => handleCheckboxChange(e.target.value)}
+                                    />
+                                    <label
+                                        htmlFor={`vertical-filter.v.${title.toLowerCase()}-${index}`}
+                                        className="text-subtext reversed-link flex flex-grow items-center justify-between gap-1 text-gray-400"
+                                    >
+                                        <span className="text-[15px] font-bold">{option.label}</span>
+                                        <span className="count">{option.count}</span>
+                                    </label>
+                                </li>
+                            ))}
                         </ul>
                     )}
                 </div>
