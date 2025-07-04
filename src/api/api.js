@@ -517,18 +517,52 @@ export const deleteCategory = async (id) => {
 
 // ------------------------------------------------------------------
 // [2.1] API lấy tất cả danh sách sản phẩm
-export const getAllProducts = async (pageNumber = 1, pageSize = 1000, search = "") => {
+export const getAllProducts = async ({
+    pageNumber = 1,
+    pageSize = 150,
+    search = "",
+    productName = "",
+    categoryNames = [],
+    colorNames = [],
+    materialNames = [],
+    sizeNames = [],
+    brandNames = [],
+    countryNames = [],
+    sortBy = "",
+    sortOrder = "",
+    minPrice = null, // Thêm tham số minPrice để lọc giá tối thiểu
+    maxPrice = null, // Thêm tham số maxPrice để lọc giá tối đa
+    inStock = null // Thêm tham số inStock để lọc trạng thái tồn kho
+} = {}) => {
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/Product?pageNumber=${pageNumber}&pageSize=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ""}`,
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            }
-        );
+        // Tạo URLSearchParams để xây dựng query string
+        const params = new URLSearchParams();
+        params.append("pageNumber", pageNumber);
+        params.append("pageSize", pageSize);
+        if (search) params.append("search", encodeURIComponent(search));
+        if (productName) params.append("productName", encodeURIComponent(productName));
+
+        // Thêm các tham số danh sách
+        categoryNames.forEach((name) => params.append("CategoryNames", encodeURIComponent(name)));
+        colorNames.forEach((name) => params.append("ColorNames", encodeURIComponent(name)));
+        materialNames.forEach((name) => params.append("MaterialNames", encodeURIComponent(name)));
+        sizeNames.forEach((name) => params.append("SizeNames", encodeURIComponent(name)));
+        brandNames.forEach((name) => params.append("BrandNames", encodeURIComponent(name)));
+        countryNames.forEach((name) => params.append("CountryNames", encodeURIComponent(name)));
+
+        if (sortBy) params.append("sortBy", encodeURIComponent(sortBy));
+        if (sortOrder) params.append("sortOrder", encodeURIComponent(sortOrder));
+        if (minPrice !== null) params.append("minPrice", minPrice); // Thêm tham số minPrice nếu có giá trị
+        if (maxPrice !== null) params.append("maxPrice", maxPrice); // Thêm tham số maxPrice nếu có giá trị
+        if (inStock !== null) params.append("inStock", inStock); // Thêm tham số inStock nếu có giá trị
+
+        const response = await fetch(`${API_BASE_URL}/Product?${params.toString()}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
 
         if (!response.ok) {
             const contentType = response.headers.get("content-type");
@@ -543,7 +577,7 @@ export const getAllProducts = async (pageNumber = 1, pageSize = 1000, search = "
         }
 
         const data = await response.json();
-        return data; // Trả về đối tượng PaginationModel chứa items, totalCount, pageNumber, pageSize
+        return data; // Trả về đối tượng PaginationModel
     } catch (error) {
         console.error("Error fetching products:", error.message);
         throw error;

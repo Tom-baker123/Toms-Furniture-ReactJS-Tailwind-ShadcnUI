@@ -61,18 +61,23 @@ export const APIProvider = ({ children }) => {
         }
     }, []);
 
-    // Hàm fetch danh mục
-    const fetchProducts = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllProducts();
-            setProducts(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+    // Hàm fetch sản phẩm với hỗ trợ filter
+    const fetchProducts = useCallback(async (filters = {}) => {
+        // Trì hoãn setLoading để tránh lỗi render
+        setTimeout(() => {
+            setLoading(true);
+            setError(null);
+            getAllProducts(filters)
+                .then((response) => {
+                    setProducts(response);
+                })
+                .catch((err) => {
+                    setError(err.message);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }, 0);
     }, []);
 
     // Hàm fetch Colors
@@ -198,30 +203,14 @@ export const APIProvider = ({ children }) => {
         fetchSuppliers,
     ]);
 
-    // Hàm refetch để gọi lại API
-    const refetch = useCallback(() => {
-        fetchCategories();
-        fetchStoreInformation();
-        fetchProducts();
-        fetchColors();
-        fetchUnits();
-        fetchMaterials();
-        fetchSizes();
-        fetchCountries();
-        fetchBrands();
-        fetchSuppliers();
-    }, [
-        fetchCategories,
-        fetchStoreInformation,
-        fetchProducts,
-        fetchColors,
-        fetchUnits,
-        fetchMaterials,
-        fetchSizes,
-        fetchCountries,
-        fetchBrands,
-        fetchSuppliers,
-    ]);
+    // Hàm refetch chỉ gọi fetchProducts với filters
+    const refetch = useCallback(
+        (filters = {}) => {
+            console.log("Refetch called with filters:", filters); // Debug
+            fetchProducts(filters); // Chỉ gọi fetchProducts với filters
+        },
+        [fetchProducts],
+    );
 
     return (
         <APIContext.Provider
@@ -231,3 +220,5 @@ export const APIProvider = ({ children }) => {
         </APIContext.Provider>
     );
 };
+
+export default APIProvider;
