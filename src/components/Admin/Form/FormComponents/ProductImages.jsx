@@ -39,26 +39,35 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
     };
 
     const handleAddImageWithFile = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImages((prev) => {
-                    // **Sửa đổi**: Sử dụng ProductName + số thứ tự cho alt của ảnh mới
-                    const productName = watch("ProductName");
-                    const defaultAlt = productName ? `${productName} ${formatSliderIndex(prev.length)}` : `Image ${formatSliderIndex(prev.length)}`;
-                    return [
-                        ...prev,
-                        {
+        const files = Array.from(event.target.files);
+        if (files.length > 0) {
+            const productName = watch("ProductName");
+
+            // Process multiple files sequentially
+            const processFile = (file, index) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        resolve({
                             file: file,
                             preview: reader.result,
-                            alt: defaultAlt,
-                            displayOrder: prev.length,
-                        },
-                    ];
+                            alt: productName ? `${productName} ${formatSliderIndex(index)}` : `Image ${formatSliderIndex(index)}`,
+                            displayOrder: index,
+                        });
+                    };
+                    reader.readAsDataURL(file);
                 });
             };
-            reader.readAsDataURL(file);
+
+            // Process all files and update state once
+            Promise.all(
+                files.map((file, index) => {
+                    const currentIndex = images.length + index;
+                    return processFile(file, currentIndex);
+                }),
+            ).then((newImages) => {
+                setImages((prev) => [...prev, ...newImages]);
+            });
         }
         event.target.value = "";
     };
@@ -186,6 +195,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                             <input
                                 type="file"
                                 accept="image/*"
+                                multiple
                                 className="hidden"
                                 onChange={handleAddImageWithFile}
                             />
@@ -203,8 +213,8 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                         </div>
                         <div className="ml-3">
                             <p className="text-sm text-blue-800">
-                                <strong>Tip:</strong> The first image will be the main product image. Click the "+" button to add a new image. Scroll
-                                horizontally to view all images.
+                                <strong>Tip:</strong> The first image will be the main product image. Click the "+" button to add images (you can
+                                select multiple images at once). Scroll horizontally to view all images.
                             </p>
                         </div>
                     </div>
