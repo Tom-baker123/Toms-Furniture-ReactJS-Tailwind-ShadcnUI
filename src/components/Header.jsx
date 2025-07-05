@@ -16,7 +16,7 @@ import { APIContext } from "@/context/APIContext";
 const Header = ({ onOpenCartModal }) => {
     const { openModal } = useModal(); // Gọi hàm modal
     const { authStatus, handleLogout } = useAuth(); // Kiểm tra trạng thái
-    const { storeInformation, loading, error } = useContext(APIContext); // Lấy thông tin cửa hàng
+    const { categories, storeInformation, loading, error } = useContext(APIContext); // Lấy thông tin cửa hàng
 
     const showHead = showHeader();
     // [1.] Xử lý scroll xuống và scroll lên đầu
@@ -73,7 +73,7 @@ const Header = ({ onOpenCartModal }) => {
 
                     {/* Thanh tìm kiếm */}
                     <div className="hidden md:px-5 lg:block lg:w-[44rem] xl:px-10">
-                        <SearchHeader id="categories-desktop" />
+                        <SearchHeader />
                     </div>
 
                     {/* Thanh Nav gồm: giỏ hàng, Login/ Register, Find a store*/}

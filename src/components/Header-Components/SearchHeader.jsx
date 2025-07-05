@@ -1,18 +1,35 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { APIContext } from "@/context/APIContext";
 
 const SearchHeader = ({ id = "categories" }) => {
+    const { categories } = useContext(APIContext); // Lấy danh mục từ APIContext
+    const navigate = useNavigate();
+
+    const handleCategoryChange = (event) => {
+        const selectedCategoryId = event.target.value;
+        if (selectedCategoryId) {
+            navigate(`/products/${selectedCategoryId}`); // Chuyển hướng đến danh mục được chọn
+        }
+    };
+
     return (
         <form className="flex items-center gap-2 rounded-full bg-gray-200">
             <div className="relative flex items-center">
                 <select
                     id={id}
                     className="text-md block w-17 appearance-none rounded-full border-2 border-transparent bg-gray-200 px-5 py-3 font-bold text-gray-900 focus:border-black focus:bg-white md:w-40"
+                    onChange={handleCategoryChange} // Thêm sự kiện onChange
                 >
-                    <option value=""> All categories </option>
-                    <option value=""> United States </option>
-                    <option value=""> Canada </option>
-                    <option value=""> France </option>
-                    <option value=""> Germany </option>
+                    <option value="">All categories</option>
+                    {categories?.map((category) => (
+                        <option
+                            key={category.id}
+                            value={category.id}
+                        >
+                            {category.categoryName}
+                        </option>
+                    ))}
                 </select>
 
                 <svg

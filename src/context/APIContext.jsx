@@ -10,6 +10,7 @@ import {
     getAllCountries,
     getAllBrands,
     getAllSuppliers,
+    getProductById,
 } from "@/api/api";
 
 // Tạo Context chung cho ứng dụng
@@ -17,20 +18,35 @@ export const APIContext = createContext();
 
 // Provider để bọc ứng dụng hoặc các component cần dùng danh mục và thông tin cửa hàng
 export const APIProvider = ({ children }) => {
-    const [categories, setCategories] = useState(null);
-    const [storeInformation, setStoreInformation] = useState(null); // State cho thông tin cửa hàng
-    const [products, setProducts] = useState(null); // State cho thông tin cửa hàng
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-
-    // State cho Colors, Units, Materials, Sizes, Countries, Brands, Suppliers
-    const [colors, setColors] = useState(null);
-    const [units, setUnits] = useState(null);
-    const [materials, setMaterials] = useState(null);
-    const [sizes, setSizes] = useState(null);
-    const [countries, setCountries] = useState(null);
-    const [brands, setBrands] = useState(null);
-    const [suppliers, setSuppliers] = useState(null);
+    const [state, setState] = useState({
+        categories: undefined,
+        storeInformation: undefined,
+        products: undefined,
+        product: undefined,
+        colors: undefined,
+        units: undefined,
+        materials: undefined,
+        sizes: undefined,
+        countries: undefined,
+        brands: undefined,
+        suppliers: undefined,
+        loading: false,
+        error: undefined,
+    });
+    // Helper setters for each property
+    const setCategories = (categories) => setState((prev) => ({ ...prev, categories }));
+    const setStoreInformation = (storeInformation) => setState((prev) => ({ ...prev, storeInformation }));
+    const setProducts = (products) => setState((prev) => ({ ...prev, products }));
+    const setProduct = (product) => setState((prev) => ({ ...prev, product }));
+    const setColors = (colors) => setState((prev) => ({ ...prev, colors }));
+    const setUnits = (units) => setState((prev) => ({ ...prev, units }));
+    const setMaterials = (materials) => setState((prev) => ({ ...prev, materials }));
+    const setSizes = (sizes) => setState((prev) => ({ ...prev, sizes }));
+    const setCountries = (countries) => setState((prev) => ({ ...prev, countries }));
+    const setBrands = (brands) => setState((prev) => ({ ...prev, brands }));
+    const setSuppliers = (suppliers) => setState((prev) => ({ ...prev, suppliers }));
+    const setLoading = (loading) => setState((prev) => ({ ...prev, loading }));
+    const setError = (error) => setState((prev) => ({ ...prev, error }));
 
     // Hàm fetch danh mục
     const fetchCategories = useCallback(async () => {
@@ -78,6 +94,23 @@ export const APIProvider = ({ children }) => {
                     setLoading(false);
                 });
         }, 0);
+    }, []);
+
+    // Hàm fetch sản phẩm theo ID
+    const fetchProductById = useCallback(async (id) => {
+        // Đặt trạng thái loading và xóa lỗi cũ
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getProductById(id); // Gọi API lấy sản phẩm theo ID
+            setProduct(response); // Lưu dữ liệu sản phẩm vào state
+            return response; // Trả về dữ liệu để component sử dụng nếu cần
+        } catch (err) {
+            setError(err.message); // Lưu lỗi nếu có
+            throw err; // Ném lỗi để component xử lý
+        } finally {
+            setLoading(false); // Kết thúc trạng thái loading
+        }
     }, []);
 
     // Hàm fetch Colors
@@ -214,7 +247,23 @@ export const APIProvider = ({ children }) => {
 
     return (
         <APIContext.Provider
-            value={{ categories, storeInformation, products, colors, units, materials, sizes, countries, brands, suppliers, loading, error, refetch }}
+            value={{
+                categories: state.categories,
+                storeInformation: state.storeInformation,
+                products: state.products,
+                product: state.product,
+                colors: state.colors,
+                units: state.units,
+                materials: state.materials,
+                sizes: state.sizes,
+                countries: state.countries,
+                brands: state.brands,
+                suppliers: state.suppliers,
+                loading: state.loading,
+                error: state.error,
+                refetch,
+                fetchProductById, // Thêm hàm fetchProductById vào context
+            }}
         >
             {children}
         </APIContext.Provider>

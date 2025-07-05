@@ -97,7 +97,8 @@ const ProductForm = () => {
                 })),
             );
         } else {
-            setImages([{ file: null, preview: null, alt: "", displayOrder: 0 }]);
+            // Không tạo khung ảnh trống khi tạo mới
+            setImages([]);
         }
     }, [isEditing, productData]);
 
@@ -190,7 +191,7 @@ const ProductForm = () => {
 
     const resetForm = () => {
         reset();
-        setImages([{ file: null, preview: null, alt: "", displayOrder: 0 }]);
+        setImages([]); // Không tạo khung ảnh trống khi reset
         setImageErrors({});
     };
 

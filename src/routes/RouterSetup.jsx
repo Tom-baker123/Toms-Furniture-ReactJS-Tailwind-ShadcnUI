@@ -132,10 +132,6 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            {
-                path: "products/:proid",
-                element: <ProductDetails />,
-            },
             // Không tìm thấy trang phù hợp
             { path: "*", element: <PageNotFound /> },
         ],

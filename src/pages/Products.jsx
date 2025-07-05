@@ -1,10 +1,10 @@
-import { NewArrivalsPicture } from "@/assets/FakeData";
+// import { NewArrivalsPicture } from "@/assets/FakeData";
 import AboutMaterial from "@/components/Home/ProductCategoryComponents/AboutMaterial";
 import BannerProducts from "@/components/Home/ProductCategoryComponents/BannerProducts";
 import FilterComponents from "@/components/Home/ProductCategoryComponents/FilterComponents";
 import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
-import ButtonHov from "@/components/tailwind-custom/ButtonHov";
+// import ButtonHov from "@/components/tailwind-custom/ButtonHov";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 // import ButtonHovCustom from "@/components/tailwind-custom/ButtonHovCustom";
 import showHeader from "@/hooks/showHeader";
@@ -12,10 +12,12 @@ import { cn } from "@/lib/utils";
 import { ChevronDown, Funnel, Grid2x2, List } from "lucide-react";
 import React, { useCallback, useContext, useState } from "react";
 import { APIContext } from "@/context/APIContext";
+import { Link, useNavigate } from "react-router-dom";
 
 const Products = () => {
     // Sử dụng showHeader hook để lấy trạng thái hiển thị của header
     const showHead = showHeader();
+    const navigate = useNavigate();
     const { products, loading, error, refetch } = useContext(APIContext);
 
     const [filters, setFilters] = useState({
@@ -80,6 +82,10 @@ const Products = () => {
     const handleSortChange = (e) => {
         const value = e.target.value;
         handleFilterChange("sortBy", value);
+    };
+
+    const goToProductDetail = (param) => {
+        navigate(`/products/${param}`, { replace: true });
     };
 
     return (
@@ -250,11 +256,13 @@ const Products = () => {
                                 >
                                     {/* Product Image */}
                                     <div className="relative mb-3 overflow-hidden rounded-md">
-                                        <img
-                                            className="aspect-square w-full rounded-md object-cover transition-transform duration-300 group-hover:scale-105"
-                                            src={product.sliders[0]?.imageUrl || "/img/placeholder.jpg"}
-                                            alt={product.productName}
-                                        />
+                                        <Link to={`/products/${product.id}`}>
+                                            <img
+                                                className="aspect-square w-full rounded-md object-cover transition-transform duration-300 group-hover:scale-105"
+                                                src={product.sliders[0]?.imageUrl || "/img/placeholder.jpg"}
+                                                alt={product.productName}
+                                            />
+                                        </Link>
                                         {/* Hiển thị promotion nếu có giảm giá */}
                                         {product.productVariants.some((pv) => pv.discountedPrice < pv.originalPrice) && (
                                             <div className="absolute top-2 left-2 rounded bg-red-500 px-2 py-1 text-xs font-bold text-white">
@@ -268,7 +276,12 @@ const Products = () => {
                                         {/* Category */}
                                         <p className="text-sm font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
                                         {/* Product Name */}
-                                        <h3 className="line-clamp-2 text-lg font-bold text-gray-900">{product.productName}</h3>
+                                        <Link
+                                            to={`/products/${product.id}`}
+                                            className="line-clamp-2 text-lg font-bold text-gray-900"
+                                        >
+                                            {product.productName}
+                                        </Link>
                                         {/* Price */}
                                         <p className="text-lg font-bold text-gray-900">
                                             $
@@ -279,9 +292,9 @@ const Products = () => {
                                         {/* Color Options */}
                                         <div className="mt-2 flex items-center gap-2">
                                             {[...new Set(product.productVariants.map((pv) => pv.colorName))].map((color, idx) => (
-                                                <div
+                                                <Link
                                                     key={idx}
-                                                    className="h-5 w-5 cursor-pointer rounded-full border border-gray-300 transition-transform hover:scale-110"
+                                                    className="h-5 w-5 cursor-pointer rounded-xs border border-gray-300 transition-transform hover:scale-110"
                                                     style={{
                                                         backgroundColor:
                                                             product.productVariants.find((pv) => pv.colorName === color)?.colorCode || "#000",
@@ -297,6 +310,7 @@ const Products = () => {
                 </div>
             </div>
 
+            {/* [5.] Collapsible Về cửa hàng */}
             <div className="">
                 <AboutMaterial />
             </div>

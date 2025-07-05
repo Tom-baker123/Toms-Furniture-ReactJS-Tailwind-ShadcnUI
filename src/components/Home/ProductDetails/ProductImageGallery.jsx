@@ -24,7 +24,7 @@ const ProductImageGallery = () => {
                 spaceBetween={10}
                 watchSlidesProgress
                 modules={[Thumbs]}
-                className="order-2 w-full md:order-1 md:w-16"
+                className="order-2 w-full md:order-1 md:w-24"
                 breakpoints={{
                     768: {
                         direction: "vertical",
@@ -35,12 +35,12 @@ const ProductImageGallery = () => {
                 {images.map((img, idx) => (
                     <SwiperSlide
                         key={idx}
-                        className="!mb-0 md:!h-18"
+                        className="!mb-0 md:!h-24"
                     >
                         <img
                             src={img}
                             alt={`Thumb ${idx}`}
-                            className="w-full cursor-pointer rounded border object-cover md:h-16 md:w-16"
+                            className="w-full cursor-pointer rounded border object-cover md:h-20 md:w-20"
                         />
                     </SwiperSlide>
                 ))}
