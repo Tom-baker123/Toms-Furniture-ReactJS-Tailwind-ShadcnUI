@@ -11,7 +11,6 @@ export const YOUR_SHOP_WARD_CODE = "20804"; // Replace with valid ward code
 // const API_BASE_URL = "http://tom11357-001-site1.qtempurl.com/api";
 const API_BASE_URL = "https://tomsfurniturebackend.onrender.com/api";
 
-
 //#region [Global API🌐]-----------------------------------------------
 // [1.] Kiểm tra trạng thái đăng nhập của người dùng
 export const checkAuthStatus = async () => {
@@ -37,7 +36,7 @@ export const checkAuthStatus = async () => {
             email: data.email || null,
             role: data.role || null,
             message: data.message || null,
-            redirectUrl: data.redirectUrl || "/"
+            redirectUrl: data.redirectUrl || "/",
         };
     } catch (error) {
         // Ghi log lỗi và trả về trạng thái mặc định
@@ -66,7 +65,7 @@ export const login = async (email, password) => {
             message: data.message || "Login successful.",
             userName: data.userName,
             role: data.role,
-            redirectUrl: data.redirectUrl
+            redirectUrl: data.redirectUrl,
         };
     } catch (error) {
         console.error("Lỗi khi đăng nhập:", error);
@@ -86,7 +85,7 @@ export const register = async (userData) => {
                 password: userData.password,
                 gender: userData.gender === "true", // Chuyển đổi string thành boolean
                 phoneNumber: userData.phoneNumber || null,
-                userAddress: userData.userAddress || null
+                userAddress: userData.userAddress || null,
             }),
         });
 
@@ -97,7 +96,7 @@ export const register = async (userData) => {
 
         return {
             success: data.success || false,
-            message: data.message || "Registration successful."
+            message: data.message || "Registration successful.",
         };
     } catch (error) {
         console.error("Lỗi khi đăng ký:", error);
@@ -121,7 +120,7 @@ export const verifyOtp = async (email, otp) => {
 
         return {
             success: data.success || false,
-            message: data.message || "OTP verification successful."
+            message: data.message || "OTP verification successful.",
         };
     } catch (error) {
         console.error("Lỗi khi xác thực OTP:", error);
@@ -145,7 +144,7 @@ export const resendOtp = async (email) => {
 
         return {
             success: data.success || false,
-            message: data.message || "New OTP sent successfully."
+            message: data.message || "New OTP sent successfully.",
         };
     } catch (error) {
         console.error("Lỗi khi gửi lại OTP:", error);
@@ -167,7 +166,7 @@ export const logout = async () => {
 
         return {
             success: data.success || false,
-            message: data.message || "Logout successful."
+            message: data.message || "Logout successful.",
         };
     } catch (error) {
         console.error("Lỗi khi đăng xuất:", error);
@@ -191,7 +190,7 @@ export const forgotPassword = async (email) => {
 
         return {
             success: data.success || false,
-            message: data.message || "OTP sent successfully."
+            message: data.message || "OTP sent successfully.",
         };
     } catch (error) {
         console.error("Lỗi khi yêu cầu quên mật khẩu:", error);
@@ -215,7 +214,7 @@ export const resetPassword = async (email, newPassword) => {
 
         return {
             success: data.success || false,
-            message: data.message || "Password reset successfully."
+            message: data.message || "Password reset successfully.",
         };
     } catch (error) {
         console.error("Lỗi khi đặt lại mật khẩu:", error);
@@ -223,7 +222,6 @@ export const resetPassword = async (email, newPassword) => {
     }
 };
 //#endregion [Global API🌐 - End]--------------------------------------
-
 
 //#region [Home Page 🏠]-----------------------------------------------
 export const getProductDetail = () => {
@@ -290,16 +288,10 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
         if (!items.length) throw new Error("Cart items trống");
         if (!Number(toDistrictId) || !toWardCode) throw new Error("Invalid district or ward code");
 
-        const totalWeight = items.reduce(
-            (sum, item) => sum + (item.sanPham.weight || 1000) * item.soLuong,
-            0
-        );
+        const totalWeight = items.reduce((sum, item) => sum + (item.sanPham.weight || 1000) * item.soLuong, 0);
         const maxLength = Math.max(...items.map((item) => item.sanPham.length || 20));
         const maxWidth = Math.max(...items.map((item) => item.sanPham.width || 20));
-        const totalHeight = items.reduce(
-            (sum, item) => sum + (item.sanPham.height || 10) * item.soLuong,
-            0
-        );
+        const totalHeight = items.reduce((sum, item) => sum + (item.sanPham.height || 10) * item.soLuong, 0);
 
         if (totalWeight <= 0 || totalHeight <= 0 || maxLength <= 0 || maxWidth <= 0) {
             throw new Error("Invalid package dimensions or weight");
@@ -341,8 +333,180 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
         return 0;
     }
 };
-//#endregion [Home Page 🏠 - End]--------------------------------------
 
+// [1] API thêm sản phẩm vào giỏ hàng
+export const addToCart = async (cartData) => {
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (!cartData.ProVarId || cartData.ProVarId <= 0) {
+            throw new Error("Valid product variant ID is required");
+        }
+        if (!cartData.Quantity || cartData.Quantity <= 0) {
+            throw new Error("Quantity must be greater than 0");
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Cart`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(cartData), // CartCreateVModel: { Quantity, ProVarId }
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to add to cart";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.Message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json(); // Trả về { Message, Cart }
+    } catch (error) {
+        console.error("Error adding to cart:", error.message);
+        throw error;
+    }
+};
+
+// [2] API cập nhật giỏ hàng
+export const updateCart = async (cartData) => {
+    try {
+        // Kiểm tra dữ liệu đầu vào
+        if (!cartData.Id || cartData.Id <= 0) {
+            throw new Error("Valid cart item ID is required");
+        }
+        if (!cartData.ProVarId || cartData.ProVarId <= 0) {
+            throw new Error("Valid product variant ID is required");
+        }
+        if (!cartData.Quantity || cartData.Quantity <= 0) {
+            throw new Error("Quantity must be greater than 0");
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Cart`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(cartData), // CartUpdateVModel: { Id, Quantity, ProVarId }
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update cart";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.Message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json(); // Trả về { Message, Cart }
+    } catch (error) {
+        console.error("Error updating cart:", error.message);
+        throw error;
+    }
+};
+
+// [3] API xóa mục khỏi giỏ hàng
+export const removeFromCart = async (id) => {
+    try {
+        // Kiểm tra ID
+        if (!id || id <= 0) {
+            throw new Error("Valid cart item ID is required");
+        }
+
+        const response = await fetch(`${API_BASE_URL}/Cart/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to remove cart item with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.Message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json(); // Trả về { Message, Cart }
+    } catch (error) {
+        console.error(`Error removing cart item with ID ${id}:`, error.message);
+        throw error;
+    }
+};
+
+// [4] API lấy giỏ hàng
+export const getCart = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Cart`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch cart";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.Message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json(); // Trả về { Cart: List<CartGetVModel> }
+    } catch (error) {
+        console.error("Error fetching cart:", error.message);
+        throw error;
+    }
+};
+
+// [5] API hợp nhất giỏ hàng từ cookie
+export const mergeCart = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/Cart/merge`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to merge cart";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.Message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json(); // Trả về { Message, Cart }
+    } catch (error) {
+        console.error("Error merging cart:", error.message);
+        throw error;
+    }
+};
+//#endregion [Home Page 🏠 - End]--------------------------------------
 
 //#region [ADMIN Page 🪪]----------------------------------------------
 // [1.1] API lấy tất cả danh sách danh mục sản phẩm
@@ -513,8 +677,6 @@ export const deleteCategory = async (id) => {
     }
 };
 
-
-
 // ------------------------------------------------------------------
 // [2.1] API lấy tất cả danh sách sản phẩm
 export const getAllProducts = async ({
@@ -532,7 +694,7 @@ export const getAllProducts = async ({
     sortOrder = "",
     minPrice = null, // Thêm tham số minPrice để lọc giá tối thiểu
     maxPrice = null, // Thêm tham số maxPrice để lọc giá tối đa
-    inStock = null // Thêm tham số inStock để lọc trạng thái tồn kho
+    inStock = null, // Thêm tham số inStock để lọc trạng thái tồn kho
 } = {}) => {
     try {
         // Tạo URLSearchParams để xây dựng query string
@@ -702,7 +864,7 @@ export const createProduct = async (productData, sliders) => {
         // Bước 4: Trả về kết quả tạo sản phẩm và trạng thái sliders
         return {
             product: createdProduct,
-            sliders: sliderResults
+            sliders: sliderResults,
         };
     } catch (error) {
         console.error("Error creating product:", error.message);
@@ -872,7 +1034,7 @@ export const updateProduct = async (productData, sliders) => {
         // Bước 7: Trả về kết quả cập nhật sản phẩm và trạng thái sliders
         return {
             product: updatedProduct,
-            sliders: sliderResults
+            sliders: sliderResults,
         };
     } catch (error) {
         console.error("Error updating product:", error.message);
@@ -1184,7 +1346,6 @@ export const getProductVariantById = async (id) => {
             }
             throw new Error(errorMessage);
         }
-
         return await response.json();
     } catch (error) {
         console.error(`Error fetching Product Variant with ID ${id}:`, error.message);
@@ -1192,6 +1353,33 @@ export const getProductVariantById = async (id) => {
     }
 };
 
+// [2.14] API lấy ProductVariantId theo thuộc tính
+export const getProductVariantIdByAttributes = async (productIdentifier, colorId, sizeId, materialId) => {
+    try {
+        const params = new URLSearchParams({
+            productIdentifier,
+            colorId,
+            sizeId,
+            materialId,
+        });
+        const response = await fetch(`${API_BASE_URL}/Product/variant/check?${params.toString()}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to get product variant by attributes.");
+        }
+        return data; // { Message, Success, VariantId }
+    } catch (error) {
+        console.error("Error fetching product variant by attributes:", error.message);
+        throw error;
+    }
+};
 
 // ------------------------------------------------------------------
 // [3.1] API lấy tất cả user
@@ -1199,7 +1387,11 @@ export const getAllUsers = async () => {
     try {
         // Gửi yêu cầu đến API để kiểm tra trạng thái đăng nhập + cookie
         const response = await fetch(`${API_BASE_URL}/Auth/users`, {
-            credentials: "include",
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include", // Gửi cookie xác thực
         });
         // Kiểm tra phản hồi từ server
         if (!response.ok) {
@@ -1211,7 +1403,7 @@ export const getAllUsers = async () => {
         console.log("Error fetching users: ", error);
         return { message: "Can't get all users!" };
     }
-}
+};
 
 // [3.2] Lấy thông tin người dùng theo ID
 export const getUserById = async (id) => {
@@ -1225,9 +1417,9 @@ export const getUserById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch user with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1256,9 +1448,9 @@ export const createUser = async (userData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create user';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create user";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1287,9 +1479,9 @@ export const updateUser = async (id, userData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update user';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update user";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1314,9 +1506,9 @@ export const deleteUser = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete user with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1332,7 +1524,6 @@ export const deleteUser = async (id) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 // [4.1] API lấy tất cả danh sách thương hiệu
 export const getAllBrands = async () => {
@@ -1346,9 +1537,9 @@ export const getAllBrands = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch brands';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch brands";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1376,9 +1567,9 @@ export const getBrandById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch brand with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1410,12 +1601,12 @@ export const createBrand = async (brandData, imageFile) => {
         });
 
         console.log("Create brand response status:", response.status); // Debug
-        console.log("Create brand response headers:", response.headers.get('content-type')); // Debug
+        console.log("Create brand response headers:", response.headers.get("content-type")); // Debug
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create brand';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create brand";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 console.log("Error data (JSON):", errorData); // Debug
                 errorMessage = errorData.message || errorMessage;
@@ -1451,9 +1642,9 @@ export const updateBrand = async (brandData, imageFile) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update brand';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update brand";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1478,9 +1669,9 @@ export const deleteBrand = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete brand with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1496,7 +1687,6 @@ export const deleteBrand = async (id) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 // [5.1] Lấy tất cả danh sách xuất xứ
 export const getAllCountries = async () => {
@@ -1510,9 +1700,9 @@ export const getAllCountries = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Không thể lấy danh sách xuất xứ';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Không thể lấy danh sách xuất xứ";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1540,9 +1730,9 @@ export const getCountryById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Không thể lấy xuất xứ với ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1574,9 +1764,9 @@ export const createCountry = async (countryData, imageFile) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Không thể tạo xuất xứ';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Không thể tạo xuất xứ";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1610,9 +1800,9 @@ export const updateCountry = async (countryData, imageFile) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Không thể cập nhật xuất xứ';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Không thể cập nhật xuất xứ";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1637,9 +1827,9 @@ export const deleteCountry = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Không thể xóa xuất xứ với ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1655,7 +1845,6 @@ export const deleteCountry = async (id) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 // [6.1] API lấy tất cả danh sách nhà cung cấp
 export const getAllSuppliers = async () => {
@@ -1669,9 +1858,9 @@ export const getAllSuppliers = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch suppliers'; // Thông báo lỗi bằng tiếng Anh
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch suppliers"; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1699,9 +1888,9 @@ export const getSupplierById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch supplier with ID ${id}`; // Thông báo lỗi bằng tiếng Anh
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1738,9 +1927,9 @@ export const createSupplier = async (supplierData, imageFile) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create supplier'; // Thông báo lỗi bằng tiếng Anh
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create supplier"; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1779,9 +1968,9 @@ export const updateSupplier = async (supplierData, imageFile) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update supplier'; // Thông báo lỗi bằng tiếng Anh
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update supplier"; // Thông báo lỗi bằng tiếng Anh
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1806,9 +1995,9 @@ export const deleteSupplier = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete supplier with ID ${id}`; // Thông báo lỗi bằng tiếng Anh
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1824,7 +2013,6 @@ export const deleteSupplier = async (id) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 // [7.1] API lấy tất cả danh sách kích thước
 export const getAllSizes = async () => {
@@ -1838,9 +2026,9 @@ export const getAllSizes = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch sizes';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch sizes";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1868,9 +2056,9 @@ export const getSizeById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch size with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1899,9 +2087,9 @@ export const createSize = async (sizeData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create size';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create size";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1921,10 +2109,10 @@ export const createSize = async (sizeData) => {
 export const updateSize = async (sizeData) => {
     try {
         const formData = new FormData();
-        formData.append('Id', sizeData.Id);
-        formData.append('SizeName', sizeData.SizeName);
+        formData.append("Id", sizeData.Id);
+        formData.append("SizeName", sizeData.SizeName);
         if (sizeData.IsActive !== undefined) {
-            formData.append('IsActive', sizeData.IsActive.toString());
+            formData.append("IsActive", sizeData.IsActive.toString());
         }
 
         const response = await fetch(`${API_BASE_URL}/Size`, {
@@ -1934,9 +2122,9 @@ export const updateSize = async (sizeData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update size';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update size";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1961,9 +2149,9 @@ export const deleteSize = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete size with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -1978,7 +2166,6 @@ export const deleteSize = async (id) => {
         throw error;
     }
 };
-
 
 // ------------------------------------------------------------------
 // [8.1] API lấy tất cả danh sách màu sắc
@@ -1995,9 +2182,9 @@ export const getAllColors = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch colors';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch colors";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2027,9 +2214,9 @@ export const getColorById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch color with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2060,9 +2247,9 @@ export const createColor = async (colorData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create color';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create color";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2084,11 +2271,11 @@ export const createColor = async (colorData) => {
 export const updateColor = async (colorData) => {
     try {
         const formData = new FormData();
-        formData.append('Id', colorData.Id);
-        formData.append('ColorName', colorData.ColorName);
-        formData.append('ColorCode', colorData.ColorCode || '');
+        formData.append("Id", colorData.Id);
+        formData.append("ColorName", colorData.ColorName);
+        formData.append("ColorCode", colorData.ColorCode || "");
         if (colorData.IsActive !== undefined) {
-            formData.append('IsActive', colorData.IsActive.toString());
+            formData.append("IsActive", colorData.IsActive.toString());
         }
 
         const response = await fetch(`${API_BASE_URL}/Color`, {
@@ -2098,9 +2285,9 @@ export const updateColor = async (colorData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update color';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update color";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2126,9 +2313,9 @@ export const deleteColor = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete color with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2143,7 +2330,6 @@ export const deleteColor = async (id) => {
         throw error;
     }
 };
-
 
 // ------------------------------------------------------------------
 // [9.1] API lấy tất cả danh sách vật liệu
@@ -2160,9 +2346,9 @@ export const getAllMaterials = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch materials';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch materials";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2192,9 +2378,9 @@ export const getMaterialById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch material with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2225,9 +2411,9 @@ export const createMaterial = async (materialData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create material';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create material";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2249,10 +2435,10 @@ export const createMaterial = async (materialData) => {
 export const updateMaterial = async (materialData) => {
     try {
         const formData = new FormData();
-        formData.append('Id', materialData.Id);
-        formData.append('MaterialName', materialData.MaterialName);
+        formData.append("Id", materialData.Id);
+        formData.append("MaterialName", materialData.MaterialName);
         if (materialData.IsActive !== undefined) {
-            formData.append('IsActive', materialData.IsActive.toString());
+            formData.append("IsActive", materialData.IsActive.toString());
         }
 
         const response = await fetch(`${API_BASE_URL}/Material`, {
@@ -2262,9 +2448,9 @@ export const updateMaterial = async (materialData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update material';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update material";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2290,9 +2476,9 @@ export const deleteMaterial = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete material with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2307,7 +2493,6 @@ export const deleteMaterial = async (id) => {
         throw error;
     }
 };
-
 
 // ------------------------------------------------------------------
 // [10.1] API lấy tất cả danh sách đơn vị
@@ -2475,7 +2660,6 @@ export const deleteUnit = async (id) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 // [11.1] API lấy tất cả danh sách khuyến mãi
 export const getAllPromotions = async () => {
@@ -2489,9 +2673,9 @@ export const getAllPromotions = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch promotions';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch promotions";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2519,9 +2703,9 @@ export const getPromotionById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch promotion with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2559,9 +2743,9 @@ export const createPromotion = async (promotionData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create promotion';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create promotion";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2601,9 +2785,9 @@ export const updatePromotion = async (promotionData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update promotion';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update promotion";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2628,9 +2812,9 @@ export const deletePromotion = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete promotion with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2646,7 +2830,6 @@ export const deletePromotion = async (id) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 // [12.1] API lấy tất cả danh sách loại khuyến mãi
 export const getAllPromotionTypes = async () => {
@@ -2660,9 +2843,9 @@ export const getAllPromotionTypes = async () => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to fetch promotion types';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch promotion types";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2690,9 +2873,9 @@ export const getPromotionTypeById = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to fetch promotion type with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2725,9 +2908,9 @@ export const createPromotionType = async (promotionTypeData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to create promotion type';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create promotion type";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2762,9 +2945,9 @@ export const updatePromotionType = async (promotionTypeData) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
-            let errorMessage = 'Failed to update promotion type';
-            if (contentType && contentType.includes('application/json')) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update promotion type";
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2789,9 +2972,9 @@ export const deletePromotionType = async (id) => {
         });
 
         if (!response.ok) {
-            const contentType = response.headers.get('content-type');
+            const contentType = response.headers.get("content-type");
             let errorMessage = `Failed to delete promotion type with ID ${id}`;
-            if (contentType && contentType.includes('application/json')) {
+            if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
                 errorMessage = errorData.message || errorMessage;
             } else {
@@ -2806,7 +2989,6 @@ export const deletePromotionType = async (id) => {
         throw error;
     }
 };
-
 
 // [13.1] API lấy tất cả thông tin cửa hàng
 export const getAllStoreInformations = async () => {
@@ -2973,7 +3155,6 @@ export const deleteStoreInformation = async (id) => {
     }
 };
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
-
 
 // ----- [NOTE] --------------------------------------------------------
 // - 'credentials': 'include' để gửi cookie xác thực.
