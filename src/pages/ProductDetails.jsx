@@ -77,7 +77,7 @@ const ProductDetails = () => {
             <div className="grid grid-cols-1 gap-x-5 gap-y-6 md:grid-cols-2 lg:gap-x-8">
                 {/* Left side - Product Images */}
                 <div
-                    className="relative md:sticky md:top-[var(--sticky-top)] md:z-[1] md:self-start"
+                    className="transition-all md:sticky md:top-[var(--sticky-top)] md:z-[1] md:self-start"
                     style={{ "--sticky-top": `${stickyTop}px` }}
                 >
                     <ProductImageGallery images={product.sliders?.map((s) => s.imageUrl) || []} />
@@ -85,7 +85,7 @@ const ProductDetails = () => {
 
                 {/* Right side - Product Information */}
                 <div
-                    className="space-y-6 md:sticky md:top-[var(--sticky-top)] md:z-[1] md:self-start"
+                    className="relative space-y-5 transition-all md:sticky md:top-[var(--sticky-top)] md:z-[1] md:self-start"
                     style={{ "--sticky-top": `${stickyTop}px` }}
                 >
                     {/* Product Title and Vendor */}
@@ -103,10 +103,10 @@ const ProductDetails = () => {
 
                     {/* Price */}
                     <div className="flex items-center gap-3">
-                        <span className="text-3xl font-bold text-orange-700">${selectedVariant?.discountedPrice?.toLocaleString() || "-"}</span>
+                        <span className="text-3xl font-bold text-orange-700">${selectedVariant?.discountedPrice?.toLocaleString() || "-"}.00</span>
                         {selectedVariant && selectedVariant.discountedPrice < selectedVariant.originalPrice && (
-                            <span className="text-lg font-semibold text-gray-400 line-through">
-                                ${selectedVariant.originalPrice?.toLocaleString()}
+                            <span className="text-xl font-semibold text-gray-400 line-through">
+                                ${selectedVariant.originalPrice?.toLocaleString()}.00
                             </span>
                         )}
                     </div>
@@ -137,7 +137,7 @@ const ProductDetails = () => {
                     </div>
 
                     {/* Description */}
-                    <p className="leading-relaxed text-gray-600">{product.specificationDescription}</p>
+                    {/* <p className="leading-relaxed text-gray-600">{product.specificationDescription}</p> */}
 
                     {/* Color Selection */}
                     <div>
@@ -213,7 +213,7 @@ const ProductDetails = () => {
                     </div>
 
                     {/* Quantity and Add to Cart */}
-                    <div className="flex items-center gap-4">
+                    <div className="mt-12 flex items-center gap-4">
                         <div className="flex items-center rounded-full border border-gray-300">
                             <button
                                 onClick={() => handleQuantityChange("decrease")}
