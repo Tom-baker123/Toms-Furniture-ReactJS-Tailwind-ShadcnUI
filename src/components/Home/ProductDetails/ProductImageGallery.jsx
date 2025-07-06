@@ -15,7 +15,7 @@ const ProductImageGallery = () => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
     return (
-        <div className="flex flex-col-reverse gap-4 md:flex-row">
+        <div className="flex flex-col gap-4 md:flex-row">
             {/* Thumbnails */}
             <Swiper
                 onSwiper={setThumbsSwiper}

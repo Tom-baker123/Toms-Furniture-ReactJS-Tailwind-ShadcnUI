@@ -15,7 +15,7 @@ const ButtonHovCT = ({
         <button
             type={type}
             onClick={onClick}
-            className={`group relative overflow-hidden rounded-full px-6 py-2 font-semibold ${bgColor} ${textColor} ${border ? `border ${textColor.replace("text-", "border-")}` : ""} transition-colors duration-300 ease-in-out ${className} `}
+            className={`cursor-pointer group relative overflow-hidden rounded-full px-6 py-2 font-semibold ${bgColor} ${textColor} ${border ? `border ${textColor.replace("text-", "border-")}` : ""} transition-colors duration-300 ease-in-out ${className} `}
         >
             <span
                 className={`relative !z-10 whitespace-nowrap transition-colors duration-300 ${

@@ -77,13 +77,21 @@ export const APIProvider = ({ children }) => {
         }
     }, []);
 
-    // Hàm fetch sản phẩm với hỗ trợ filter
+    // Hàm fetch sản phẩm với hỗ trợ filter và pagination
     const fetchProducts = useCallback(async (filters = {}) => {
         // Trì hoãn setLoading để tránh lỗi render
         setTimeout(() => {
             setLoading(true);
             setError(null);
-            getAllProducts(filters)
+
+            // Thêm pagination parameters mặc định nếu không có
+            const filtersWithPagination = {
+                pageNumber: 1,
+                pageSize: 8,
+                ...filters,
+            };
+
+            getAllProducts(filtersWithPagination)
                 .then((response) => {
                     setProducts(response);
                 })
@@ -215,7 +223,7 @@ export const APIProvider = ({ children }) => {
     useEffect(() => {
         fetchCategories();
         fetchStoreInformation();
-        fetchProducts();
+        fetchProducts({ pageNumber: 1, pageSize: 12 }); // Thêm pagination mặc định
         fetchColors();
         fetchUnits();
         fetchMaterials();
