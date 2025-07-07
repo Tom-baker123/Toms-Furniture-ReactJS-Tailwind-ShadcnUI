@@ -1,10 +1,12 @@
 import ProductImageGallery from "@/components/Home/ProductDetails/ProductImageGallery";
 import showHeader from "@/hooks/showHeader";
-import React, { useState, useEffect, useContext, use } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Minus, Plus, Check, Truck, RotateCcw, MapPin, ChevronRight, Zap, X } from "lucide-react";
 import { APIContext } from "@/context/APIContext";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 const ProductDetails = () => {
     const showHead = showHeader();
@@ -16,13 +18,14 @@ const ProductDetails = () => {
     const [selectedSize, setSelectedSize] = useState("");
     const [showOffer, setShowOffer] = useState(true);
     const [selectedVariant, setSelectedVariant] = useState(null);
+    const { addToCart, loading: cartLoading } = useCart();
 
     // Fetch product by id (proid)
     useEffect(() => {
         if (proid) {
             fetchProductById(proid);
         }
-    }, [proid]);
+    }, [proid, fetchProductById]);
 
     // Set default color and variant when product loaded
     useEffect(() => {
@@ -50,6 +53,16 @@ const ProductDetails = () => {
         } else if (type === "decrease" && quantity > 1) {
             setQuantity((prev) => prev - 1);
         }
+    };
+
+    // Handler thêm vào giỏ hàng
+    const handleAddToCart = async () => {
+        if (!selectedVariant) return;
+        await addToCart({
+            proVarId: selectedVariant.id,
+            quantity: quantity,
+        });
+        toast.success("You have added cart successfully!");
     };
 
     if (loading || !product) {
@@ -236,8 +249,10 @@ const ProductDetails = () => {
                             hoverBgColor=" bg-black" // lớp trượt màu đen
                             textColor="text-black"
                             hoverTextColor="text-white"
+                            onClick={handleAddToCart}
+                            disabled={cartLoading || !selectedVariant}
                         >
-                            Add To Cart
+                            {cartLoading ? "Đang thêm..." : "Add To Cart"}
                         </ButtonHovCT>
                     </div>
 

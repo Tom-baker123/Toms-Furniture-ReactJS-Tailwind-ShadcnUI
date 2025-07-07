@@ -1,13 +1,12 @@
-import React from "react"
-import RouterSetup from "./routes/RouterSetup"
+import React from "react";
+import RouterSetup from "./routes/RouterSetup";
 
 function App() {
-
-  return (
-    <>
-      <RouterSetup/>  {/* 3. Thiết lập URL */}  
-    </>
-  )
+    return (
+        <>
+            <RouterSetup /> {/* 3. Thiết lập URL */}
+        </>
+    );
 }
 
-export default App
+export default App;
