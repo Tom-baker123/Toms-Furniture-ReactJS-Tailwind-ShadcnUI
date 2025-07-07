@@ -1,14 +1,36 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cart from "@/pages/Cart";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 import ProgressBar from "./ProgressBar";
-import QuantityButton from "../tailwind-custom/QuantityButton";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
 
 const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     const [show, setShow] = useState(false);
     const timeoutRef = useRef();
+    const { cart, removeFromCart, updateCart, loading } = useCart();
+    // Debounce map: { [cartItemId]: timeoutId }
+    const debounceMap = useRef({});
+
+    // Debounced update handler
+    const debouncedUpdateCart = useCallback(
+        (item, newQuantity) => {
+            if (debounceMap.current[item.id]) {
+                clearTimeout(debounceMap.current[item.id]);
+            }
+            debounceMap.current[item.id] = setTimeout(() => {
+                updateCart({
+                    id: item.id,
+                    proVarId: item.proVarId,
+                    quantity: newQuantity,
+                });
+                debounceMap.current[item.id] = null;
+            }, 400);
+        },
+        [updateCart],
+    );
 
     // Quản lý hiển thị modal
     useEffect(() => {
@@ -70,7 +92,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                 {/* Danh sách cart */}
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
                     <h2 className="">
-                        <span>Your cart ({(ItemCount = 0)}) </span>
+                        <span>Your cart ({cart?.length || 0}) </span>
                     </h2>
                     {/* Nút đóng */}
                     <button
@@ -91,130 +113,72 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                     </div>
 
                     <div className="flex flex-col !gap-y-6">
-                        <div className="flex w-full items-start gap-3">
-                            <img
-                                src="/img/cart-image/Spoke-Sofa-Armrest-b.webp"
-                                alt="sadasd"
-                                className="rounded-lg"
-                                width={100}
-                            />
-                            <div className="flex flex-1 flex-col">
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex justify-between gap-3">
-                                        <div className="">
-                                            <h2 className="block text-lg font-semibold">Spoke Sofa Basic</h2>
-                                            <p className="block">Oak, Navy Blue</p>
-                                        </div>
-                                        {/* Nút Gỡ Item Cart */}
-                                        <button
-                                            className="hover-rotate cursor-pointer"
-                                            onClick={onClose}
-                                            aria-label="Close"
-                                        >
-                                            <X className="h-5 w-5 stroke-3" />
-                                        </button>
-                                    </div>
+                        {cart && cart.length > 0 ? (
+                            cart.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex w-full items-start gap-3"
+                                >
+                                    <img
+                                        src={"/img/cart-image/Spoke-Sofa-Armrest-b.webp"}
+                                        alt={item.productName}
+                                        className="rounded-lg"
+                                        width={100}
+                                    />
+                                    <div className="flex flex-1 flex-col">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="flex justify-between gap-3">
+                                                <div className="">
+                                                    <h2 className="block text-lg font-semibold">{item.productName}</h2>
+                                                    <p className="block">
+                                                        {item.productVariant?.materialName}, {item.productVariant?.colorName}
+                                                    </p>
+                                                </div>
+                                                {/* Nút Gỡ Item Cart */}
+                                                <button
+                                                    className="hover-rotate cursor-pointer"
+                                                    onClick={async () => {
+                                                        await removeFromCart(item.id);
+                                                        toast.success("Đã xóa sản phẩm khỏi giỏ hàng!");
+                                                    }}
+                                                    aria-label="Remove"
+                                                >
+                                                    <X className="h-5 w-5 stroke-3" />
+                                                </button>
+                                            </div>
 
-                                    <div className="flex items-center justify-between">
-                                        <QuantityButton />
-                                        <span className="font-bold whitespace-nowrap md:text-lg">2,000,000 VND</span>
+                                            <div className="flex items-center justify-between">
+                                                {/* QuantityButton thay bằng nút cập nhật số lượng */}
+                                                <div className="flex items-center rounded-full border">
+                                                    <button
+                                                        className="px-2 py-1"
+                                                        disabled={item.quantity <= 1 || loading}
+                                                        onClick={() => debouncedUpdateCart(item, item.quantity - 1)}
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="px-3">{item.quantity}</span>
+                                                    <button
+                                                        className="px-2 py-1"
+                                                        disabled={loading}
+                                                        onClick={() => debouncedUpdateCart(item, item.quantity + 1)}
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                                <span className="font-bold whitespace-nowrap md:text-lg">
+                                                    {item.productVariant?.discountedPrice?.toLocaleString() ||
+                                                        item.productVariant?.originalPrice?.toLocaleString()}{" "}
+                                                    VND
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="flex w-full items-start gap-3">
-                            <img
-                                src="/img/cart-image/Spoke-Sofa-Armrest-b.webp"
-                                alt="sadasd"
-                                className="rounded-lg"
-                                width={100}
-                            />
-                            <div className="flex flex-1 flex-col">
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex justify-between gap-3">
-                                        <div className="">
-                                            <h2 className="block text-lg font-semibold">Spoke Sofa Basic</h2>
-                                            <p className="block">Oak, Navy Blue</p>
-                                        </div>
-                                        {/* Nút Gỡ Item Cart */}
-                                        <button
-                                            className="hover-rotate cursor-pointer"
-                                            onClick={onClose}
-                                            aria-label="Close"
-                                        >
-                                            <X className="h-5 w-5 stroke-3" />
-                                        </button>
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <QuantityButton />
-                                        <span className="font-bold whitespace-nowrap md:text-lg">2,000,000 VND</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex w-full items-start gap-3">
-                            <img
-                                src="/img/cart-image/Spoke-Sofa-Armrest-b.webp"
-                                alt="sadasd"
-                                className="rounded-lg"
-                                width={100}
-                            />
-                            <div className="flex flex-1 flex-col">
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex justify-between gap-3">
-                                        <div className="">
-                                            <h2 className="block text-lg font-semibold">Spoke Sofa Basic</h2>
-                                            <p className="block">Oak, Navy Blue</p>
-                                        </div>
-                                        {/* Nút Gỡ Item Cart */}
-                                        <button
-                                            className="hover-rotate cursor-pointer"
-                                            onClick={onClose}
-                                            aria-label="Close"
-                                        >
-                                            <X className="h-5 w-5 stroke-3" />
-                                        </button>
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <QuantityButton />
-                                        <span className="font-bold whitespace-nowrap md:text-lg">2,000,000 VND</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex w-full items-start gap-3">
-                            <img
-                                src="/img/cart-image/Spoke-Sofa-Armrest-b.webp"
-                                alt="sadasd"
-                                className="rounded-lg"
-                                width={100}
-                            />
-                            <div className="flex flex-1 flex-col">
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex justify-between gap-3">
-                                        <div className="">
-                                            <h2 className="block text-lg font-semibold">Spoke Sofa Basic</h2>
-                                            <p className="block">Oak, Navy Blue</p>
-                                        </div>
-                                        {/* Nút Gỡ Item Cart */}
-                                        <button
-                                            className="hover-rotate cursor-pointer"
-                                            onClick={onClose}
-                                            aria-label="Close"
-                                        >
-                                            <X className="h-5 w-5 stroke-3" />
-                                        </button>
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <QuantityButton />
-                                        <span className="font-bold whitespace-nowrap md:text-lg">2,000,000 VND</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            ))
+                        ) : (
+                            <div className="py-10 text-center text-gray-500">Giỏ hàng trống</div>
+                        )}
                     </div>
                 </div>
 

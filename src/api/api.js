@@ -334,178 +334,69 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
     }
 };
 
-// [1] API thêm sản phẩm vào giỏ hàng
-export const addToCart = async (cartData) => {
-    try {
-        // Kiểm tra dữ liệu đầu vào
-        if (!cartData.ProVarId || cartData.ProVarId <= 0) {
-            throw new Error("Valid product variant ID is required");
-        }
-        if (!cartData.Quantity || cartData.Quantity <= 0) {
-            throw new Error("Quantity must be greater than 0");
-        }
 
-        const response = await fetch(`${API_BASE_URL}/Cart`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(cartData), // CartCreateVModel: { Quantity, ProVarId }
-        });
-
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            let errorMessage = "Failed to add to cart";
-            if (contentType && contentType.includes("application/json")) {
-                const errorData = await response.json();
-                errorMessage = errorData.Message || errorMessage;
-            } else {
-                errorMessage = await response.text();
-            }
-            throw new Error(errorMessage);
-        }
-
-        return await response.json(); // Trả về { Message, Cart }
-    } catch (error) {
-        console.error("Error adding to cart:", error.message);
-        throw error;
-    }
-};
-
-// [2] API cập nhật giỏ hàng
-export const updateCart = async (cartData) => {
-    try {
-        // Kiểm tra dữ liệu đầu vào
-        if (!cartData.Id || cartData.Id <= 0) {
-            throw new Error("Valid cart item ID is required");
-        }
-        if (!cartData.ProVarId || cartData.ProVarId <= 0) {
-            throw new Error("Valid product variant ID is required");
-        }
-        if (!cartData.Quantity || cartData.Quantity <= 0) {
-            throw new Error("Quantity must be greater than 0");
-        }
-
-        const response = await fetch(`${API_BASE_URL}/Cart`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(cartData), // CartUpdateVModel: { Id, Quantity, ProVarId }
-        });
-
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            let errorMessage = "Failed to update cart";
-            if (contentType && contentType.includes("application/json")) {
-                const errorData = await response.json();
-                errorMessage = errorData.Message || errorMessage;
-            } else {
-                errorMessage = await response.text();
-            }
-            throw new Error(errorMessage);
-        }
-
-        return await response.json(); // Trả về { Message, Cart }
-    } catch (error) {
-        console.error("Error updating cart:", error.message);
-        throw error;
-    }
-};
-
-// [3] API xóa mục khỏi giỏ hàng
-export const removeFromCart = async (id) => {
-    try {
-        // Kiểm tra ID
-        if (!id || id <= 0) {
-            throw new Error("Valid cart item ID is required");
-        }
-
-        const response = await fetch(`${API_BASE_URL}/Cart/${id}`, {
-            method: "DELETE",
-            credentials: "include",
-        });
-
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            let errorMessage = `Failed to remove cart item with ID ${id}`;
-            if (contentType && contentType.includes("application/json")) {
-                const errorData = await response.json();
-                errorMessage = errorData.Message || errorMessage;
-            } else {
-                errorMessage = await response.text();
-            }
-            throw new Error(errorMessage);
-        }
-
-        return await response.json(); // Trả về { Message, Cart }
-    } catch (error) {
-        console.error(`Error removing cart item with ID ${id}:`, error.message);
-        throw error;
-    }
-};
-
-// [4] API lấy giỏ hàng
+// [Cart] Lấy giỏ hàng
 export const getCart = async () => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Cart`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        });
-
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            let errorMessage = "Failed to fetch cart";
-            if (contentType && contentType.includes("application/json")) {
-                const errorData = await response.json();
-                errorMessage = errorData.Message || errorMessage;
-            } else {
-                errorMessage = await response.text();
-            }
-            throw new Error(errorMessage);
-        }
-
-        return await response.json(); // Trả về { Cart: List<CartGetVModel> }
-    } catch (error) {
-        console.error("Error fetching cart:", error.message);
-        throw error;
-    }
+    const response = await fetch(`${API_BASE_URL}/Cart`, {
+        credentials: "include",
+    });
+    if (!response.ok) throw new Error("Failed to fetch cart");
+    return (await response.json()).cart;
 };
 
-// [5] API hợp nhất giỏ hàng từ cookie
-export const mergeCart = async () => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/Cart/merge`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        });
-
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            let errorMessage = "Failed to merge cart";
-            if (contentType && contentType.includes("application/json")) {
-                const errorData = await response.json();
-                errorMessage = errorData.Message || errorMessage;
-            } else {
-                errorMessage = await response.text();
-            }
-            throw new Error(errorMessage);
-        }
-
-        return await response.json(); // Trả về { Message, Cart }
-    } catch (error) {
-        console.error("Error merging cart:", error.message);
-        throw error;
-    }
+// [Cart] Thêm vào giỏ hàng
+export const addToCart = async (cartItem) => {
+    const response = await fetch(`${API_BASE_URL}/Cart`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(cartItem),
+    });
+    if (!response.ok) throw new Error("Failed to add to cart");
+    return (await response.json()).cart;
 };
+
+// [Cart] Cập nhật giỏ hàng
+export const updateCart = async (cartItem) => {
+    const response = await fetch(`${API_BASE_URL}/Cart`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(cartItem),
+    });
+    if (!response.ok) throw new Error("Failed to update cart");
+    return (await response.json()).cart;
+};
+
+
+
+// [Cart] Xóa khỏi giỏ hàng
+export const removeFromCart = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/Cart/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+    if (!response.ok) throw new Error("Failed to remove from cart");
+    return (await response.json()).cart;
+};
+
+
+
+// [Cart] Hợp nhất giỏ hàng (mergeCart)
+// Gọi API POST /Cart/merge để hợp nhất giỏ hàng từ cookie sang tài khoản khi đăng nhập
+// Tham số: mergedCartData (object, ví dụ: { cartItems: [...] })
+// Trả về giỏ hàng đã hợp nhất
+export const mergeCart = async (mergedCartData) => {
+    const response = await fetch(`${API_BASE_URL}/Cart/merge`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(mergedCartData),
+    });
+    if (!response.ok) throw new Error("Failed to merge cart");
+    return (await response.json()).cart;
+};
+
 //#endregion [Home Page 🏠 - End]--------------------------------------
 
 //#region [ADMIN Page 🪪]----------------------------------------------

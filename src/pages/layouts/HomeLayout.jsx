@@ -10,6 +10,7 @@ import { ModalProvider } from "@/context/ModalContext";
 import React, { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
+import { CartProvider } from "@/context/CartContext";
 
 const HomeLayout = () => {
     const [openCartModal, setOpenCartModal] = useState(false);
@@ -18,20 +19,22 @@ const HomeLayout = () => {
         <ModalProvider>
             <AuthProvider>
                 <APIProvider>
-                    {/* 0. Thiết lập Scroll to top */}
-                    <ScrollToTop />
-                    {/* 1. Thiết lập header */}
-                    <Header onOpenCartModal={() => setOpenCartModal(true)} />
-                    {/* 1.1 Cart Modal */}
-                    <CartModal
-                        open={openCartModal}
-                        onClose={() => setOpenCartModal(false)}
-                    />
-                    <Breadcrumbs />
-                    <Outlet /> {/* 2. Thiết lập OUTLET */}
-                    <Footer /> {/* 3. Thiết lập footer */}
-                    <Toaster toastOptions={{ duration: 2000 }} /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}
-                    <ModalTemplate />
+                    <CartProvider>
+                        {/* 0. Thiết lập Scroll to top */}
+                        <ScrollToTop />
+                        {/* 1. Thiết lập header */}
+                        <Header onOpenCartModal={() => setOpenCartModal(true)} />
+                        {/* 1.1 Cart Modal */}
+                        <CartModal
+                            open={openCartModal}
+                            onClose={() => setOpenCartModal(false)}
+                        />
+                        <Breadcrumbs />
+                        <Outlet /> {/* 2. Thiết lập OUTLET */}
+                        <Footer /> {/* 3. Thiết lập footer */}
+                        <Toaster toastOptions={{ duration: 2000 }} /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}
+                        <ModalTemplate />
+                    </CartProvider>
                 </APIProvider>
             </AuthProvider>
         </ModalProvider>
