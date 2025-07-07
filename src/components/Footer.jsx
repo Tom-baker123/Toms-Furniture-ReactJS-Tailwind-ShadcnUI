@@ -1,5 +1,6 @@
 import { FooterContact, FooterList, FooterPaymentIcon, FooterSocial } from "@/assets/FakeData";
 import React from "react";
+import { Link } from "react-router-dom";
 import ButtonHovCustom from "./tailwind-custom/ButtonHovCustom";
 import { useDesktopBreakpoint } from "@/hooks/useDesktopBreakpoint";
 import ButtonHovCT from "./tailwind-custom/ButtonHovCT";
@@ -8,6 +9,25 @@ import Collapse from "./tailwind-custom/Collapse";
 const Footer = () => {
     // 1. Xử lý details đóng mở responsive footer
     const isDesktop = useDesktopBreakpoint(); // Mặc định là màn hình 1024 trở lên là desktop
+
+    // Mapping cho các footer links
+    const footerLinkMapping = {
+        "About us": "/about",
+        Contact: "/contact",
+        FAQs: "/faq",
+        Blog: "/blog",
+        "Find a Store": "/findastore",
+        Tables: "/products",
+        "Bow Chairs": "/products",
+        "Turn Table": "/products",
+        "Turn Chair": "/products",
+        "Cross Bar Chair": "/products",
+        Sofas: "/products",
+        Outdoor: "/products",
+        Seating: "/products",
+        Lighting: "/products",
+        Accessories: "/products",
+    };
 
     return (
         <footer className="container-custom block py-6 md:py-12 lg:py-10">
@@ -142,7 +162,18 @@ const Footer = () => {
 
                             <ul className="space-y-2 py-3 font-semibold text-gray-500">
                                 {t.footerList.map((fl, flindex) => (
-                                    <li key={flindex}> {fl} </li>
+                                    <li key={flindex}>
+                                        {footerLinkMapping[fl] ? (
+                                            <Link
+                                                to={footerLinkMapping[fl]}
+                                                className="transition-colors hover:text-gray-900"
+                                            >
+                                                {fl}
+                                            </Link>
+                                        ) : (
+                                            <span>{fl}</span>
+                                        )}
+                                    </li>
                                 ))}
                             </ul>
                         </details>
@@ -151,6 +182,7 @@ const Footer = () => {
                             <Collapse
                                 title={t.footerHeading}
                                 json={t.footerList}
+                                linkMapping={footerLinkMapping}
                             />
                         </div>
                     </div>

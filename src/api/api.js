@@ -1019,7 +1019,7 @@ export const updateProduct = async (productData, sliders) => {
                         const errorData = await sliderResponse.json();
                         errorMessage = errorData.Message || errorMessage;
                     } else {
-                        errorMessage = await response.text();
+                        errorMessage = await sliderResponse.text();
                     }
                     console.warn(`Warning: ${errorMessage}`);
                     sliderResults.push({ success: false, message: errorMessage });

@@ -113,20 +113,20 @@ const PromotionManagement = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <div className="flex justify-between">
-                <div className="title">Quản lý khuyến mãi</div>
+                <div className="title">Promotion Management</div>
                 <button
                     className="rounded-lg bg-blue-600 px-4 py-2 text-white"
                     onClick={() => navigate("/admin/promotions/new_promotion")}
                 >
-                    Thêm khuyến mãi
+                    Add Promotion
                 </button>
             </div>
             <div className="card">
                 <div className="card-header">
-                    <div className="card-title">Tất cả khuyến mãi</div>
+                    <div className="card-title">All Promotions</div>
                     {sortConfig.key && (
                         <div className="text-sm text-gray-500">
-                            Sắp xếp theo {sortConfig.key} ({sortConfig.direction === "asc" ? "tăng dần" : "giảm dần"})
+                            Sorted by {sortConfig.key} ({sortConfig.direction === "asc" ? "ascending" : "descending"})
                         </div>
                     )}
                 </div>
@@ -136,22 +136,25 @@ const PromotionManagement = () => {
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <SortableHeader sortKey="id">#</SortableHeader>
-                                    <SortableHeader sortKey="promotionCode">Mã khuyến mãi</SortableHeader>
-                                    <SortableHeader sortKey="discountValue">Giá trị giảm</SortableHeader>
-                                    <SortableHeader sortKey="orderMinimum">Đơn hàng tối thiểu</SortableHeader>
-                                    <SortableHeader sortKey="maximumDiscountAmount">Giảm tối đa</SortableHeader>
-                                    <SortableHeader sortKey="startDate">Ngày bắt đầu</SortableHeader>
-                                    <SortableHeader sortKey="endDate">Ngày kết thúc</SortableHeader>
-                                    <SortableHeader sortKey="couponUsage">Số lần sử dụng</SortableHeader>
-                                    <SortableHeader sortKey="isActive">Trạng thái</SortableHeader>
-                                    <SortableHeader sortKey="createdDate">Ngày tạo</SortableHeader>
-                                    <SortableHeader sortKey="updatedDate">Ngày cập nhật</SortableHeader>
-                                    <th className="table-head whitespace-nowrap">Hành động</th>
+                                    <SortableHeader sortKey="promotionCode">Promotion Code</SortableHeader>
+                                    <SortableHeader sortKey="discountValue">Discount Value</SortableHeader>
+                                    <SortableHeader sortKey="orderMinimum">Order Minimum</SortableHeader>
+                                    <SortableHeader sortKey="maximumDiscountAmount">Max Discount</SortableHeader>
+                                    <SortableHeader sortKey="startDate">Start Date</SortableHeader>
+                                    <SortableHeader sortKey="endDate">End Date</SortableHeader>
+                                    <SortableHeader sortKey="couponUsage">Usage Count</SortableHeader>
+                                    <SortableHeader sortKey="isActive">Status</SortableHeader>
+                                    <SortableHeader sortKey="createdDate">Created At</SortableHeader>
+                                    <SortableHeader sortKey="updatedDate">Updated At</SortableHeader>
+                                    <th className="table-head whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="table-body">
                                 {sortedPromotions.map((promotion) => (
-                                    <tr key={promotion.id} className="table-row">
+                                    <tr
+                                        key={promotion.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{promotion.id}</td>
                                         <td className="table-cell">{promotion.promotionCode}</td>
                                         <td className="table-cell">{promotion.discountValue}</td>
@@ -162,19 +165,13 @@ const PromotionManagement = () => {
                                         <td className="table-cell">{promotion.couponUsage}</td>
                                         <td className="table-cell">
                                             {promotion.isActive ? (
-                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">
-                                                    Hoạt động
-                                                </div>
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Hoạt động</div>
                                             ) : (
-                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">
-                                                    Không hoạt động
-                                                </div>
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Không hoạt động</div>
                                             )}
                                         </td>
                                         <td className="table-cell">{FormatDatetime(promotion.createdDate) || "N/A"}</td>
-                                        <td className="table-cell">
-                                            {FormatDatetime(promotion.updatedDate) || "N/A"}
-                                        </td>
+                                        <td className="table-cell">{FormatDatetime(promotion.updatedDate) || "N/A"}</td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button

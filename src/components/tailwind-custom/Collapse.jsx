@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-const Collapse = ({ showHead, title = "", json }) => {
+const Collapse = ({ showHead, title = "", json, linkMapping = {} }) => {
     const [AccordionOpen, setAccordionOpen] = useState(false);
     return (
         <div className="border-b border-gray-200 py-6 first:pt-0 last:border-0">
@@ -40,9 +41,23 @@ const Collapse = ({ showHead, title = "", json }) => {
                     AccordionOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
                 )}
             >
-                <ul className="overflow-hidden space-y-2 font-semibold text-gray-500">
+                <ul className="space-y-2 overflow-hidden font-semibold text-gray-500">
                     {json.map((fl, flindex) => (
-                        <li className="first:pt-6" key={flindex}> {fl} </li>
+                        <li
+                            className="first:pt-6"
+                            key={flindex}
+                        >
+                            {linkMapping[fl] ? (
+                                <Link
+                                    to={linkMapping[fl]}
+                                    className="transition-colors hover:text-gray-900"
+                                >
+                                    {fl}
+                                </Link>
+                            ) : (
+                                <span>{fl}</span>
+                            )}
+                        </li>
                     ))}
                 </ul>
             </div>

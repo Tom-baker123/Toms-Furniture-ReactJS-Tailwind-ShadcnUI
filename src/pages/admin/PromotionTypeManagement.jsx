@@ -109,20 +109,20 @@ const PromotionTypeManagement = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <div className="flex justify-between">
-                <div className="title">Quản lý loại khuyến mãi</div>
+                <div className="title">Promotion Type Management</div>
                 <button
                     className="rounded-lg bg-blue-600 px-4 py-2 text-white"
                     onClick={() => navigate("/admin/promotiontypes/new_promotiontype")}
                 >
-                    Thêm loại khuyến mãi
+                    Add Promotion Type
                 </button>
             </div>
             <div className="card">
                 <div className="card-header">
-                    <div className="card-title">Tất cả loại khuyến mãi</div>
+                    <div className="card-title">All Promotion Types</div>
                     {sortConfig.key && (
                         <div className="text-sm text-gray-500">
-                            Sắp xếp theo {sortConfig.key} ({sortConfig.direction === "asc" ? "tăng dần" : "giảm dần"})
+                            Sorted by {sortConfig.key} ({sortConfig.direction === "asc" ? "ascending" : "descending"})
                         </div>
                     )}
                 </div>
@@ -132,31 +132,30 @@ const PromotionTypeManagement = () => {
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <SortableHeader sortKey="id">ID</SortableHeader>
-                                    <SortableHeader sortKey="promotionTypeName">Tên loại</SortableHeader>
-                                    <SortableHeader sortKey="description">Mô tả</SortableHeader>
-                                    <SortableHeader sortKey="promotionUnit">Đơn vị</SortableHeader>
-                                    <SortableHeader sortKey="isActive">Trạng thái</SortableHeader>
-                                    <SortableHeader sortKey="createdDate">Ngày tạo</SortableHeader>
-                                    <SortableHeader sortKey="updatedDate">Ngày cập nhật</SortableHeader>
-                                    <th className="table-head whitespace-nowrap">Hành động</th>
+                                    <SortableHeader sortKey="promotionTypeName">Type Name</SortableHeader>
+                                    <SortableHeader sortKey="description">Description</SortableHeader>
+                                    <SortableHeader sortKey="promotionUnit">Unit</SortableHeader>
+                                    <SortableHeader sortKey="isActive">Status</SortableHeader>
+                                    <SortableHeader sortKey="createdDate">Created At</SortableHeader>
+                                    <SortableHeader sortKey="updatedDate">Updated At</SortableHeader>
+                                    <th className="table-head whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="table-body">
                                 {sortedPromotionTypes.map((type) => (
-                                    <tr key={type.id} className="table-row">
+                                    <tr
+                                        key={type.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{type.id}</td>
                                         <td className="table-cell">{type.promotionTypeName}</td>
                                         <td className="table-cell">{type.description || "N/A"}</td>
                                         <td className="table-cell">{type.promotionUnit === 0 ? "Phần trăm" : "Số tiền cố định"}</td>
                                         <td className="table-cell">
                                             {type.isActive ? (
-                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">
-                                                    Hoạt động
-                                                </div>
+                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Hoạt động</div>
                                             ) : (
-                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">
-                                                    Không hoạt động
-                                                </div>
+                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Không hoạt động</div>
                                             )}
                                         </td>
                                         <td className="table-cell">{FormatDatetime(type.createdDate) || "N/A"}</td>

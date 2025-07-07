@@ -11,6 +11,7 @@ import {
     FAQ,
     Profile,
     Cart,
+    Blog,
     // Admin Page
     AnalyticsReport,
     BrandManagement,
@@ -114,6 +115,7 @@ const router = createBrowserRouter([
             { path: "faq", element: <FAQ /> },
             { path: "findastore", element: <FindAStore /> },
             { path: "cart", element: <Cart /> },
+            { path: "blog", element: <Blog /> },
             { path: "payment", element: <Payment /> },
             {
                 path: "profile",
