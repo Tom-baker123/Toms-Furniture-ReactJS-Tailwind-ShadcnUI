@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import QuantityInput from "./QuantityInput";
 import { useDebounce } from "react-use";
 import { ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -185,7 +186,12 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                     >
                                                         -
                                                     </button>
-                                                    <span className="px-3">{localQuantities[item.id] ?? item.quantity}</span>
+                                                    <QuantityInput
+                                                        value={localQuantities[item.id] ?? item.quantity}
+                                                        onChange={(val) => debouncedUpdateCart(item, val)}
+                                                        disabled={loading}
+                                                        min={1}
+                                                    />
                                                     <button
                                                         className="cursor-pointer px-2 py-1"
                                                         disabled={loading}
