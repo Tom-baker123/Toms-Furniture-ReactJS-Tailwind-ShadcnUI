@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useDebounce } from "react-use";
 import { ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cart from "@/pages/Cart";
@@ -11,26 +12,53 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     const [show, setShow] = useState(false);
     const timeoutRef = useRef();
     const { cart, removeFromCart, updateCart, loading } = useCart();
-    // Debounce map: { [cartItemId]: timeoutId }
-    const debounceMap = useRef({});
+    // State để lưu số lượng hiển thị tạm thời cho từng item
+    const [localQuantities, setLocalQuantities] = useState({});
+    // State để lưu các lần thay đổi số lượng tạm thời (debounce)
+    const [pendingUpdate, setPendingUpdate] = useState({});
 
-    // Debounced update handler
-    const debouncedUpdateCart = useCallback(
-        (item, newQuantity) => {
-            if (debounceMap.current[item.id]) {
-                clearTimeout(debounceMap.current[item.id]);
-            }
-            debounceMap.current[item.id] = setTimeout(() => {
-                updateCart({
-                    id: item.id,
-                    proVarId: item.proVarId,
-                    quantity: newQuantity,
+    // Đồng bộ localQuantities khi cart thay đổi (ví dụ khi load lại cart từ server)
+    useEffect(() => {
+        if (cart && cart.length > 0) {
+            setLocalQuantities((prev) => {
+                const updated = { ...prev };
+                cart.forEach((item) => {
+                    updated[item.id] = item.quantity;
                 });
-                debounceMap.current[item.id] = null;
-            }, 400);
+                return updated;
+            });
+        }
+    }, [cart]);
+
+    // Debounce cập nhật số lượng từng item
+    useDebounce(
+        () => {
+            Object.entries(pendingUpdate).forEach(([id, val]) => {
+                if (val !== undefined && val !== null) {
+                    updateCart(val);
+                }
+            });
+            setPendingUpdate({});
         },
-        [updateCart],
+        400,
+        [pendingUpdate],
     );
+
+    // Hàm gọi khi muốn tăng/giảm số lượng: cập nhật local trước, rồi debounce API
+    const debouncedUpdateCart = useCallback((item, newQuantity) => {
+        setLocalQuantities((prev) => ({
+            ...prev,
+            [item.id]: newQuantity,
+        }));
+        setPendingUpdate((prev) => ({
+            ...prev,
+            [item.id]: {
+                id: item.id,
+                proVarId: item.proVarId,
+                quantity: newQuantity,
+            },
+        }));
+    }, []);
 
     // Quản lý hiển thị modal
     useEffect(() => {
@@ -151,17 +179,17 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                 {/* QuantityButton thay bằng nút cập nhật số lượng */}
                                                 <div className="flex items-center rounded-full border">
                                                     <button
-                                                        className="px-2 py-1"
-                                                        disabled={item.quantity <= 1 || loading}
-                                                        onClick={() => debouncedUpdateCart(item, item.quantity - 1)}
+                                                        className="cursor-pointer px-2 py-1"
+                                                        disabled={(localQuantities[item.id] ?? item.quantity) <= 1 || loading}
+                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.id] ?? item.quantity) - 1)}
                                                     >
                                                         -
                                                     </button>
-                                                    <span className="px-3">{item.quantity}</span>
+                                                    <span className="px-3">{localQuantities[item.id] ?? item.quantity}</span>
                                                     <button
-                                                        className="px-2 py-1"
+                                                        className="cursor-pointer px-2 py-1"
                                                         disabled={loading}
-                                                        onClick={() => debouncedUpdateCart(item, item.quantity + 1)}
+                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.id] ?? item.quantity) + 1)}
                                                     >
                                                         +
                                                     </button>

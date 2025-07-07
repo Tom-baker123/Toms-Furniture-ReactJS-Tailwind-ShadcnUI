@@ -11,12 +11,13 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import DropdownCT from "./tailwind-custom/DropdownCT";
 import { CartIconSvgCT, FindLocationSvgCT, UserIconSvgCT } from "@/assets/SVG/svg";
+import { useCart } from "@/context/CartContext";
 import { APIContext } from "@/context/APIContext";
 
 const Header = ({ onOpenCartModal }) => {
     const { openModal } = useModal(); // Gọi hàm modal
     const { authStatus, handleLogout } = useAuth(); // Kiểm tra trạng thái
-    const { categories, storeInformation, loading, error } = useContext(APIContext); // Lấy thông tin cửa hàng
+    const { storeInformation, loading, error } = useContext(APIContext); // Lấy thông tin cửa hàng
 
     const showHead = showHeader();
     // [1.] Xử lý scroll xuống và scroll lên đầu
@@ -27,6 +28,9 @@ const Header = ({ onOpenCartModal }) => {
         openModal(<AuthSwitcher />, { className: "max-w-md" });
     };
 
+    const { cart } = useCart();
+    // Tính tổng số lượng sản phẩm trong giỏ hàng
+    const cartCount = Array.isArray(cart) ? cart.reduce((sum, item) => sum + (item.quantity || 0), 0) : 0;
     return (
         <>
             {/* -[TOPBAR]-------------------------------------------------------------------------- */}
@@ -139,9 +143,14 @@ const Header = ({ onOpenCartModal }) => {
                             {/* Cart Icon */}
                             <button
                                 onClick={onOpenCartModal}
-                                className="cursor-pointer sm:rounded-full sm:bg-gray-200 sm:p-3"
+                                className="relative cursor-pointer sm:rounded-full sm:bg-gray-200 sm:p-3"
                             >
                                 <CartIconSvgCT />
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-2 -right-2 z-10 flex h-7 min-h-3 w-7 min-w-3 items-center justify-center rounded-full bg-red-700 text-xs font-bold text-white shadow-lg">
+                                        {cartCount > 99 ? "99+" : cartCount}
+                                    </span>
+                                )}
                             </button>
                         </div>
                     </div>
