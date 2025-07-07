@@ -33,6 +33,7 @@
         "react-hot-toast": "^2.5.2",
         "react-redux": "^9.2.0",
         "react-router-dom": "^7.5.2",
+        "react-use": "^17.6.0",
         "recharts": "^2.15.3",
         "swiper": "^11.2.6",
         "tailwind-merge": "^3.2.0",
