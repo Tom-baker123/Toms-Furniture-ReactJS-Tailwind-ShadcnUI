@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import QuantityInput from "./QuantityInput";
 import { useDebounce } from "react-use";
-import { ChevronRight, X } from "lucide-react";
+import { ChevronRight, ShoppingCart, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Cart from "@/pages/Cart";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
@@ -211,7 +211,22 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                 </div>
                             ))
                         ) : (
-                            <div className="py-10 text-center text-gray-500">Giỏ hàng trống</div>
+                            <div className="grid gap-3">
+                                <h3 className="text-center text-2xl font-bold">Your cart is currently empty.</h3>
+                                <p className="text-center text-gray-500">Not sure where to start? Try these collections:</p>
+                                <ShoppingCart
+                                    size={48}
+                                    className="mx-auto text-gray-500"
+                                />
+                                <ButtonHovCT
+                                    className={"mx-auto mt-2 w-fit !border-black"}
+                                    bgColor="bg-black"
+                                    hoverBgColor=" bg-white" // lớp trượt màu đen
+                                    textColor="text-white"
+                                >
+                                    Continue Shopping
+                                </ButtonHovCT>
+                            </div>
                         )}
                     </div>
                 </div>
