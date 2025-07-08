@@ -338,6 +338,8 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
 // [Cart] Lấy giỏ hàng
 export const getCart = async () => {
     const response = await fetch(`${API_BASE_URL}/Cart`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
     });
     if (!response.ok) throw new Error("Failed to fetch cart");
@@ -367,8 +369,6 @@ export const updateCart = async (cartItem) => {
     if (!response.ok) throw new Error("Failed to update cart");
     return (await response.json()).cart;
 };
-
-
 
 // [Cart] Xóa khỏi giỏ hàng
 export const removeFromCart = async (id) => {
