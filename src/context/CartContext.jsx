@@ -13,8 +13,10 @@ export const CartProvider = ({ children }) => {
         setError(null);
         try {
             const data = await getCart();
+            console.log("Raw API response:", data);
             setCart(data || []);
         } catch (err) {
+            console.error("Fetch cart error:", err);
             setCart([]);
             setError(err.message);
         } finally {
