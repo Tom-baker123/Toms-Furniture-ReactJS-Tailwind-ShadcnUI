@@ -4,15 +4,15 @@ import { Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
 
-const images = [
-    "/img/Products/Spoke-Sofa-Basic.webp",
-    "/img/Products/Spoke-Sofa-Basic.webp",
-    "/img/Products/Spoke-Sofa-Basic.webp",
-    "/img/Products/Spoke-Sofa-Basic.webp",
-];
 
-const ProductImageGallery = () => {
+const ProductImageGallery = ({ images = [] }) => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    // Nếu images rỗng hoặc không có ảnh hợp lệ, dùng ảnh mặc định
+    const validImages = Array.isArray(images) && images.length > 0
+        ? images.filter((img) => !!img && typeof img === "string" && img.trim() !== "")
+        : [];
+    const fallbackImage = "/img/NotFound/No Picture.png";
+    const displayImages = validImages.length > 0 ? validImages : [fallbackImage];
 
     return (
         <div className="flex flex-col gap-4 md:flex-row">
@@ -32,7 +32,7 @@ const ProductImageGallery = () => {
                     },
                 }}
             >
-                {images.map((img, idx) => (
+                {displayImages.map((img, idx) => (
                     <SwiperSlide
                         key={idx}
                         className="!mb-0 md:!h-24"
@@ -53,7 +53,7 @@ const ProductImageGallery = () => {
                 modules={[Thumbs]}
                 className="order-1 w-full md:order-2 md:w-[calc(100%-6rem)]"
             >
-                {images.map((img, idx) => (
+                {displayImages.map((img, idx) => (
                     <SwiperSlide key={idx}>
                         <img
                             src={img}
