@@ -82,7 +82,7 @@ const Header = ({ onOpenCartModal }) => {
 
                     {/* Thanh Nav gồm: giỏ hàng, Login/ Register, Find a store*/}
                     <div className="w-full">
-                        <div className="flex h-full items-center justify-end gap-4 sm:gap-6">
+                        <div className="flex h-full items-center justify-end gap-4">
                             <button className="flex cursor-pointer gap-x-1 whitespace-nowrap">
                                 <FindLocationSvgCT />
                                 <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Find a store</p>
