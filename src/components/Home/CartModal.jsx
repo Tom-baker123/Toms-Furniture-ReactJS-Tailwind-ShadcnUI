@@ -143,13 +143,17 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
 
                     <div className="flex flex-col !gap-y-6">
                         {cart && cart.length > 0 ? (
-                            cart.map((item) => (
+                            cart.map((item, index) => (
                                 <div
-                                    key={item.id}
+                                    key={index}
                                     className="flex w-full items-start gap-3"
                                 >
                                     <img
-                                        src={"/img/cart-image/Spoke-Sofa-Armrest-b.webp"}
+                                        src={
+                                            item.productVariant?.images?.length > 0
+                                                ? item.productVariant.images[0].imageUrl
+                                                : "/img/cart-image/Spoke-Sofa-Armrest-b.webp"
+                                        }
                                         alt={item.productName}
                                         className="rounded-lg"
                                         width={100}
@@ -167,7 +171,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                 <button
                                                     className="hover-rotate cursor-pointer"
                                                     onClick={async () => {
-                                                        await removeFromCart(item.id);
+                                                        await removeFromCart(item.id !== 0 ? item.id : item.proVarId);
                                                         toast.success("Đã xóa sản phẩm khỏi giỏ hàng!");
                                                     }}
                                                     aria-label="Remove"

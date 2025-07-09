@@ -93,11 +93,16 @@ const Cart = ({ itemCount = 0 }) => {
                                                 <X className="h-7 w-7 stroke-3" />
                                             </button>
                                             <div className="flex items-center">
-                                                <img
-                                                    src={item.productVariant?.image || "/img/cart-image/TurnTableMono.png"}
-                                                    alt={item.productName || "Product"}
-                                                    className="mr-3 size-20 rounded-md object-contain sm:size-22 lg:size-30"
-                                                />
+                                            <img
+                                                src={
+                                                    // Ưu tiên ảnh đầu tiên trong mảng images của biến thể, nếu có
+                                                    (item.productVariant?.images && Array.isArray(item.productVariant.images) && item.productVariant.images.length > 0
+                                                        ? item.productVariant.images[0].imageUrl
+                                                        : item.productVariant?.image) || "/img/cart-image/TurnTableMono.png"
+                                                }
+                                                alt={item.productName || "Product"}
+                                                className="mr-3 size-20 rounded-md object-contain sm:size-22 lg:size-30"
+                                            />
                                             </div>
 
                                             <div className="flex flex-1 flex-col justify-between gap-1 sm:gap-2 md:gap-2.5">
