@@ -26,6 +26,7 @@ export { default as Dashboard } from "./admin/Dashboard";
 export { default as MaterialManagement } from "./admin/MaterialManagement";
 export { default as InventoryManagement } from "./admin/InventoryManagement";
 export { default as OrderManagement } from "./admin/OrderManagement";
+export { default as OrderStatusManagement } from "./admin/OrderStatusManagement";
 export { default as ProductManagement } from "./admin/ProductManagement";
 export { default as ProductCollection } from "./admin/ProductCollection";
 export { default as PromotionManagement } from "./admin/PromotionManagement";
