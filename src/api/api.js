@@ -3045,6 +3045,159 @@ export const deleteStoreInformation = async (id) => {
         throw error;
     }
 };
+
+// [Order Status API] - Thêm vào cuối file trước dòng NOTE
+// [14.1] API lấy tất cả danh sách trạng thái đơn hàng
+export const getAllOrderStatuses = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/OrderStatus`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch order statuses";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching order statuses: ${error.message}`);
+        throw error;
+    }
+};
+
+// [14.2] API lấy trạng thái đơn hàng theo ID
+export const getOrderStatusById = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/OrderStatus/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                credentials: "include",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to fetch order status with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching order status with ID ${id}: ${error.message}`);
+        throw error;
+    }
+};
+
+// [14.3] API thêm trạng thái đơn hàng
+export const createOrderStatus = async (orderStatusData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/OrderStatus`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                credentials: "include",
+            },
+            credentials: "include",
+            body: JSON.stringify(orderStatusData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to create order status";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error creating order status:", error.message);
+        throw error;
+    }
+};
+
+// [14.4] API cập nhật trạng thái đơn hàng
+export const updateOrderStatus = async (orderStatusData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/OrderStatus`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                credentials: "include",
+            },
+            credentials: "include",
+            body: JSON.stringify(orderStatusData),
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to update order status";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error updating order status:", error.message);
+        throw error;
+    }
+};
+
+// [14.5] API xóa trạng thái đơn hàng
+export const deleteOrderStatus = async (id) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/OrderStatus/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = `Failed to delete order status with ID ${id}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting order status:", error.message);
+        throw error;
+    }
+};
 //#endregion [ADMIN Page 🪪 - End]-------------------------------------
 
 // ----- [NOTE] --------------------------------------------------------

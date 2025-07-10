@@ -1,6 +1,16 @@
 // AdminAPIContext.jsx
 import { createContext, useState, useEffect, useCallback } from "react";
-import { getAllCategories, getAllBrands, getAllCountries, getAllSuppliers, getAllColors, getAllSizes, getAllMaterials, getAllUnits } from "@/api/api";
+import {
+    getAllCategories,
+    getAllBrands,
+    getAllCountries,
+    getAllSuppliers,
+    getAllColors,
+    getAllSizes,
+    getAllMaterials,
+    getAllUnits,
+    getAllOrderStatuses,
+} from "@/api/api";
 import toast from "react-hot-toast";
 
 // Tạo Context chung
@@ -16,6 +26,7 @@ export const AdminAPIProvider = ({ children }) => {
     const [sizes, setSizes] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [units, setUnits] = useState([]);
+    const [orderStatuses, setOrderStatuses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -24,16 +35,18 @@ export const AdminAPIProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
-            const [categoriesData, brandsData, countriesData, suppliersData, colorsData, sizesData, materialsData, unitsData] = await Promise.all([
-                getAllCategories(),
-                getAllBrands(),
-                getAllCountries(),
-                getAllSuppliers(),
-                getAllColors(),
-                getAllSizes(),
-                getAllMaterials(),
-                getAllUnits(),
-            ]);
+            const [categoriesData, brandsData, countriesData, suppliersData, colorsData, sizesData, materialsData, unitsData, orderStatusesData] =
+                await Promise.all([
+                    getAllCategories(),
+                    getAllBrands(),
+                    getAllCountries(),
+                    getAllSuppliers(),
+                    getAllColors(),
+                    getAllSizes(),
+                    getAllMaterials(),
+                    getAllUnits(),
+                    getAllOrderStatuses(),
+                ]);
             setCategories(categoriesData);
             setBrands(brandsData);
             setCountries(countriesData);
@@ -42,6 +55,7 @@ export const AdminAPIProvider = ({ children }) => {
             setSizes(sizesData);
             setMaterials(materialsData);
             setUnits(unitsData);
+            setOrderStatuses(orderStatusesData);
         } catch (err) {
             setError(err.message);
             toast.error(`Error loading data: ${err.message}`);
@@ -71,6 +85,7 @@ export const AdminAPIProvider = ({ children }) => {
                 sizes,
                 materials,
                 units,
+                orderStatuses,
                 loading,
                 error,
                 refetch,

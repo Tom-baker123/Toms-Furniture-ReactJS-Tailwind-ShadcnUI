@@ -21,15 +21,16 @@ import {
     DraftOrders,
     InventoryManagement,
     OrderManagement,
+    OrderStatusManagement,
     ProductManagement,
     ProductCollection,
     PromotionManagement,
     CountryManagement,
-    SupplierManagement, // Thêm mới
-    SizeManagement, // Thêm mới
+    SupplierManagement,
+    SizeManagement,
     ColorManagement,
     MaterialManagement,
-    UnitManagement, // Thêm mới
+    UnitManagement,
     UserManagement,
     PromotionTypeManagement,
     WebsiteManagement,
@@ -63,6 +64,8 @@ import {
     getPromotionById, // Thêm import
     getAllPromotionTypes, // Thêm import
     getPromotionTypeById, // Thêm import
+    getAllOrderStatuses, // Thêm import
+    getOrderStatusById, // Thêm import
 } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
@@ -78,6 +81,8 @@ import UserForm from "@/components/Admin/Form/UserForm";
 import PromotionForm from "@/components/Admin/Form/PromotionForm";
 import PromotionTypeForm from "@/components/Admin/Form/PromotionTypeForm";
 import { storeInformationLoader } from "@/components/Admin/Form/StoreInformationForm";
+import OrderStatusForm from "@/components/Admin/Form/OrderStatusForm";
+import OrderForm from "@/components/Admin/Form/OrderForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -313,8 +318,39 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-            // [12.]
-            { path: "order", element: <OrderManagement /> },
+            // [12.] Đơn hàng & Trạng thái Đơn hàng
+            // [12.1] Đơn hàng
+            {
+                path: "order",
+                children: [
+                    {
+                        index: true,
+                        element: <OrderManagement />,
+                    },
+                    { path: "new_order", element: <OrderForm /> },
+                    {
+                        path: "edit_order/:id",
+                        element: <OrderForm />,
+                    },
+                ],
+            },
+            // [12.2] Trạng thái Đơn hàng
+            {
+                path: "order_status",
+                children: [
+                    {
+                        index: true,
+                        element: <OrderStatusManagement />,
+                        loader: async () => await getAllOrderStatuses(),
+                    },
+                    { path: "new_order_status", element: <OrderStatusForm /> },
+                    {
+                        path: "edit_order_status/:id",
+                        element: <OrderStatusForm />,
+                        loader: async ({ params }) => await getOrderStatusById(params.id),
+                    },
+                ],
+            },
             // [13.]
             { path: "draft_orders", element: <DraftOrders /> },
             // [14.]
