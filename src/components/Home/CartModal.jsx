@@ -24,7 +24,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
             setLocalQuantities((prev) => {
                 const updated = { ...prev };
                 cart.forEach((item) => {
-                    updated[item.id] = item.quantity;
+                    updated[item.proVarId] = item.quantity;
                 });
                 return updated;
             });
@@ -34,7 +34,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     // Debounce cập nhật số lượng từng item
     useDebounce(
         () => {
-            Object.entries(pendingUpdate).forEach(([id, val]) => {
+            Object.values(pendingUpdate).forEach((val) => {
                 if (val !== undefined && val !== null) {
                     updateCart(val);
                 }
@@ -49,7 +49,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     const debouncedUpdateCart = useCallback((item, newQuantity) => {
         setLocalQuantities((prev) => ({
             ...prev,
-            [item.id]: newQuantity,
+            [item.proVarId]: newQuantity,
         }));
         setPendingUpdate((prev) => ({
             ...prev,
@@ -164,7 +164,8 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                 <div className="">
                                                     <h2 className="block text-lg font-semibold">{item.productName}</h2>
                                                     <p className="block">
-                                                        {item.productVariant?.materialName}, {item.productVariant?.colorName}
+                                                        {item.productVariant?.materialName}, {item.productVariant?.colorName},{" "}
+                                                        {item.productVariant?.sizeName}
                                                     </p>
                                                 </div>
                                                 {/* Nút Gỡ Item Cart */}
@@ -185,13 +186,13 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                 <div className="flex items-center rounded-full border">
                                                     <button
                                                         className="cursor-pointer px-2 py-1"
-                                                        disabled={(localQuantities[item.id] ?? item.quantity) <= 1 || loading}
-                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.id] ?? item.quantity) - 1)}
+                                                        disabled={(localQuantities[item.proVarId] ?? item.quantity) <= 1 || loading}
+                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) - 1)}
                                                     >
                                                         -
                                                     </button>
                                                     <QuantityInput
-                                                        value={localQuantities[item.id] ?? item.quantity}
+                                                        value={localQuantities[item.proVarId] ?? item.quantity}
                                                         onChange={(val) => debouncedUpdateCart(item, val)}
                                                         disabled={loading}
                                                         min={1}
@@ -199,15 +200,15 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                     <button
                                                         className="cursor-pointer px-2 py-1"
                                                         disabled={loading}
-                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.id] ?? item.quantity) + 1)}
+                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) + 1)}
                                                     >
                                                         +
                                                     </button>
                                                 </div>
                                                 <span className="font-bold whitespace-nowrap md:text-lg">
-                                                    {item.productVariant?.discountedPrice?.toLocaleString() ||
-                                                        item.productVariant?.originalPrice?.toLocaleString()}{" "}
-                                                    VND
+                                                    $
+                                                    {item.productVariant?.discountedPrice?.toLocaleString() + ".00" ||
+                                                        item.productVariant?.originalPrice?.toLocaleString() + ".00"}
                                                 </span>
                                             </div>
                                         </div>
