@@ -1,15 +1,12 @@
-// import { NewArrivalsPicture } from "@/assets/FakeData";
 import AboutMaterial from "@/components/Home/ProductCategoryComponents/AboutMaterial";
 import BannerProducts from "@/components/Home/ProductCategoryComponents/BannerProducts";
 import FilterComponents from "@/components/Home/ProductCategoryComponents/FilterComponents";
 import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
-// import ButtonHov from "@/components/tailwind-custom/ButtonHov";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
-// import ButtonHovCustom from "@/components/tailwind-custom/ButtonHovCustom";
 import showHeader from "@/hooks/showHeader";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Funnel, Grid2x2, List } from "lucide-react";
+import { ChevronDown, Grid2x2, List } from "lucide-react";
 import React, { useCallback, useContext, useState, useEffect, useRef } from "react";
 import { APIContext } from "@/context/APIContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,7 +20,7 @@ const Products = () => {
 
     // State cho pagination
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5); // Số sản phẩm trên mỗi trang
+    const [pageSize, setPageSize] = useState(8); // Số sản phẩm trên mỗi trang
     const pageSizeInputRef = useRef();
     const debounceTimeoutRef = useRef();
 
@@ -81,6 +78,7 @@ const Products = () => {
                 setCurrentPage(1);
 
                 // Gọi lại API với bộ lọc mới và pagination
+                console.log("[FilterChange] pageSize gửi lên API:", pageSize);
                 refetch({ ...newFilters, pageNumber: 1, pageSize });
                 return newFilters;
             });
@@ -101,6 +99,7 @@ const Products = () => {
             }, 0);
             // Delay 2s trước khi gọi API
             setTimeout(() => {
+                console.log("[PageChange] pageSize gửi lên API:", pageSize);
                 refetch({ ...filters, pageNumber: newPage, pageSize });
             }, 500);
         },
@@ -112,6 +111,7 @@ const Products = () => {
         (newPageSize) => {
             setPageSize(newPageSize);
             setCurrentPage(1);
+            console.log("[PageSizeChange] pageSize gửi lên API:", newPageSize);
             refetch({ ...filters, pageNumber: 1, pageSize: newPageSize });
         },
         [refetch, filters],
@@ -140,6 +140,8 @@ const Products = () => {
     // Tính toán thông tin pagination
     const totalPages = Math.ceil((products?.totalCount || 0) / pageSize);
     const totalItems = products?.totalCount || 0;
+    // Log số lượng sản phẩm thực tế trả về
+    console.log("[Render] Số sản phẩm trả về từ API:", products?.items?.length, "pageSize:", pageSize);
 
     const goToProductDetail = (param) => {
         navigate(`/products/${param}`, { replace: true });

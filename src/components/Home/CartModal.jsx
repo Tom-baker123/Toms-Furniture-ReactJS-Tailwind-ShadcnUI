@@ -187,7 +187,9 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                     <button
                                                         className="cursor-pointer px-2 py-1"
                                                         disabled={(localQuantities[item.proVarId] ?? item.quantity) <= 1 || loading}
-                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) - 1)}
+                                                        onClick={() =>
+                                                            debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) - 1)
+                                                        }
                                                     >
                                                         -
                                                     </button>
@@ -200,7 +202,9 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                     <button
                                                         className="cursor-pointer px-2 py-1"
                                                         disabled={loading}
-                                                        onClick={() => debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) + 1)}
+                                                        onClick={() =>
+                                                            debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) + 1)
+                                                        }
                                                     >
                                                         +
                                                     </button>
