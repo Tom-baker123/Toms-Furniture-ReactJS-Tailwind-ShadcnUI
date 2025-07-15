@@ -25,7 +25,8 @@ const ProductDetails = () => {
         if (proid) {
             fetchProductById(proid);
         }
-    }, [proid, fetchProductById]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [proid]);
 
     // Set default color and variant when product loaded
     useEffect(() => {

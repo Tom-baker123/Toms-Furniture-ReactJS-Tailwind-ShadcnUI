@@ -12,6 +12,7 @@ import {
     getAllSuppliers,
     getProductById,
 } from "@/api/api";
+import useApiFetch from "@/hooks/useApiFetch";
 
 // Tạo Context chung cho ứng dụng
 export const APIContext = createContext();
@@ -34,224 +35,52 @@ export const APIProvider = ({ children }) => {
         error: undefined,
     });
     // Helper setters for each property
-    const setCategories = (categories) => setState((prev) => ({ ...prev, categories }));
-    const setStoreInformation = (storeInformation) => setState((prev) => ({ ...prev, storeInformation }));
-    const setProducts = (products) => setState((prev) => ({ ...prev, products }));
-    const setProduct = (product) => setState((prev) => ({ ...prev, product }));
-    const setColors = (colors) => setState((prev) => ({ ...prev, colors }));
-    const setUnits = (units) => setState((prev) => ({ ...prev, units }));
-    const setMaterials = (materials) => setState((prev) => ({ ...prev, materials }));
-    const setSizes = (sizes) => setState((prev) => ({ ...prev, sizes }));
-    const setCountries = (countries) => setState((prev) => ({ ...prev, countries }));
-    const setBrands = (brands) => setState((prev) => ({ ...prev, brands }));
-    const setSuppliers = (suppliers) => setState((prev) => ({ ...prev, suppliers }));
     const setLoading = (loading) => setState((prev) => ({ ...prev, loading }));
     const setError = (error) => setState((prev) => ({ ...prev, error }));
 
-    // Hàm fetch danh mục
-    const fetchCategories = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllCategories();
-            setCategories(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    // Sử dụng custom hook useApiFetch
+    const fetchData = useApiFetch(setLoading, setError, setState);
 
-    // Hàm fetch thông tin cửa hàng
-    const fetchStoreInformation = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllStoreInformations();
-            // Lấy bản ghi đầu tiên nếu tồn tại
-            setStoreInformation(response.length > 0 ? response[0] : null);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch sản phẩm với hỗ trợ filter và pagination
-    const fetchProducts = useCallback(async (filters = {}) => {
-        // Trì hoãn setLoading để tránh lỗi render
-        setTimeout(() => {
-            setLoading(true);
-            setError(null);
-
-            // Thêm pagination parameters mặc định nếu không có
-            const filtersWithPagination = {
-                pageNumber: 1,
-                pageSize: 8,
-                ...filters,
-            };
-
-            getAllProducts(filtersWithPagination)
-                .then((response) => {
-                    setProducts(response);
-                })
-                .catch((err) => {
-                    setError(err.message);
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        }, 0);
-    }, []);
-
-    // Hàm fetch sản phẩm theo ID
-    const fetchProductById = useCallback(async (id) => {
-        // Đặt trạng thái loading và xóa lỗi cũ
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getProductById(id); // Gọi API lấy sản phẩm theo ID
-            setProduct(response); // Lưu dữ liệu sản phẩm vào state
-            return response; // Trả về dữ liệu để component sử dụng nếu cần
-        } catch (err) {
-            setError(err.message); // Lưu lỗi nếu có
-            throw err; // Ném lỗi để component xử lý
-        } finally {
-            setLoading(false); // Kết thúc trạng thái loading
-        }
-    }, []);
-
-    // Hàm fetch Colors
-    const fetchColors = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllColors();
-            setColors(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch Units
-    const fetchUnits = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllUnits();
-            setUnits(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch Materials
-    const fetchMaterials = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllMaterials();
-            setMaterials(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch Sizes
-    const fetchSizes = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllSizes();
-            setSizes(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch Countries
-    const fetchCountries = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllCountries();
-            setCountries(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch Brands
-    const fetchBrands = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllBrands();
-            setBrands(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Hàm fetch Suppliers
-    const fetchSuppliers = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await getAllSuppliers();
-            setSuppliers(response);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    // Các hàm fetch sử dụng fetchData tổng quát (không dùng useCallback để tránh lặp vô hạn)
+    const fetchCategories = () => fetchData(getAllCategories, "categories");
+    const fetchStoreInformation = () => fetchData(getAllStoreInformations, "storeInformation", undefined, (res) => (res.length > 0 ? res[0] : null));
+    const fetchProducts = (filters = {}) => {
+        const filtersWithPagination = { pageNumber: 1, pageSize: 8, ...filters };
+        return fetchData(getAllProducts, "products", filtersWithPagination);
+    };
+    const fetchProductById = (id) => fetchData(getProductById, "product", id);
+    const fetchColors = () => fetchData(getAllColors, "colors");
+    const fetchUnits = () => fetchData(getAllUnits, "units");
+    const fetchMaterials = () => fetchData(getAllMaterials, "materials");
+    const fetchSizes = () => fetchData(getAllSizes, "sizes");
+    const fetchCountries = () => fetchData(getAllCountries, "countries");
+    const fetchBrands = () => fetchData(getAllBrands, "brands");
+    const fetchSuppliers = () => fetchData(getAllSuppliers, "suppliers");
 
     // Gọi API khi component mount
+    // Chỉ gọi fetchProducts một lần khi mount
+    const [didInit, setDidInit] = useState(false);
     useEffect(() => {
-        fetchCategories();
-        fetchStoreInformation();
-        fetchProducts({ pageNumber: 1, pageSize: 12 }); // Thêm pagination mặc định
-        fetchColors();
-        fetchUnits();
-        fetchMaterials();
-        fetchSizes();
-        fetchCountries();
-        fetchBrands();
-        fetchSuppliers();
-    }, [
-        fetchCategories,
-        fetchStoreInformation,
-        fetchProducts,
-        fetchColors,
-        fetchUnits,
-        fetchMaterials,
-        fetchSizes,
-        fetchCountries,
-        fetchBrands,
-        fetchSuppliers,
-    ]);
+        if (!didInit) {
+            fetchCategories();
+            fetchStoreInformation();
+            fetchProducts({ pageNumber: 1, pageSize: 8 }); // Thêm pagination mặc định
+            fetchColors();
+            fetchUnits();
+            fetchMaterials();
+            fetchSizes();
+            fetchCountries();
+            fetchBrands();
+            fetchSuppliers();
+            setDidInit(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [didInit]);
 
     // Hàm refetch chỉ gọi fetchProducts với filters
-    const refetch = useCallback(
-        (filters = {}) => {
-            console.log("Refetch called with filters:", filters); // Debug
-            fetchProducts(filters); // Chỉ gọi fetchProducts với filters
-        },
-        [fetchProducts],
-    );
+    const refetch = (filters = {}) => {
+        fetchProducts(filters);
+    };
 
     return (
         <APIContext.Provider

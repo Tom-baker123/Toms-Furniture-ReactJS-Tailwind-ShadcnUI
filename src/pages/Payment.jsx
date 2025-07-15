@@ -7,7 +7,7 @@ const mockCartItems = [
         sanPham: {
             name: "Ghế sofa cao cấp",
             price: 15000000,
-            image: "/public/img/Products/sofa-1.jpg",
+            image: "/img/Products/sofa-1.jpg",
             weight: 500,
             width: 30,
             length: 40,
@@ -20,7 +20,7 @@ const mockCartItems = [
         sanPham: {
             name: "Bàn gỗ tự nhiên",
             price: 8500000,
-            image: "/public/img/Products/table-1.jpg",
+            image: "/img/Products/table-1.jpg",
             weight: 2000,
             width: 50,
             length: 60,
