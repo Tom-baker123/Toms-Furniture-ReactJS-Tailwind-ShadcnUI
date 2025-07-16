@@ -239,8 +239,8 @@ const Payment = () => {
     };
 
     return (
-        <div className="mx-auto max-w-6xl p-4">
-            <h1 className="mb-6 text-2xl font-bold">Thanh toán</h1>
+        <div className="container-custom lg:px-10 lg:py-5">
+            <h1 className="mb-6 text-2xl font-bold">Payment</h1>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Phần thông tin đặt hàng */}
