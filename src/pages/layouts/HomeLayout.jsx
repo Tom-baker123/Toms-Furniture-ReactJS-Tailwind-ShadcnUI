@@ -29,6 +29,11 @@ const HomeLayout = () => {
                             open={openCartModal}
                             onClose={() => setOpenCartModal(false)}
                         />
+                        {/* 1.1 Cart Modal */}
+                        <CartModal
+                            open={openCartModal}
+                            onClose={() => setOpenCartModal(false)}
+                        />
                         <Breadcrumbs />
                         <Outlet /> {/* 2. Thiết lập OUTLET */}
                         <Footer /> {/* 3. Thiết lập footer */}
