@@ -4,7 +4,7 @@ import Topbar from "./Header-Components/Topbar";
 import SearchHeader from "./Header-Components/SearchHeader";
 import Navbar from "./Header-Components/Navbar";
 import { useModal } from "@/context/ModalContext";
-import AuthSwitcher from "./Home/AuthSwitcher";
+import AuthSwitcher from "./Home/AuthComponents/AuthSwitcher";
 import isSticky from "@/hooks/isSticky";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";

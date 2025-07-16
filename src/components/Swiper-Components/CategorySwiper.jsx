@@ -8,7 +8,6 @@ import "swiper/css/navigation"; // Import CSS cho Navigation
 import "swiper/css/pagination"; // Import CSS cho Pagination
 // import { categoryList } from "@/assets/FakeData";
 import { Link } from "react-router-dom";
-// import useApi from "@/hooks/useApi";
 import { APIContext } from "@/context/APIContext";
 
 // Component Loading Skeleton

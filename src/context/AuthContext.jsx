@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkAuthStatus, login, logout, register, forgotPassword, verifyOtp, resendOtp, resetPassword } from "@/api/api";
+import { checkAuthStatus, login, logout, register, forgotPassword, verifyOtp, resendOtp, resetPassword } from "@/api/service/AuthService";
 import toast from "react-hot-toast";
 import { VerifyOtpForm } from "@/components/Home/AuthComponents/VerifyOtpForm";
 import ResetPasswordForm from "@/components/Home/Form/ResetPasswordForm";

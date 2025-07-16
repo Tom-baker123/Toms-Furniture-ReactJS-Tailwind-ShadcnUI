@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
+import ButtonHovCT from "../../tailwind-custom/ButtonHovCT";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -38,10 +38,16 @@ const LoginForm = () => {
             <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">If you have an account with us, please log in.</p>
 
             {/* Form đăng nhập */}
-            <form className="mt-6 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+            <form
+                className="mt-6 flex flex-col"
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 {/* Trường Email */}
                 <div className="Form-Field">
-                    <label htmlFor="email" className="Form-Label">
+                    <label
+                        htmlFor="email"
+                        className="Form-Label"
+                    >
                         Email
                     </label>
                     <input
@@ -62,7 +68,10 @@ const LoginForm = () => {
 
                 {/* Trường Password */}
                 <div className="Form-Field">
-                    <label htmlFor="password" className="Form-Label">
+                    <label
+                        htmlFor="password"
+                        className="Form-Label"
+                    >
                         Password
                     </label>
                     <input
