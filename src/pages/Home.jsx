@@ -1,5 +1,4 @@
 import FeatureSection from "@/components/Home/FeatureSection";
-import GetAPI from "@/components/Home/GetAPI";
 import PromotionBanner from "@/components/Home/PromotionBanner";
 import AlbumSwiper from "@/components/Swiper-Components/AlbumSwiper";
 import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
@@ -22,7 +21,7 @@ const Home = () => {
             {/* 5. FeatureSection */}
             <FeatureSection />
             {/* 6. PromotionBanner */}
-            <PromotionBanner/>
+            <PromotionBanner />
         </main>
     );
 };

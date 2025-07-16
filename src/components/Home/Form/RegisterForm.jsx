@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
+import ButtonHovCT from "../../tailwind-custom/ButtonHovCT";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";

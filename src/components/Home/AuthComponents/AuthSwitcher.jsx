@@ -1,8 +1,8 @@
 import React from "react";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
-import ForgotPasswordForm from "./Form/ForgotPasswordForm";
-import ResetPasswordForm from "./Form/ResetPasswordForm";
+import LoginForm from "../Form/LoginForm";
+import RegisterForm from "../Form/RegisterForm";
+import ForgotPasswordForm from "../Form/ForgotPasswordForm";
+import ResetPasswordForm from "../Form/ResetPasswordForm";
 import { useAuth } from "@/context/AuthContext";
 
 const AuthSwitcher = () => {
