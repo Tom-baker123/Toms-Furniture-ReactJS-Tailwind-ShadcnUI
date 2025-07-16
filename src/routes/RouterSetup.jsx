@@ -38,7 +38,7 @@ import {
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
 import AdminLayouts from "@/pages/layouts/AdminLayouts";
-import AuthService from "@/api/service/AuthService";
+import { checkAuthStatus } from "@/api/service/AuthService";
 import {
     getAllBrands,
     getAllCategories,
@@ -90,7 +90,7 @@ const AdminRoute = ({ children }) => {
 
     useEffect(() => {
         const fetchAuthStatus = async () => {
-            const result = await AuthService.checkAuthStatus();
+            const result = await checkAuthStatus();
             setAuthStatus(result);
             if (!result.isAuthenticated || result.role !== "Admin") {
                 navigate("/");
