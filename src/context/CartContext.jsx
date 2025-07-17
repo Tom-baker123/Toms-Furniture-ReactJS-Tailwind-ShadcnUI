@@ -7,6 +7,7 @@ export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [cartTotal, setCartTotal] = useState(0);
 
     const fetchCart = useCallback(async () => {
         setLoading(true);
@@ -27,6 +28,19 @@ export const CartProvider = ({ children }) => {
     useEffect(() => {
         fetchCart();
     }, [fetchCart]);
+
+    // Tính tổng số tiền mỗi khi cart thay đổi
+    useEffect(() => {
+        if (cart && Array.isArray(cart)) {
+            const total = cart.reduce((sum, item) => {
+                const price = item.productVariant?.discountedPrice ?? item.productVariant?.originalPrice ?? 0;
+                return sum + price * item.quantity;
+            }, 0);
+            setCartTotal(total);
+        } else {
+            setCartTotal(0);
+        }
+    }, [cart]);
 
     const handleAddToCart = async (item) => {
         await addToCart(item);
@@ -53,6 +67,7 @@ export const CartProvider = ({ children }) => {
                 addToCart: handleAddToCart,
                 updateCart: handleUpdateCart,
                 removeFromCart: handleRemoveFromCart,
+                cartTotal,
             }}
         >
             {children}

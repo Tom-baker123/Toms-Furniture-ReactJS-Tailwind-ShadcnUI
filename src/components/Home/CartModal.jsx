@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     const [show, setShow] = useState(false);
     const timeoutRef = useRef();
-    const { cart, removeFromCart, updateCart, loading } = useCart();
+    const { cart, removeFromCart, updateCart, loading, cartTotal } = useCart();
     // State để lưu số lượng hiển thị tạm thời cho từng item
     const [localQuantities, setLocalQuantities] = useState({});
     // State để lưu các lần thay đổi số lượng tạm thời (debounce)
@@ -272,7 +272,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                 <div className="grid gap-1">
                                     <div className="flex items-center justify-between text-xl font-bold">
                                         <div className="">Estimated total</div>
-                                        <div className="text-2xl">{"2.000.000"} VND</div>
+                                        <div className="text-2xl">{cartTotal.toLocaleString()} VND</div>
                                     </div>
                                     <div className="text-left text-sm">Taxes and shipping calculated at checkout</div>
                                 </div>
