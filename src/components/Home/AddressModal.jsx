@@ -9,6 +9,31 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const [show, setShow] = useState(false);
     const timeoutRef = useRef();
 
+    // Chuẩn hóa dữ liệu khi edit (từ API về)
+    const getDefaultValues = () => {
+        if (editingAddress) {
+            return {
+                recipient: editingAddress.recipient || "",
+                phoneNumber: editingAddress.phoneNumber || "",
+                addressDetailRecipient: editingAddress.addressDetailRecipient || "",
+                city: editingAddress.city || "",
+                district: editingAddress.district || "",
+                ward: editingAddress.ward || "",
+                isDeafaultAddress: editingAddress.isDeafaultAddress || false,
+            };
+        }
+        return {
+            recipient: "",
+            phoneNumber: "",
+            addressDetailRecipient: "",
+            city: "",
+            district: "",
+            ward: "",
+            isDeafaultAddress: false,
+            userId: 0,
+        };
+    };
+
     const {
         register,
         handleSubmit,
@@ -16,46 +41,20 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
         reset,
         setValue,
     } = useForm({
-        defaultValues: {
-            label: "",
-            fullName: "",
-            phone: "",
-            address: "",
-            city: "",
-            state: "",
-            zipCode: "",
-            isDefault: false,
-        },
+        defaultValues: getDefaultValues(),
     });
 
     // Quản lý hiển thị modal giống CartModal
     useEffect(() => {
         if (open) {
-            setShow(true);
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        } else if (!open && show) {
-            timeoutRef.current = setTimeout(() => setShow(false), 300);
+            const values = getDefaultValues();
+            Object.keys(values).forEach((key) => setValue(key, values[key]));
+        } else {
+            reset(getDefaultValues());
         }
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, [open, show]);
-
-    // Điền dữ liệu form khi edit
-    useEffect(() => {
-        if (open && editingAddress) {
-            setValue("label", editingAddress.label || "");
-            setValue("fullName", editingAddress.fullName || "");
-            setValue("phone", editingAddress.phone || "");
-            setValue("address", editingAddress.address || "");
-            setValue("city", editingAddress.city || "");
-            setValue("state", editingAddress.state || "");
-            setValue("zipCode", editingAddress.zipCode || "");
-            setValue("isDefault", editingAddress.isDefault || false);
-        } else if (open && !editingAddress) {
-            // Reset form khi thêm mới
-            reset();
-        }
     }, [open, editingAddress, setValue, reset]);
 
     // Đóng modal bằng phím ESC
@@ -75,12 +74,11 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     useEffect(() => {
         if (open) document.body.classList.add("overflow-hidden");
         else document.body.classList.remove("overflow-hidden");
-
         return () => document.body.classList.remove("overflow-hidden");
     }, [open]);
 
+    // Không cần normalize lại vì đã đúng API
     const onSubmit = (data) => {
-        console.log("Address data:", data);
         if (onSave) {
             onSave(data);
         }
@@ -104,7 +102,6 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                 )}
                 onClick={handleClose}
             />
-
             {/* Panel trượt từ bên phải */}
             <div
                 className={cn(
@@ -116,7 +113,6 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                 <div className="bg-[#1D349A] px-[15px] py-3 text-center text-[15px] font-semibold text-white">
                     📍 {editingAddress ? "Edit Address" : "Add New Address"}
                 </div>
-
                 {/* Header */}
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
                     <h2 className="flex items-center gap-2">
@@ -132,102 +128,83 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                         <X className="h-7 w-7 stroke-3" />
                     </button>
                 </div>
-
                 {/* Form nhập địa chỉ */}
                 <div className="flex-1 overflow-auto px-4 py-6 md:px-7">
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
-                        {/* Label địa chỉ */}
+                        {/* Họ và tên người nhận */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Address Label *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Recipient *</label>
                             <input
-                                {...register("label", { required: "Address label is required" })}
+                                {...register("recipient", { required: "Recipient is required" })}
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="e.g. Home, Office, Parent's House"
+                                placeholder="Enter recipient's name"
                             />
-                            {errors.label && <p className="mt-1 text-sm text-red-500">{errors.label.message}</p>}
+                            {errors.recipient && <p className="mt-1 text-sm text-red-500">{errors.recipient.message}</p>}
                         </div>
-
-                        {/* Họ và tên */}
-                        <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Full Name *</label>
-                            <input
-                                {...register("fullName", { required: "Full name is required" })}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter full name"
-                            />
-                            {errors.fullName && <p className="mt-1 text-sm text-red-500">{errors.fullName.message}</p>}
-                        </div>
-
                         {/* Số điện thoại */}
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">Phone Number *</label>
                             <input
-                                {...register("phone", { required: "Phone number is required" })}
+                                {...register("phoneNumber", { required: "Phone number is required" })}
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                 placeholder="Enter phone number"
                             />
-                            {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
+                            {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>}
                         </div>
-
-                        {/* Địa chỉ */}
+                        {/* Địa chỉ chi tiết */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Address *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Address Detail *</label>
                             <textarea
-                                {...register("address", { required: "Address is required" })}
+                                {...register("addressDetailRecipient", { required: "Address detail is required" })}
                                 rows={3}
                                 className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                 placeholder="Enter full address"
                             />
-                            {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address.message}</p>}
+                            {errors.addressDetailRecipient && <p className="mt-1 text-sm text-red-500">{errors.addressDetailRecipient.message}</p>}
                         </div>
-
-                        {/* Thành phố và Bang */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">City *</label>
-                                <input
-                                    {...register("city", { required: "City is required" })}
-                                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                    placeholder="Enter city"
-                                />
-                                {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>}
-                            </div>
-
-                            <div>
-                                <label className="mb-2 block text-sm font-medium text-gray-700">State *</label>
-                                <input
-                                    {...register("state", { required: "State is required" })}
-                                    className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                    placeholder="Enter state"
-                                />
-                                {errors.state && <p className="mt-1 text-sm text-red-500">{errors.state.message}</p>}
-                            </div>
-                        </div>
-
-                        {/* Mã ZIP */}
+                        {/* Thành phố */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">ZIP Code *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">City *</label>
                             <input
-                                {...register("zipCode", { required: "ZIP code is required" })}
+                                {...register("city", { required: "City is required" })}
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter ZIP code"
+                                placeholder="Enter city"
                             />
-                            {errors.zipCode && <p className="mt-1 text-sm text-red-500">{errors.zipCode.message}</p>}
+                            {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>}
                         </div>
-
+                        {/* Quận/Huyện */}
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">District *</label>
+                            <input
+                                {...register("district", { required: "District is required" })}
+                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                placeholder="Enter district"
+                            />
+                            {errors.district && <p className="mt-1 text-sm text-red-500">{errors.district.message}</p>}
+                        </div>
+                        {/* Phường/Xã */}
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Ward *</label>
+                            <input
+                                {...register("ward", { required: "Ward is required" })}
+                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                placeholder="Enter ward"
+                            />
+                            {errors.ward && <p className="mt-1 text-sm text-red-500">{errors.ward.message}</p>}
+                        </div>
                         {/* Checkbox địa chỉ mặc định */}
                         <div className="flex items-center">
                             <input
-                                {...register("isDefault")}
+                                {...register("isDeafaultAddress")}
                                 type="checkbox"
-                                id="isDefault"
+                                id="isDeafaultAddress"
                                 className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                             />
                             <label
-                                htmlFor="isDefault"
+                                htmlFor="isDeafaultAddress"
                                 className="text-sm font-medium text-gray-700"
                             >
                                 Set as default address
@@ -235,18 +212,18 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                         </div>
                     </form>
                 </div>
-
                 {/* Footer với nút hành động */}
                 <div className="w-full border-t border-gray-200 bg-white p-4 md:p-6">
                     <div className="flex gap-3">
                         <ButtonHovCT
                             type="button"
                             onClick={handleClose}
-                            className="flex-1 !border-gray-300"
+                            className="flex-1 !font-bold"
                             bgColor="bg-gray-100"
-                            hoverBgColor="bg-gray-200"
-                            textColor="text-gray-700"
-                            hoverTextColor="text-gray-900"
+                            hoverBgColor="bg-black"
+                            textColor="text-black"
+                            hoverTextColor="text-white"
+                            border={false}
                         >
                             Cancel
                         </ButtonHovCT>
@@ -255,9 +232,9 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                             onClick={handleSubmit(onSubmit)}
                             className="flex-1 !border-black"
                             bgColor="bg-black"
-                            hoverBgColor="bg-gray-800"
+                            hoverBgColor="bg-white"
                             textColor="text-white"
-                            hoverTextColor="text-white"
+                            hoverTextColor="text-black"
                         >
                             {editingAddress ? "Update Address" : "Save Address"}
                         </ButtonHovCT>
