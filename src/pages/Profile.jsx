@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { usePayment } from "../context/PaymentContext";
 import { useForm } from "react-hook-form";
@@ -10,7 +11,8 @@ import ProfileOrdersTab from "../components/Home/Profile/ProfileOrdersTab";
 import ProfileAddressesTab from "../components/Home/Profile/ProfileAddressesTab";
 
 const Profile = () => {
-    const [activeTab, setActiveTab] = useState("profile");
+    const navigate = useNavigate();
+    const location = useLocation();
     const [isEditing, setIsEditing] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
@@ -45,6 +47,18 @@ const Profile = () => {
         { id: "orders", label: "Orders", icon: ShoppingBag },
         { id: "addresses", label: "Addresses", icon: MapPin },
     ];
+
+    // Lấy tab từ URL
+    const getActiveTab = () => {
+        const match = location.pathname.match(/\/profile\/?(\w+)?/);
+        return match && match[1] ? match[1] : "profile";
+    };
+    const activeTab = getActiveTab();
+
+    // Khi click tab, chuyển router
+    const handleTabClick = (tabId) => {
+        navigate(tabId === "profile" ? "/profile" : `/profile/${tabId}`);
+    };
 
     const onSubmit = (data) => {
         console.log("Profile data:", data);
@@ -98,7 +112,7 @@ const Profile = () => {
                     <ProfileSidebar
                         tabs={tabs}
                         activeTab={activeTab}
-                        setActiveTab={setActiveTab}
+                        setActiveTab={handleTabClick}
                     />
                 </div>
 

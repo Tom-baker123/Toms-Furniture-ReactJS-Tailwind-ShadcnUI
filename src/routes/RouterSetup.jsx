@@ -125,6 +125,12 @@ const router = createBrowserRouter([
             {
                 path: "profile",
                 element: <Profile />,
+                children: [
+                    { index: true, element: <Profile /> },
+                    { path: "security", element: <Profile /> },
+                    { path: "orders", element: <Profile /> },
+                    { path: "addresses", element: <Profile /> },
+                ],
             },
             {
                 path: "products",

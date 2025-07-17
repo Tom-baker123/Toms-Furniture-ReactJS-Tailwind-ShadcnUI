@@ -12,6 +12,7 @@ import {
     resetPassword,
     updatePassword,
 } from "@/api/service/AuthService";
+import { updateUser } from "@/api/api";
 import toast from "react-hot-toast";
 import { VerifyOtpForm } from "@/components/Home/AuthComponents/VerifyOtpForm";
 import ResetPasswordForm from "@/components/Home/Form/ResetPasswordForm";
@@ -176,7 +177,23 @@ export const AuthProvider = ({ children }) => {
         return result;
     };
 
-    // Hàm xử lý đăng xuất
+    // Hàm xử lý cập nhật thông tin tài khoản
+    const handleUpdateProfile = async (profileData) => {
+        try {
+            if (!authStatus?.userId) throw new Error("Không tìm thấy userId");
+            await updateUser(authStatus.userId, profileData);
+            toast.success("Cập nhật thông tin thành công!");
+            // Cập nhật lại trạng thái xác thực với thông tin mới
+            const updated = await checkAuthStatus();
+            setAuthStatus(updated);
+            return true;
+        } catch (error) {
+            toast.error("Cập nhật thất bại!");
+            return false;
+        }
+    };
+
+    // ...existing code...
     const handleLogout = async () => {
         // Gửi yêu cầu đăng xuất
         const result = await logout();
@@ -208,6 +225,7 @@ export const AuthProvider = ({ children }) => {
                 handleResetPassword,
                 handleLogout,
                 handleUpdatePassword,
+                handleUpdateProfile,
             }}
         >
             {children}
