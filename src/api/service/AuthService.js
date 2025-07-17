@@ -145,3 +145,19 @@ export const resetPassword = async (email, newPassword) => {
     };
 };
 
+// [9.] Cập nhật mật khẩu khi đã đăng nhập
+export const updatePassword = async (currentPassword, newPassword, confirmNewPassword) => {
+    const data = await apiRequest("/Auth/update-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword, confirmNewPassword }),
+    });
+    if (data.error) {
+        return { success: false, message: data.message };
+    }
+    return {
+        success: data.success || false,
+        message: data.message || "Password updated successfully.",
+    };
+};
+
