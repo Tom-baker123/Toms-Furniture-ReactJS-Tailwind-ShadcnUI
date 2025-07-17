@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { User, Settings, ShoppingBag, MapPin, Edit3, Save, X, Eye, EyeOff, Package, Plus } from "lucide-react";
 import ProfileSidebar from "../components/Home/Profile/ProfileSidebar";
@@ -69,6 +70,8 @@ const Profile = () => {
         formState: { errors: passwordErrors },
     } = useForm();
 
+    const { handleUpdatePassword } = useAuth();
+
     const tabs = [
         { id: "profile", label: "Profile", icon: User },
         { id: "security", label: "Security", icon: Settings },
@@ -82,7 +85,8 @@ const Profile = () => {
     };
 
     const onPasswordSubmit = (data) => {
-        console.log("Password data:", data);
+        // Gọi hàm cập nhật mật khẩu từ AuthContext
+        handleUpdatePassword(data.currentPassword, data.newPassword, data.confirmPassword);
     };
 
     const handleEdit = () => {

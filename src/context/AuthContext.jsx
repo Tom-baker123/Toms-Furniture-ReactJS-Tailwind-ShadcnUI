@@ -1,7 +1,17 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkAuthStatus, login, logout, register, forgotPassword, verifyOtp, resendOtp, resetPassword } from "@/api/service/AuthService";
+import {
+    checkAuthStatus,
+    login,
+    logout,
+    register,
+    forgotPassword,
+    verifyOtp,
+    resendOtp,
+    resetPassword,
+    updatePassword,
+} from "@/api/service/AuthService";
 import toast from "react-hot-toast";
 import { VerifyOtpForm } from "@/components/Home/AuthComponents/VerifyOtpForm";
 import ResetPasswordForm from "@/components/Home/Form/ResetPasswordForm";
@@ -155,6 +165,17 @@ export const AuthProvider = ({ children }) => {
         return result;
     };
 
+    // Hàm xử lý cập nhật mật khẩu khi đã đăng nhập
+    const handleUpdatePassword = async (currentPassword, newPassword, confirmNewPassword) => {
+        const result = await updatePassword(currentPassword, newPassword, confirmNewPassword);
+        if (result.success) {
+            toast.success(result.message);
+        } else {
+            toast.error(result.message);
+        }
+        return result;
+    };
+
     // Hàm xử lý đăng xuất
     const handleLogout = async () => {
         // Gửi yêu cầu đăng xuất
@@ -186,6 +207,7 @@ export const AuthProvider = ({ children }) => {
                 handleResendOtp,
                 handleResetPassword,
                 handleLogout,
+                handleUpdatePassword,
             }}
         >
             {children}
