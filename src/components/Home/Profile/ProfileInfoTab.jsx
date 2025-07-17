@@ -17,6 +17,7 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
         if (authStatus && authStatus.userId) {
             try {
                 const user = await fetchData(getUserById, "userDetail", authStatus.userId, (res) => res.user || res);
+                setUserDetail(user); // Đảm bảo userDetail luôn cập nhật
                 reset({
                     name: user.userName || "",
                     email: user.email || "",
@@ -35,8 +36,7 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
 
     // Hàm xử lý submit cập nhật thông tin
     const handleProfileSubmit = async (data) => {
-        let roleId = userDetail?.roleId || userDetail?.RoleId || "2";
-        if (typeof roleId === "string") roleId = parseInt(roleId);
+        let roleId = userDetail?.roleName === "Admin" ? 1 : 2;
         const success = await handleUpdateProfile({
             UserName: data.name,
             Email: data.email,
