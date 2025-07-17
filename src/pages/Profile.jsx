@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { usePayment } from "../context/PaymentContext";
 import { useForm } from "react-hook-form";
 import { User, Settings, ShoppingBag, MapPin, Edit3, Save, X, Eye, EyeOff, Package, Plus } from "lucide-react";
 import ProfileSidebar from "../components/Home/Profile/ProfileSidebar";
@@ -14,41 +15,7 @@ const Profile = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [editingAddress, setEditingAddress] = useState(null);
-    const [savedAddresses, setSavedAddresses] = useState([
-        {
-            id: 1,
-            label: "Home",
-            fullName: "John Doe",
-            phone: "0123456789",
-            address: "123 Main St, Apartment 4B",
-            city: "New York",
-            state: "NY",
-            zipCode: "10001",
-            isDefault: true,
-        },
-        {
-            id: 2,
-            label: "Office",
-            fullName: "John Doe",
-            phone: "0123456789",
-            address: "456 Business Ave, Suite 200",
-            city: "New York",
-            state: "NY",
-            zipCode: "10002",
-            isDefault: false,
-        },
-        {
-            id: 3,
-            label: "Parent's House",
-            fullName: "John Doe",
-            phone: "0123456789",
-            address: "789 Family Street",
-            city: "Brooklyn",
-            state: "NY",
-            zipCode: "11201",
-            isDefault: false,
-        },
-    ]);
+    const { addresses, fetchAddresses, addAddress, updateAddress, removeAddress, loading } = usePayment();
 
     const {
         register,
@@ -96,20 +63,15 @@ const Profile = () => {
         }
     };
 
-    const handleSaveAddress = (addressData) => {
+    const handleSaveAddress = async (addressData) => {
         if (editingAddress) {
-            // Cập nhật địa chỉ có sẵn
-            setSavedAddresses((prev) => prev.map((addr) => (addr.id === editingAddress.id ? { ...addr, ...addressData } : addr)));
-            setEditingAddress(null);
+            await updateAddress({ ...editingAddress, ...addressData });
         } else {
-            // Thêm địa chỉ mới
-            const newAddress = {
-                id: Date.now(),
-                ...addressData,
-            };
-            setSavedAddresses((prev) => [...prev, newAddress]);
+            await addAddress(addressData);
         }
+        setEditingAddress(null);
         setShowAddressModal(false);
+        fetchAddresses();
     };
 
     const handleEditAddress = (address) => {
@@ -117,12 +79,19 @@ const Profile = () => {
         setShowAddressModal(true);
     };
 
-    const handleDeleteAddress = (id) => {
-        setSavedAddresses((prev) => prev.filter((addr) => addr.id !== id));
+    const handleDeleteAddress = async (id) => {
+        await removeAddress(id);
+        fetchAddresses();
     };
 
+    useEffect(() => {
+        if (activeTab === "addresses") {
+            fetchAddresses();
+        }
+    }, [activeTab]);
+
     return (
-        <div className="container-custom py-10">
+        <div className="container-custom py-3">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
@@ -168,7 +137,7 @@ const Profile = () => {
                         {/* Addresses Tab */}
                         {activeTab === "addresses" && (
                             <ProfileAddressesTab
-                                savedAddresses={savedAddresses}
+                                savedAddresses={addresses}
                                 handleEditAddress={handleEditAddress}
                                 handleDeleteAddress={handleDeleteAddress}
                                 showAddressModal={showAddressModal}
@@ -176,6 +145,7 @@ const Profile = () => {
                                 setEditingAddress={setEditingAddress}
                                 handleSaveAddress={handleSaveAddress}
                                 editingAddress={editingAddress}
+                                loading={loading}
                             />
                         )}
                     </div>
