@@ -3,19 +3,19 @@ import { createPortal } from "react-dom";
 import { useHover } from "@/hooks/useHover";
 import MegaMenuColumn from "./MegaMenuColumn";
 import RecommendationPicture from "./RecommendationPicture";
-import { navItem5Config } from "./megaMenuConfig";
+import { navItem4Config } from "./navItem4Config";
 import { getGridClass, filterValidColumns, getRecommendationWidth } from "./megaMenuUtils";
 
-const NavItem5 = () => {
+const NavItem4 = () => {
     const { isHovered, handleMouseEnter, handleMouseLeave, forceShow } = useHover(100);
 
     // Lọc các cột có dữ liệu và tính toán grid class
-    const validColumns = filterValidColumns(navItem5Config.columns);
+    const validColumns = filterValidColumns(navItem4Config.columns);
     const columnCount = validColumns.length;
 
     return (
         <>
-            {/* Pages */}
+            {/* Chairs & Stools */}
             <li
                 className="inline-flex items-center"
                 onMouseEnter={handleMouseEnter}
@@ -28,7 +28,7 @@ const NavItem5 = () => {
                     <summary className="list-none appearance-none px-4 marker:hidden">
                         <span className="inline-block w-full py-1">
                             <p className="group underline-hover-text flex flex-wrap items-center gap-2">
-                                Pages
+                                Chairs & Stools
                                 <svg
                                     className="icon icon-caret-down icon--2xs icon--thick"
                                     viewBox="0 0 20 20"
@@ -74,7 +74,7 @@ const NavItem5 = () => {
                                 </div>
                                 {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
                                 <RecommendationPicture
-                                    {...navItem5Config.recommendationPicture}
+                                    {...navItem4Config.recommendationPicture}
                                     className={getRecommendationWidth(columnCount)}
                                 />
                                 {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
@@ -87,4 +87,4 @@ const NavItem5 = () => {
     );
 };
 
-export default NavItem5;
+export default NavItem4;

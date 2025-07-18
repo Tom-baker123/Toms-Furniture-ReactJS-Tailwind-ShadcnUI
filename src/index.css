@@ -205,11 +205,16 @@
     @apply pt-8 px-8 pb-15 border-r-[1px] border-gray-300;
   }
 
+  .mega-menu__column:last-child {
+    @apply border-r-0;
+  }
+
   /* Nav custom grid */
   .nav-custom-grid {
     display: grid;
-    grid-template-columns: repeat(var(--menu-columns, 3), 1fr);
+    grid-template-columns: repeat(auto-fit, 1fr);
     min-width: 20%;
+    gap: 0;
   }
 
   /* Promotion Column */
