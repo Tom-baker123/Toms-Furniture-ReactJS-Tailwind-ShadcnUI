@@ -1,25 +1,21 @@
-import ButtonHov from "@/components/tailwind-custom/ButtonHov";
-import React, { useState } from "react";
+import React from "react";
 import { createPortal } from "react-dom";
+import { useHover } from "@/hooks/useHover";
+import MegaMenuColumn from "./MegaMenuColumn";
+import RecommendationPicture from "./RecommendationPicture";
+import { navItem4Config } from "./megaMenuConfig";
+import { getGridClass, filterValidColumns, getRecommendationWidth } from "./megaMenuUtils";
 
 const NavItem4 = () => {
-    const [isHovered, setIsHovered] = useState(false);
-    let hoverTimeout;
+    const { isHovered, handleMouseEnter, handleMouseLeave, forceShow } = useHover(100);
 
-    const handleMouseEnter = () => {
-        hoverTimeout = setTimeout(() => {
-            setIsHovered(true);
-        }, 500); // 2 giây
-    };
-
-    const handleMouseLeave = () => {
-        clearTimeout(hoverTimeout);
-        setIsHovered(false);
-    };
+    // Lọc các cột có dữ liệu và tính toán grid class
+    const validColumns = filterValidColumns(navItem4Config.columns);
+    const columnCount = validColumns.length;
 
     return (
         <>
-            {/* Shop By Categories */}
+            {/* Chairs & Stools */}
             <li
                 className="inline-flex items-center"
                 onMouseEnter={handleMouseEnter}
@@ -52,458 +48,35 @@ const NavItem4 = () => {
                             </p>
                         </span>
                     </summary>
-                    {/* // Trong component NavItem4: */}
                     {isHovered &&
                         createPortal(
                             <div className="fixed inset-0 top-11 z-40 bg-black/50 opacity-100 transition-all duration-300"></div>,
                             document.body,
                         )}
                     <div
-                        className={`fixed left-0 z-10 mt-[17px] w-full bg-white shadow-2xl transition-all duration-300 ${
+                        className={`fixed left-0 z-50 mt-[17px] w-full bg-white shadow-2xl transition-all duration-300 ${
                             isHovered
                                 ? "pointer-events-auto visible translate-y-0 opacity-100"
                                 : "pointer-events-none invisible -translate-y-4 opacity-0"
                         }`}
-                        onMouseEnter={() => setIsHovered(true)} // Giữ dropdown khi chuột vào
+                        onMouseEnter={() => forceShow()} // Giữ dropdown khi chuột vào
                         onMouseLeave={handleMouseLeave} // Ẩn dropdown khi chuột rời
                     >
-                        <div className="custom-scrollbar z-50 mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
+                        <div className="custom-scrollbar mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
                             <div className="flex flex-wrap">
-                                <div className="nav-custom-grid flex-1">
-                                    <div className="mega-menu__column flex flex-col gap-8">
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="mega-menu__column flex flex-col gap-8">
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="mega-menu__column flex flex-col gap-8">
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div className="mega-menu__column flex flex-col gap-8">
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="mega-menu__item">
-                                            <a
-                                                href="#"
-                                                className="mega-menu__link"
-                                            >
-                                                Furniture
-                                            </a>
-                                            <ul className="font-medium text-gray-500">
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/sofas"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Sofas</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/tables-desk"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Tables & Desks</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/chairs-stool"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Chair & Stools</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/shelves"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shelves</span>
-                                                    </a>
-                                                </li>
-                                                <li className="gap-0.5">
-                                                    <a
-                                                        href="/collections/all"
-                                                        className="mega-menu__link block"
-                                                    >
-                                                        <span className="reversed-link__text">Shop All</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                <div className={`grid ${getGridClass(columnCount)} flex-1 gap-0`}>
+                                    {validColumns.map((columnData, index) => (
+                                        <MegaMenuColumn
+                                            key={index}
+                                            menuItems={columnData}
+                                        />
+                                    ))}
                                 </div>
                                 {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
-                                <div className="nav-promotion-custom nav-promotion-custom-grid pt-[30px] pb-[60px] pl-[30px]">
-                                    <div>
-                                        <a href="#">
-                                            <div className="relative grid grid-cols-[1fr] overflow-hidden">
-                                                <div className="block h-full w-full overflow-hidden">
-                                                    <img
-                                                        className="rounded-md"
-                                                        src="https://hyper-garace.myshopify.com/cdn/shop/files/collection-menu-banner.jpg?v=1734424636&width=1100"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                                <div className="content-overlay">
-                                                    <p className="mb-4 text-center text-xl"> Home&Decor </p>
-                                                    <p className="text-center text-3xl"> Decoration From $10 </p>
-                                                    <div className="mt-8 flex flex-1 items-end">
-                                                        <p>
-                                                            <ButtonHov />
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
+                                <RecommendationPicture
+                                    {...navItem4Config.recommendationPicture}
+                                    className={getRecommendationWidth(columnCount)}
+                                />
                                 {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
                             </div>
                         </div>

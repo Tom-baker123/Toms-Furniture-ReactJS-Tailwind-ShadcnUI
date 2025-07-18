@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useHover } from "@/hooks/useHover";
 import MegaMenuColumn from "./MegaMenuColumn";
 import RecommendationPicture from "./RecommendationPicture";
-import { navItem5Config } from "./megaMenuConfig";
+import { navItem5Config } from "./navItem5Config";
 import { getGridClass, filterValidColumns, getRecommendationWidth } from "./megaMenuUtils";
 
 const NavItem5 = () => {
