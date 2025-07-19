@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
     TOKEN,
     GHN_BASE_URL,
@@ -16,63 +15,81 @@ export {
     API_BASE_URL,
 };
 
-export const getProductDetail = () => {
-    return true;
+// Hàm gọi API dùng chung cho GHN
+const apiRequest = async (url, { method = "GET", headers = {}, params = undefined, body = undefined } = {}) => {
+    let fullUrl = url;
+    if (params && typeof params === "object") {
+        const query = Object.entries(params)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join("&");
+        fullUrl += `?${query}`;
+    }
+    try {
+        const response = await fetch(fullUrl, {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : undefined,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || `Request failed: ${response.status}`);
+        }
+        return data;
+    } catch (error) {
+        console.error("GHN API Error:", error);
+        return { error: true, message: error.message || "An error occurred." };
+    }
 };
 
 export const getProvinces = async () => {
-    try {
-        const response = await axios.get(`${GHN_BASE_URL}/master-data/province`, {
-            headers: { Token: TOKEN },
-        });
-        return response.data.data || [];
-    } catch (error) {
-        console.error("Error lấy tỉnh:", error);
+    const data = await apiRequest(`${GHN_BASE_URL}/master-data/province`, {
+        headers: { Token: TOKEN },
+    });
+    if (data.error) {
+        console.error("Error lấy tỉnh:", data.message);
         return [];
     }
+    return data.data || [];
 };
 
 export const getDistricts = async (provinceId) => {
-    try {
-        const response = await axios.get(`${GHN_BASE_URL}/master-data/district`, {
-            params: { province_id: provinceId },
-            headers: { Token: TOKEN },
-        });
-        return response.data.data || [];
-    } catch (error) {
-        console.error("Error lấy quận:", error);
+    const data = await apiRequest(`${GHN_BASE_URL}/master-data/district`, {
+        headers: { Token: TOKEN },
+        params: { province_id: provinceId },
+    });
+    if (data.error) {
+        console.error("Error lấy quận:", data.message);
         return [];
     }
+    return data.data || [];
 };
 
 export const getWards = async (districtId) => {
-    try {
-        const response = await axios.get(`${GHN_BASE_URL}/master-data/ward`, {
-            params: { district_id: districtId },
-            headers: { Token: TOKEN },
-        });
-        return response.data.data || [];
-    } catch (error) {
-        console.error("Error lấy phường:", error);
+    const data = await apiRequest(`${GHN_BASE_URL}/master-data/ward`, {
+        headers: { Token: TOKEN },
+        params: { district_id: districtId },
+    });
+    if (data.error) {
+        console.error("Error lấy phường:", data.message);
         return [];
     }
+    return data.data || [];
 };
 
 export const getAvailableServices = async (fromDistrictId, toDistrictId) => {
-    try {
-        const response = await axios.get(`${GHN_BASE_URL}/v2/shipping-order/available-services`, {
-            params: {
-                shop_id: SHOP_ID,
-                from_district: fromDistrictId,
-                to_district: toDistrictId,
-            },
-            headers: { Token: TOKEN },
-        });
-        return response.data.data || [];
-    } catch (error) {
-        console.error("Error lấy dịch vụ khả dụng:", error);
+    const data = await apiRequest(`${GHN_BASE_URL}/v2/shipping-order/available-services`, {
+        headers: { Token: TOKEN },
+        params: {
+            shop_id: SHOP_ID,
+            from_district: fromDistrictId,
+            to_district: toDistrictId,
+        },
+    });
+    if (data.error) {
+        console.error("Error lấy dịch vụ khả dụng:", data.message);
         return [];
     }
+    return data.data || [];
 };
 
 export const calculateShippingFee = async (toDistrictId, toWardCode, items = [], serviceTypeId = 2) => {
@@ -103,24 +120,33 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
             width: maxWidth,
         };
 
-        const response = await axios.post(`${GHN_BASE_URL}/v2/shipping-order/fee`, payload, {
+        const data = await apiRequest(`${GHN_BASE_URL}/v2/shipping-order/fee`, {
+            method: "POST",
             headers: {
                 Token: TOKEN,
                 ShopId: SHOP_ID,
                 "Content-Type": "application/json",
             },
+            body: payload,
         });
 
-        if (response.data.code === 200) {
-            return response.data.data.total;
+        if (data.error) {
+            throw new Error(data.message || "API returned error");
+        }
+        if (data.code === 200) {
+            return data.data.total;
         } else {
-            throw new Error(response.data.message || "API returned non-200 status");
+            throw new Error(data.message || "API returned non-200 status");
         }
     } catch (error) {
         console.error("❌ Error khi tính phí vận chuyển:", {
             message: error.message,
-            response: error.response?.data,
-            payload,
+            payload: {
+                toDistrictId,
+                toWardCode,
+                items,
+                serviceTypeId,
+            },
         });
         return 0;
     }

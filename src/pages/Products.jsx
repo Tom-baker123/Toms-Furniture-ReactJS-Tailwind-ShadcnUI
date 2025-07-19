@@ -2,7 +2,7 @@ import AboutMaterial from "@/components/Home/ProductCategoryComponents/AboutMate
 import BannerProducts from "@/components/Home/ProductCategoryComponents/BannerProducts";
 import FilterComponents from "@/components/Home/ProductCategoryComponents/FilterComponents";
 import ProductCategoryToolbar from "@/components/Home/ProductCategoryToolbar";
-import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
+import CategorySwiper from "@/components/Home/Swiper-Components/CategorySwiper";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import showHeader from "@/hooks/showHeader";
 import { cn } from "@/lib/utils";

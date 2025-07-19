@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { NewArrivalsPicture } from "@/assets/FakeData";
 import { cn } from "@/lib/utils";
-import ButtonHov from "../tailwind-custom/ButtonHov";
+import ButtonHov from "../../tailwind-custom/ButtonHov";
 
 const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
     // Tạo ref cho nút prev và next
@@ -26,31 +26,31 @@ const PaginationSwiper = ({ Picture = NewArrivalsPicture }) => {
                 {Picture.map((image, index) => (
                     <div key={index}>
                         {image.info?.length > 0 ? (
-                                <img
-                                    className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
-                                    src={`/img/NewArrivals/${image.ImageURL}`}
-                                    alt="asdsa"
-                                />
-                            ) : (
-                                <div className="relative grid grid-cols-[1fr] overflow-hidden h-full">
-                                    <div className="block h-full w-full overflow-hidden">
-                                        <img
-                                            className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
-                                            src={`/img/NewArrivals/${image.ImageURL}`}
-                                            alt="asdsa"
-                                        />
-                                    </div>
-                                    <div className="content-overlay">
-                                        <p className="mb-2 w-full text-left text-sm font-bold"> Promotion </p>
-                                        <p className="w-full text-left text-xl font-bold"> Soft Stools Design </p>
-                                        <div className="mt-8 flex w-full flex-1 items-end justify-start">
-                                            <p className="w-full">
-                                                <ButtonHov />
-                                            </p>
-                                        </div>
+                            <img
+                                className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
+                                src={`/img/NewArrivals/${image.ImageURL}`}
+                                alt="asdsa"
+                            />
+                        ) : (
+                            <div className="relative grid h-full grid-cols-[1fr] overflow-hidden">
+                                <div className="block h-full w-full overflow-hidden">
+                                    <img
+                                        className={cn(`w-full rounded-md object-cover`, image.info?.length > 0 ? "aspect-square" : "h-full")}
+                                        src={`/img/NewArrivals/${image.ImageURL}`}
+                                        alt="asdsa"
+                                    />
+                                </div>
+                                <div className="content-overlay">
+                                    <p className="mb-2 w-full text-left text-sm font-bold"> Promotion </p>
+                                    <p className="w-full text-left text-xl font-bold"> Soft Stools Design </p>
+                                    <div className="mt-8 flex w-full flex-1 items-end justify-start">
+                                        <p className="w-full">
+                                            <ButtonHov />
+                                        </p>
                                     </div>
                                 </div>
-                            )}
+                            </div>
+                        )}
                         {/* pt-[12px] cho box title */}
                         {Array.isArray(image.info) && image.info.length > 0 && (
                             <div className="flex-1 pt-3">
