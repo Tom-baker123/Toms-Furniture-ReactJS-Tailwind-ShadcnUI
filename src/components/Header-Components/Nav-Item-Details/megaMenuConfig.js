@@ -112,63 +112,218 @@ export const megaMenuConfig = {
 
 // NavItem2 Config - Shop By Room
 export const navItem2Config = {
-    columns: [
-        // Cột 1 - Living Room
-        [
+    // Cấu hình hiển thị grid sản phẩm
+    displayType: "productGrid",
+    productCategories: [
+        {
+            id: "tables-desks",
+            name: "Tables & Desks",
+            image: "/img/category-menu/Turn-Table-Mono.png",
+            href: "/collections/tables-desks"
+        },
+        {
+            id: "sofas",
+            name: "Sofas",
+            image: "/img/category-menu/Spoke-Sofa-Basic.png",
+            href: "/collections/sofas"
+        },
+        {
+            id: "chairs-stools",
+            name: "Chairs & Stools",
+            image: "/img/category-menu/Arc-Chair-dark.png",
+            href: "/collections/chairs-stools"
+        },
+        {
+            id: "storages-cabinets",
+            name: "Storages & Cabinets",
+            image: "/img/category-menu/Curve-Coat-Rack-Shelf.png",
+            href: "/collections/storages-cabinets"
+        },
+        {
+            id: "bow-chairs",
+            name: "Bow Chairs",
+            image: "/img/category-menu/Turn-chair-colorful.png",
+            href: "/collections/bow-chairs"
+        },
+        {
+            id: "cross-bar-chairs",
+            name: "Cross Bar Chairs",
+            image: "/img/category-menu/Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png",
+            href: "/collections/cross-bar-chairs"
+        },
+        {
+            id: "single-coffee-tables",
+            name: "Single Coffee Tables",
+            image: "/img/category-menu/Turn-chair-Warm.png",
+            href: "/collections/single-coffee-tables"
+        },
+        {
+            id: "soft-bench",
+            name: "Soft Bench",
+            image: "/img/category-menu/Curve-Coat-Rack.png",
+            href: "/collections/soft-bench"
+        }
+    ],
+    // Sidebar menu cho room navigation
+    roomCategories: [
+        {
+            title: "Living Room",
+            href: "/collections/living-room",
+            hasSubmenu: true
+        },
+        {
+            title: "Dining & Kitchen",
+            href: "/collections/dining-kitchen",
+            hasSubmenu: true
+        },
+        {
+            title: "Bed Room",
+            href: "/collections/bedroom",
+            hasSubmenu: true
+        },
+        {
+            title: "Work Room",
+            href: "/collections/work-room",
+            hasSubmenu: true
+        },
+        {
+            title: "Outdoor",
+            href: "/collections/outdoor",
+            hasSubmenu: true
+        }
+    ],
+    // Cấu hình sản phẩm theo từng room
+    roomProducts: {
+        "Living Room": [
             {
-                title: "Living Room",
-                href: "#",
-                items: [
-                    { label: "Sofas & Sectionals", href: "/collections/living-room-sofas" },
-                    { label: "Coffee Tables", href: "/collections/living-room-coffee-tables" },
-                    { label: "TV Stands", href: "/collections/living-room-tv-stands" },
-                    { label: "Accent Chairs", href: "/collections/living-room-chairs" },
-                    { label: "Shop All", href: "/collections/living-room-all" }
-                ]
+                id: "sofas",
+                name: "Sofas",
+                image: "/img/category-menu/Spoke-Sofa-Basic.png",
+                href: "/collections/sofas"
+            },
+            {
+                id: "chairs-stools",
+                name: "Chairs & Stools",
+                image: "/img/category-menu/Arc-Chair-dark.png",
+                href: "/collections/chairs-stools"
+            },
+            {
+                id: "single-coffee-tables",
+                name: "Single Coffee Tables",
+                image: "/img/category-menu/Turn-chair-Warm.png",
+                href: "/collections/single-coffee-tables"
+            },
+            {
+                id: "storages-cabinets",
+                name: "Storages & Cabinets",
+                image: "/img/category-menu/Curve-Coat-Rack-Shelf.png",
+                href: "/collections/storages-cabinets"
             }
         ],
-        // Cột 2 - Bedroom
-        [
+        "Dining & Kitchen": [
             {
-                title: "Bedroom",
-                href: "#",
-                items: [
-                    { label: "Beds & Frames", href: "/collections/bedroom-beds" },
-                    { label: "Dressers", href: "/collections/bedroom-dressers" },
-                    { label: "Nightstands", href: "/collections/bedroom-nightstands" },
-                    { label: "Wardrobes", href: "/collections/bedroom-wardrobes" },
-                    { label: "Shop All", href: "/collections/bedroom-all" }
-                ]
+                id: "tables-desks",
+                name: "Tables & Desks",
+                image: "/img/category-menu/Turn-Table-Mono.png",
+                href: "/collections/tables-desks"
+            },
+            {
+                id: "bow-chairs",
+                name: "Bow Chairs",
+                image: "/img/category-menu/Turn-chair-colorful.png",
+                href: "/collections/bow-chairs"
+            },
+            {
+                id: "cross-bar-chairs",
+                name: "Cross Bar Chairs",
+                image: "/img/category-menu/Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png",
+                href: "/collections/cross-bar-chairs"
+            },
+            {
+                id: "storages-cabinets",
+                name: "Storages & Cabinets",
+                image: "/img/category-menu/Curve-Coat-Rack-Shelf.png",
+                href: "/collections/storages-cabinets"
             }
         ],
-        // Cột 3 - Dining Room
-        [
+        "Bed Room": [
             {
-                title: "Dining Room",
-                href: "#",
-                items: [
-                    { label: "Dining Tables", href: "/collections/dining-room-tables" },
-                    { label: "Dining Chairs", href: "/collections/dining-room-chairs" },
-                    { label: "Bar Stools", href: "/collections/dining-room-stools" },
-                    { label: "Buffets & Sideboards", href: "/collections/dining-room-storage" },
-                    { label: "Shop All", href: "/collections/dining-room-all" }
-                ]
+                id: "soft-bench",
+                name: "Soft Bench",
+                image: "/img/category-menu/Curve-Coat-Rack.png",
+                href: "/collections/soft-bench"
+            },
+            {
+                id: "storages-cabinets",
+                name: "Storages & Cabinets",
+                image: "/img/category-menu/Curve-Coat-Rack-Shelf.png",
+                href: "/collections/storages-cabinets"
+            },
+            {
+                id: "chairs-stools",
+                name: "Chairs & Stools",
+                image: "/img/category-menu/Arc-Chair-dark.png",
+                href: "/collections/chairs-stools"
+            },
+            {
+                id: "tables-desks",
+                name: "Tables & Desks",
+                image: "/img/category-menu/Turn-Table-Mono.png",
+                href: "/collections/tables-desks"
+            }
+        ],
+        "Work Room": [
+            {
+                id: "tables-desks",
+                name: "Tables & Desks",
+                image: "/img/category-menu/Turn-Table-Mono.png",
+                href: "/collections/tables-desks"
+            },
+            {
+                id: "chairs-stools",
+                name: "Chairs & Stools",
+                image: "/img/category-menu/Arc-Chair-dark.png",
+                href: "/collections/chairs-stools"
+            },
+            {
+                id: "storages-cabinets",
+                name: "Storages & Cabinets",
+                image: "/img/category-menu/Curve-Coat-Rack-Shelf.png",
+                href: "/collections/storages-cabinets"
+            },
+            {
+                id: "bow-chairs",
+                name: "Bow Chairs",
+                image: "/img/category-menu/Turn-chair-colorful.png",
+                href: "/collections/bow-chairs"
+            }
+        ],
+        "Outdoor": [
+            {
+                id: "soft-bench",
+                name: "Soft Bench",
+                image: "/img/category-menu/Curve-Coat-Rack.png",
+                href: "/collections/soft-bench"
+            },
+            {
+                id: "tables-desks",
+                name: "Tables & Desks",
+                image: "/img/category-menu/Turn-Table-Mono.png",
+                href: "/collections/tables-desks"
+            },
+            {
+                id: "chairs-stools",
+                name: "Chairs & Stools",
+                image: "/img/category-menu/Arc-Chair-dark.png",
+                href: "/collections/chairs-stools"
+            },
+            {
+                id: "cross-bar-chairs",
+                name: "Cross Bar Chairs",
+                image: "/img/category-menu/Cross-Table-dark_b9e51138-56b9-45fa-a3a6-89b1f918425a.png",
+                href: "/collections/cross-bar-chairs"
             }
         ]
-    ],
-    recommendationPicture: {
-        imageUrl: "https://hyper-garace.myshopify.com/cdn/shop/files/collection-menu-banner.jpg?v=1734424636&width=1100",
-        imageAlt: "Shop By Room Collection",
-        title: "Room Sets",
-        subtitle: "Complete Your Space",
-        href: "#",
-        customStyles: {
-            containerClass: "nav-promotion-custom nav-promotion-custom-grid pt-[30px] pb-[60px] pl-[30px] border-l-[1px] border-gray-300",
-            imageClass: "rounded-md",
-            titleClass: "mb-4 text-center text-xl",
-            subtitleClass: "text-center text-3xl",
-            overlayClass: "content-overlay"
-        }
     }
 };
 
@@ -268,7 +423,7 @@ export const navItem4Config = {
     }
 };
 
-// NavItem5 Config - Pages
+// NavItem5 Config - Pages (Nested Menu)
 export const navItem5Config = {
     columns: [
         // Cột 1 - Page Links
@@ -285,6 +440,60 @@ export const navItem5Config = {
                 ]
             }
         ]
+    ],
+    // Nested menu data
+    nestedMenuData: [
+        {
+            title: "About us",
+            href: "/about",
+            submenu: []
+        },
+        {
+            title: "Collections",
+            href: "/collections",
+            submenu: [
+                { label: "Collections List", href: "/collections" },
+                { label: "Left Banner", href: "/collections/left-banner" },
+                { label: "Right Banner", href: "/collections/right-banner" },
+                { label: "With Background", href: "/collections/with-background" },
+                { label: "With Image Cards", href: "/collections/with-image-cards" },
+                { label: "Without Banner", href: "/collections/without-banner" }
+            ]
+        },
+        {
+            title: "Product Gallery",
+            href: "/product-gallery",
+            submenu: [
+                { label: "Product Grid", href: "/product-gallery/grid" },
+                { label: "Product List", href: "/product-gallery/list" },
+                { label: "Product Detail", href: "/product-gallery/detail" }
+            ]
+        },
+        {
+            title: "Customer Care",
+            href: "/customer-care",
+            submenu: []
+        },
+        {
+            title: "FAQs",
+            href: "/faq",
+            submenu: []
+        },
+        {
+            title: "Contact",
+            href: "/contact",
+            submenu: []
+        },
+        {
+            title: "Find A Store",
+            href: "/find-store",
+            submenu: []
+        },
+        {
+            title: "Blog",
+            href: "/blog",
+            submenu: []
+        }
     ],
     recommendationPicture: {
         imageUrl: "https://hyper-garace.myshopify.com/cdn/shop/files/collection-menu-banner.jpg?v=1734424636&width=1100",
