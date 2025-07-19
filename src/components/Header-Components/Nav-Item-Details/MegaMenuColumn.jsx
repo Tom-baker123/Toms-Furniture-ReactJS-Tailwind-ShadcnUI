@@ -20,11 +20,11 @@ const MegaMenuColumn = ({ menuItems = [], className = "" }) => {
                     >
                         {section.title}
                     </a>
-                    <ul className="font-medium text-gray-500">
+                    <ul className="font-medium mt-3.5 text-gray-500">
                         {section.items.map((item, itemIndex) => (
                             <li
                                 key={itemIndex}
-                                className="gap-0.5"
+                                className="mb-3"
                             >
                                 <a
                                     href={item.href}

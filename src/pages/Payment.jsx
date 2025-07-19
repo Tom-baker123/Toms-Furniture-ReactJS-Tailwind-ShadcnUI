@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getProvinces, getDistricts, getWards, getAvailableServices, calculateShippingFee, YOUR_SHOP_DISTRICT_ID } from "@/api/api";
+import { getProvinces, getDistricts, getWards, getAvailableServices, calculateShippingFee, YOUR_SHOP_DISTRICT_ID } from "@/api/service/GHNService";
 
 const mockCartItems = [
     {

@@ -1,17 +1,11 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { useHover } from "@/hooks/useHover";
-import MegaMenuColumn from "./MegaMenuColumn";
-import RecommendationPicture from "./RecommendationPicture";
+import NestedMenuColumn from "./NestedMenuColumn";
 import { navItem5Config } from "./megaMenuConfig";
-import { getGridClass, filterValidColumns, getRecommendationWidth } from "./megaMenuUtils";
 
 const NavItem5 = () => {
     const { isHovered, handleMouseEnter, handleMouseLeave, forceShow } = useHover(100);
-
-    // Lọc các cột có dữ liệu và tính toán grid class
-    const validColumns = filterValidColumns(navItem5Config.columns);
-    const columnCount = validColumns.length;
 
     return (
         <>
@@ -22,7 +16,7 @@ const NavItem5 = () => {
                 onMouseLeave={handleMouseLeave}
             >
                 <details
-                    className="group lg:pb-4"
+                    className="group relative lg:pb-4"
                     open
                 >
                     <summary className="list-none appearance-none px-4 marker:hidden">
@@ -54,7 +48,7 @@ const NavItem5 = () => {
                             document.body,
                         )}
                     <div
-                        className={`fixed left-0 z-50 mt-[17px] w-full bg-white shadow-2xl transition-all duration-300 ${
+                        className={`absolute top-full left-0 z-50 mt-[1px] transition-all duration-300 ${
                             isHovered
                                 ? "pointer-events-auto visible translate-y-0 opacity-100"
                                 : "pointer-events-none invisible -translate-y-4 opacity-0"
@@ -62,24 +56,10 @@ const NavItem5 = () => {
                         onMouseEnter={() => forceShow()} // Giữ dropdown khi chuột vào
                         onMouseLeave={handleMouseLeave} // Ẩn dropdown khi chuột rời
                     >
-                        <div className="custom-scrollbar mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
-                            <div className="flex flex-wrap">
-                                <div className={`grid ${getGridClass(columnCount)} flex-1 gap-0`}>
-                                    {validColumns.map((columnData, index) => (
-                                        <MegaMenuColumn
-                                            key={index}
-                                            menuItems={columnData}
-                                        />
-                                    ))}
-                                </div>
-                                {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
-                                <RecommendationPicture
-                                    {...navItem5Config.recommendationPicture}
-                                    className={getRecommendationWidth(columnCount)}
-                                />
-                                {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
-                            </div>
-                        </div>
+                        <NestedMenuColumn
+                            menuData={navItem5Config.nestedMenuData}
+                            width="w-48"
+                        />
                     </div>
                 </details>
             </li>
