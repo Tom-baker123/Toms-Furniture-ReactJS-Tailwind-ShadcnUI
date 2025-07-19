@@ -12,7 +12,7 @@ import { Toaster } from "react-hot-toast";
 import { Outlet } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { PaymentProvider } from "@/context/PaymentContext";
-import GHNProvider from "@/context/GHNContext";
+import { GHNProvider } from "@/context/GHNContext";
 
 const HomeLayout = () => {
     const [openCartModal, setOpenCartModal] = useState(false);

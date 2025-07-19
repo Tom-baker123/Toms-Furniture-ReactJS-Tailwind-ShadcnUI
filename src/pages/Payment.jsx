@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getProvinces, getDistricts, getWards, getAvailableServices, calculateShippingFee, YOUR_SHOP_DISTRICT_ID } from "@/api/service/GHNService";
+import UserguestForm from "../components/Home/Payment/UserguestForm";
+import ShippingAddressForm from "../components/Home/Payment/ShippingAddressForm";
+import PaymentMethodForm from "../components/Home/Payment/PaymentMethodForm";
+import { useGHN } from "../context/GHNContext";
 
 const mockCartItems = [
     {
@@ -31,14 +34,10 @@ const mockCartItems = [
 ];
 
 const Payment = () => {
-    const [provinces, setProvinces] = useState([]);
-    const [districts, setDistricts] = useState([]);
-    const [wards, setWards] = useState([]);
+    const { provinces, districts, wards, shippingFee, error, fetchProvinces, fetchDistricts, fetchWards, fetchShippingFee } = useGHN();
     const [selectedProvince, setSelectedProvince] = useState("");
     const [selectedDistrict, setSelectedDistrict] = useState("");
     const [selectedWard, setSelectedWard] = useState("");
-    const [shippingFee, setShippingFee] = useState(0);
-    const [error, setError] = useState("");
 
     // Thông tin người nhận
     const [customerInfo, setCustomerInfo] = useState({
@@ -59,10 +58,7 @@ const Payment = () => {
     const [imageErrors, setImageErrors] = useState({});
 
     useEffect(() => {
-        (async () => {
-            const data = await getProvinces();
-            setProvinces(data);
-        })();
+        fetchProvinces();
     }, []);
 
     const handleProvinceChange = async (e) => {
@@ -70,12 +66,7 @@ const Payment = () => {
         setSelectedProvince(provinceId);
         setSelectedDistrict("");
         setSelectedWard("");
-        setDistricts([]);
-        setWards([]);
-        setError("");
-
-        const data = await getDistricts(provinceId);
-        setDistricts(data);
+        await fetchDistricts(provinceId);
     };
 
     const handleDistrictChange = async (e) => {
@@ -83,40 +74,19 @@ const Payment = () => {
         console.log("Selected District ID:", districtId, typeof districtId);
         setSelectedDistrict(districtId);
         setSelectedWard("");
-        setWards([]);
-        setError("");
-
-        const data = await getWards(districtId);
-        setWards(data);
+        await fetchWards(districtId);
     };
 
     const handleWardChange = (e) => {
         const wardCode = e.target.value;
         console.log("Selected Ward Code:", wardCode, typeof wardCode);
         setSelectedWard(wardCode);
-        setError("");
     };
 
     useEffect(() => {
-        const fetchFee = async () => {
-            if (selectedDistrict && selectedWard) {
-                try {
-                    const services = await getAvailableServices(YOUR_SHOP_DISTRICT_ID, selectedDistrict);
-                    if (services.length > 0) {
-                        const fee = await calculateShippingFee(selectedDistrict, selectedWard, mockCartItems, services[0].service_type_id);
-                        setShippingFee(fee);
-                        setError("");
-                    } else {
-                        setError("No available shipping services for this route");
-                        setShippingFee(0);
-                    }
-                } catch (err) {
-                    setError("Failed to calculate shipping fee. Please try again.");
-                    setShippingFee(0);
-                }
-            }
-        };
-        fetchFee();
+        if (selectedDistrict && selectedWard) {
+            fetchShippingFee(selectedDistrict, selectedWard, mockCartItems);
+        }
     }, [selectedDistrict, selectedWard]);
 
     // Xử lý thay đổi thông tin khách hàng
@@ -246,208 +216,29 @@ const Payment = () => {
                 {/* Phần thông tin đặt hàng */}
                 <div className="space-y-6">
                     {/* Thông tin khách hàng */}
-                    <div className="rounded-lg border bg-white p-6">
-                        <h2 className="mb-4 text-lg font-semibold">Thông tin khách hàng</h2>
+                    <UserguestForm
+                        customerInfo={customerInfo}
+                        validationErrors={validationErrors}
+                        handleCustomerInfoChange={handleCustomerInfoChange}
+                    />
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Họ và tên *</label>
-                                <input
-                                    type="text"
-                                    name="fullName"
-                                    value={customerInfo.fullName}
-                                    onChange={handleCustomerInfoChange}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.fullName ? "border-red-500" : "border-gray-300"}`}
-                                    placeholder="Nhập họ và tên"
-                                />
-                                {validationErrors.fullName && <span className="text-sm text-red-500">{validationErrors.fullName}</span>}
-                            </div>
+                    <ShippingAddressForm
+                        provinces={provinces}
+                        districts={districts}
+                        wards={wards}
+                        selectedProvince={selectedProvince}
+                        selectedDistrict={selectedDistrict}
+                        selectedWard={selectedWard}
+                        validationErrors={validationErrors}
+                        handleProvinceChange={handleProvinceChange}
+                        handleDistrictChange={handleDistrictChange}
+                        handleWardChange={handleWardChange}
+                    />
 
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Số điện thoại *</label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={customerInfo.phone}
-                                    onChange={handleCustomerInfoChange}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.phone ? "border-red-500" : "border-gray-300"}`}
-                                    placeholder="Nhập số điện thoại"
-                                />
-                                {validationErrors.phone && <span className="text-sm text-red-500">{validationErrors.phone}</span>}
-                            </div>
-
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Email *</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={customerInfo.email}
-                                    onChange={handleCustomerInfoChange}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.email ? "border-red-500" : "border-gray-300"}`}
-                                    placeholder="Nhập email"
-                                />
-                                {validationErrors.email && <span className="text-sm text-red-500">{validationErrors.email}</span>}
-                            </div>
-
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Địa chỉ cụ thể *</label>
-                                <input
-                                    type="text"
-                                    name="address"
-                                    value={customerInfo.address}
-                                    onChange={handleCustomerInfoChange}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.address ? "border-red-500" : "border-gray-300"}`}
-                                    placeholder="Số nhà, tên đường..."
-                                />
-                                {validationErrors.address && <span className="text-sm text-red-500">{validationErrors.address}</span>}
-                            </div>
-
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Ghi chú</label>
-                                <textarea
-                                    name="note"
-                                    value={customerInfo.note}
-                                    onChange={handleCustomerInfoChange}
-                                    className="w-full rounded border border-gray-300 px-3 py-2"
-                                    rows="3"
-                                    placeholder="Ghi chú thêm cho đơn hàng (tùy chọn)"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Địa chỉ giao hàng */}
-                    <div className="rounded-lg border bg-white p-6">
-                        <h2 className="mb-4 text-lg font-semibold">Địa chỉ giao hàng</h2>
-
-                        <div className="space-y-4">
-                            {/* Province */}
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Tỉnh / Thành phố *</label>
-                                <select
-                                    value={selectedProvince}
-                                    onChange={handleProvinceChange}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.province ? "border-red-500" : "border-gray-300"}`}
-                                >
-                                    <option value="">-- Chọn tỉnh --</option>
-                                    {provinces.map((province) => (
-                                        <option
-                                            key={province.ProvinceID}
-                                            value={province.ProvinceID}
-                                        >
-                                            {province.ProvinceName}
-                                        </option>
-                                    ))}
-                                </select>
-                                {validationErrors.province && <span className="text-sm text-red-500">{validationErrors.province}</span>}
-                            </div>
-
-                            {/* District */}
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Quận / Huyện *</label>
-                                <select
-                                    value={selectedDistrict}
-                                    onChange={handleDistrictChange}
-                                    disabled={!selectedProvince}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince ? "bg-gray-100" : ""}`}
-                                >
-                                    <option value="">-- Chọn quận --</option>
-                                    {districts.map((district) => (
-                                        <option
-                                            key={district.DistrictID}
-                                            value={district.DistrictID}
-                                        >
-                                            {district.DistrictName}
-                                        </option>
-                                    ))}
-                                </select>
-                                {validationErrors.district && <span className="text-sm text-red-500">{validationErrors.district}</span>}
-                            </div>
-
-                            {/* Ward */}
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">Phường / Xã *</label>
-                                <select
-                                    value={selectedWard}
-                                    onChange={handleWardChange}
-                                    disabled={!selectedDistrict}
-                                    className={`w-full rounded border px-3 py-2 ${validationErrors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict ? "bg-gray-100" : ""}`}
-                                >
-                                    <option value="">-- Chọn phường --</option>
-                                    {wards.map((ward) => (
-                                        <option
-                                            key={ward.WardCode}
-                                            value={ward.WardCode}
-                                        >
-                                            {ward.WardName}
-                                        </option>
-                                    ))}
-                                </select>
-                                {validationErrors.ward && <span className="text-sm text-red-500">{validationErrors.ward}</span>}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Phương thức thanh toán */}
-                    <div className="rounded-lg border bg-white p-6">
-                        <h2 className="mb-4 text-lg font-semibold">Phương thức thanh toán</h2>
-
-                        <div className="space-y-3">
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="cod"
-                                    name="paymentMethod"
-                                    value="cod"
-                                    checked={paymentMethod === "cod"}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                    className="h-4 w-4 text-blue-600"
-                                />
-                                <label
-                                    htmlFor="cod"
-                                    className="ml-2 text-sm font-medium"
-                                >
-                                    Thanh toán khi nhận hàng (COD)
-                                </label>
-                            </div>
-
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="bank"
-                                    name="paymentMethod"
-                                    value="bank"
-                                    checked={paymentMethod === "bank"}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                    className="h-4 w-4 text-blue-600"
-                                />
-                                <label
-                                    htmlFor="bank"
-                                    className="ml-2 text-sm font-medium"
-                                >
-                                    Chuyển khoản ngân hàng
-                                </label>
-                            </div>
-
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="momo"
-                                    name="paymentMethod"
-                                    value="momo"
-                                    checked={paymentMethod === "momo"}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                    className="h-4 w-4 text-blue-600"
-                                />
-                                <label
-                                    htmlFor="momo"
-                                    className="ml-2 text-sm font-medium"
-                                >
-                                    Ví MoMo
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <PaymentMethodForm
+                        paymentMethod={paymentMethod}
+                        setPaymentMethod={setPaymentMethod}
+                    />
                 </div>
 
                 {/* Phần tổng kết đơn hàng */}

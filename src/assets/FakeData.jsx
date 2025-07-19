@@ -1,4 +1,4 @@
-import PaginationSwiper from "@/components/Swiper-Components/PaginationSwiper";
+import PaginationSwiper from "@/components/Home/Swiper-Components/PaginationSwiper";
 
 // [1.2. CATEGORY LIST]----------------------------------------------------------------------------------------------------------
 export const categoryList = [

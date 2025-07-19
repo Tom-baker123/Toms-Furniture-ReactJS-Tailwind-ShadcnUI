@@ -1,9 +1,9 @@
 import FeatureSection from "@/components/Home/FeatureSection";
 import PromotionBanner from "@/components/Home/PromotionBanner";
-import AlbumSwiper from "@/components/Swiper-Components/AlbumSwiper";
-import CategorySwiper from "@/components/Swiper-Components/CategorySwiper";
-import HeroSwiper from "@/components/Swiper-Components/HeroSwiper";
-import NewArrivalsSwiper from "@/components/Swiper-Components/NewArrivalsSwiper";
+import AlbumSwiper from "@/components/Home/Swiper-Components/AlbumSwiper";
+import CategorySwiper from "@/components/Home/Swiper-Components/CategorySwiper";
+import HeroSwiper from "@/components/Home/Swiper-Components/HeroSwiper";
+import NewArrivalsSwiper from "@/components/Home/Swiper-Components/NewArrivalsSwiper";
 import { useModal } from "@/context/ModalContext";
 import React, { useState } from "react";
 
