@@ -329,7 +329,7 @@ const Products = () => {
                             {/* [4.2.1] Product List */}
                             <div className="grid h-fit grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
                                 {/* Hiển thị trạng thái loading */}
-                                {loading && <p>Loading products...</p>}
+                                {/* {loading && <p>Loading products...</p>} */}
                                 {/* Hiển thị lỗi nếu có */}
                                 {error && <p className="text-red-500">Error: {error}</p>}
                                 {/* Hiển thị danh sách sản phẩm từ API */}
