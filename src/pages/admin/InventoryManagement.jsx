@@ -103,7 +103,7 @@ const InventoryManagement = () => {
     // Hàm lấy tên thuộc tính biến thể
     const getVariantAttributeName = (variant) => {
         return (
-            <div className="flex gap-1">
+            <div className="flex gap-1 text-gray-400">
                 <span>{`${variant?.colorName || "N/A"}`}</span>
                 <span>{`/ ${variant?.sizeName || "N/A"}`}</span>
                 <span>{`/ ${variant?.materialName || "N/A"}`}</span>
@@ -127,7 +127,7 @@ const InventoryManagement = () => {
                                     <th className="table-head whitespace-nowrap">#</th>
                                     <th className="table-head whitespace-nowrap">Hình ảnh</th>
                                     <th className="table-head whitespace-nowrap">Tên sản phẩm</th>
-                                    <th className="table-head whitespace-nowrap">Color/Size/Material/Unit</th>
+                                    {/* <th className="table-head whitespace-nowrap">Color/Size/Material/Unit</th> */}
                                     <th className="table-head whitespace-nowrap">Danh mục</th>
                                     <th className="table-head whitespace-nowrap">Tồn kho</th>
                                     <th className="table-head whitespace-nowrap">Ngày tạo</th>
@@ -143,18 +143,18 @@ const InventoryManagement = () => {
                                         >
                                             <td className="table-cell">{variant.id}</td>
                                             <td className="table-cell">
-                                                {variantIndex === 0 && (
-                                                    <img
-                                                        src={getProductImage(inventory.sliders)}
-                                                        alt={inventory.productName}
-                                                        width={50}
-                                                        height={50}
-                                                        className="object-cover"
-                                                    />
-                                                )}
+                                                <img
+                                                    src={getProductImage(inventory.sliders)}
+                                                    alt={inventory.productName}
+                                                    width={50}
+                                                    height={50}
+                                                    className="object-cover"
+                                                />
                                             </td>
-                                            <td className="table-cell">{variantIndex === 0 ? inventory.productName : ""}</td>
-                                            <td className="table-cell">{getVariantAttributeName(variant)}</td>
+                                            <td className="table-cell text-lg font-bold text-gray-700">
+                                                {inventory.productName}
+                                                <span className="text-sm font-medium text-gray-500"> - {getVariantAttributeName(variant)}</span>
+                                            </td>
                                             <td className="table-cell">{variantIndex === 0 ? inventory.categoryName || "Không có danh mục" : ""}</td>
                                             <td className="table-cell">
                                                 <div className="flex items-center gap-2">

@@ -103,9 +103,7 @@ const AdminRoute = ({ children }) => {
     return authStatus.isAuthenticated && authStatus.role === "Admin" ? children : <Navigate to="/" />;
 };
 
-{
-    /* -[Thiết lập url]------------------------------------ */
-}
+// Thiết lập router cho ứng dụng
 const router = createBrowserRouter([
     // [Router của HomePage]---------------------------
     {
@@ -121,7 +119,7 @@ const router = createBrowserRouter([
             { path: "findastore", element: <FindAStore /> },
             { path: "cart", element: <Cart /> },
             { path: "blog", element: <Blog /> },
-            { path: "payment", element: <Payment /> },
+            { path: "checkout", element: <Payment /> },
             {
                 path: "profile",
                 element: <Profile />,
@@ -432,10 +430,6 @@ const router = createBrowserRouter([
         ],
     },
 ]);
-
-{
-    /* -[Thiết lập url - End]------------------------------ */
-}
 
 export default function RouterSetup() {
     return (

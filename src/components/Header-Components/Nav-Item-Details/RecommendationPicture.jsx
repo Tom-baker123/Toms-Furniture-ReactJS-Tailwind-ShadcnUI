@@ -22,7 +22,7 @@ const RecommendationPicture = ({
     customStyles = {},
 }) => {
     const {
-        containerClass = "nav-promotion-custom nav-promotion-custom-grid pt-[30px] pb-[60px] pl-[30px] !border-l-[1px] !border-gray-300",
+        containerClass = "nav-promotion-custom nav-promotion-custom-grid pt-[30px] pb-[30px] pl-[30px] !border-l-[1px] !border-gray-300",
         imageClass = "rounded-md",
         titleClass = "mb-4 text-center text-xl",
         subtitleClass = "text-center text-3xl",

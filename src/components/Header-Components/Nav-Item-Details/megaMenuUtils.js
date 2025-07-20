@@ -27,12 +27,12 @@ export const getGridClass = (columnCount) => {
 export const getRecommendationWidth = (columnCount) => {
     // Khi có ít cột hơn thì recommendation picture có thể rộng hơn
     const widthClasses = {
-        1: 'min-w-[400px]',
-        2: 'min-w-[350px]',
-        3: 'min-w-[300px]',
-        4: 'min-w-[280px]',
-        5: 'min-w-[250px]',
-        6: 'min-w-[220px]'
+        1: 'min-w-[280px]',
+        2: 'min-w-[300px]',
+        3: 'min-w-[200px]',
+        4: 'min-w-[200px]',
+        5: 'min-w-[200px]',
+        6: 'min-w-[200px]'
     };
     return widthClasses[columnCount] || 'min-w-[300px]';
 };
