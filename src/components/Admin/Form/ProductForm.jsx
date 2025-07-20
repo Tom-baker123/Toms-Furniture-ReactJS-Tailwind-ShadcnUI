@@ -352,7 +352,7 @@ const ProductForm = () => {
                                             <Controller
                                                 name={`ProductVariants[${index}].ColorId`}
                                                 control={control}
-                                                rules={{ required: "Color is required" }}
+                                                // rules={{ required: "Color is required" }}
                                                 render={({ field }) => (
                                                     <select
                                                         className={`mt-1 w-full rounded-md border ${
@@ -383,7 +383,7 @@ const ProductForm = () => {
                                             <Controller
                                                 name={`ProductVariants[${index}].SizeId`}
                                                 control={control}
-                                                rules={{ required: "Size is required" }}
+                                                // rules={{ required: "Size is required" }}
                                                 render={({ field }) => (
                                                     <select
                                                         className={`mt-1 w-full rounded-md border ${
@@ -414,7 +414,7 @@ const ProductForm = () => {
                                             <Controller
                                                 name={`ProductVariants[${index}].MaterialId`}
                                                 control={control}
-                                                rules={{ required: "Material is required" }}
+                                                // rules={{ required: "Material is required" }}
                                                 render={({ field }) => (
                                                     <select
                                                         className={`mt-1 w-full rounded-md border ${
@@ -445,7 +445,7 @@ const ProductForm = () => {
                                             <Controller
                                                 name={`ProductVariants[${index}].UnitId`}
                                                 control={control}
-                                                rules={{ required: "Unit is required" }}
+                                                // rules={{ required: "Unit is required" }}
                                                 render={({ field }) => (
                                                     <select
                                                         className={`mt-1 w-full rounded-md border ${
