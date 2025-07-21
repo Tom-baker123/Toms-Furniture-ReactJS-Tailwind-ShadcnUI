@@ -8,10 +8,12 @@ import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 import ProgressBar from "./ProgressBar";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
     const [show, setShow] = useState(false);
     const timeoutRef = useRef();
+    const navigate = useNavigate();
     const { cart, removeFromCart, updateCart, loading, cartTotal } = useCart();
     // State để lưu số lượng hiển thị tạm thời cho từng item
     const [localQuantities, setLocalQuantities] = useState({});
@@ -283,6 +285,9 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                         hoverBgColor="bg-black"
                                         textColor="text-black"
                                         hoverTextColor="group-hover:text-white"
+                                        onClick={() => {
+                                            navigate("/cart");
+                                        }}
                                     >
                                         View Cart
                                     </ButtonHovCT>
@@ -291,8 +296,11 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                         hoverBgColor=" bg-white" // lớp trượt màu đen
                                         textColor="text-white"
                                         className="flex-1 !border-black"
+                                        onClick={() => {
+                                            navigate("/checkout");
+                                        }}
                                     >
-                                        Estimate Shipping
+                                        Checkout
                                     </ButtonHovCT>
                                 </div>
                             </div>
