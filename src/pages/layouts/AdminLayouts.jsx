@@ -9,6 +9,7 @@ import { useClickOutside } from "@/hooks/use-click-outside";
 import { Toaster } from "react-hot-toast";
 import { AdminAPIProvider } from "@/context/AdminAPIContext";
 import { AdminModalProvider } from "@/context/AdminModalContext";
+import AdminModalTemplate from "@/components/Admin/AdminModalTemplate";
 
 const AdminLayouts = ({ children }) => {
     // Kiểm tra breakpoint là màn hình desktop
@@ -59,6 +60,7 @@ const AdminLayouts = ({ children }) => {
                             <div className="h-[calc(100vh-60px)] overflow-x-hidden overflow-y-auto p-6">
                                 <Outlet />
                                 <Toaster toastOptions={{ duration: 2000 }} /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}
+                                <AdminModalTemplate />
                             </div>
                         </div>
                     </div>
