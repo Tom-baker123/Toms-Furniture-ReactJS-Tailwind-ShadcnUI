@@ -3,7 +3,6 @@ import UserguestForm from "../components/Home/Payment/UserguestForm";
 import ShippingAddressForm from "../components/Home/Payment/ShippingAddressForm";
 import SelectPaymentMethodForm from "../components/Home/Payment/SelectPaymentMethodForm";
 import { useGHN } from "../context/GHNContext";
-import { PaymentMethodProvider } from "../context/PaymentMethodContext";
 
 const mockCartItems = [
     {
@@ -64,6 +63,7 @@ const Payment = () => {
 
     const handleProvinceChange = async (e) => {
         const provinceId = e.target.value;
+        console.log("Selected Province ID:", provinceId, typeof provinceId);
         setSelectedProvince(provinceId);
         setSelectedDistrict("");
         setSelectedWard("");
@@ -210,109 +210,107 @@ const Payment = () => {
     };
 
     return (
-        
-            <div className="container-custom lg:px-10 lg:py-5">
-                <h1 className="mb-6 text-2xl font-bold">Payment</h1>
+        <div className="container-custom lg:px-10 lg:py-5">
+            <h1 className="mb-6 text-2xl font-bold">Payment</h1>
 
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    {/* Phần thông tin đặt hàng */}
-                    <div className="space-y-6">
-                        {/* Thông tin khách hàng */}
-                        <UserguestForm
-                            customerInfo={customerInfo}
-                            validationErrors={validationErrors}
-                            handleCustomerInfoChange={handleCustomerInfoChange}
-                        />
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                {/* Phần thông tin đặt hàng */}
+                <div className="space-y-6">
+                    {/* Thông tin khách hàng */}
+                    <UserguestForm
+                        customerInfo={customerInfo}
+                        validationErrors={validationErrors}
+                        handleCustomerInfoChange={handleCustomerInfoChange}
+                    />
 
-                        <ShippingAddressForm
-                            provinces={provinces}
-                            districts={districts}
-                            wards={wards}
-                            selectedProvince={selectedProvince}
-                            selectedDistrict={selectedDistrict}
-                            selectedWard={selectedWard}
-                            validationErrors={validationErrors}
-                            handleProvinceChange={handleProvinceChange}
-                            handleDistrictChange={handleDistrictChange}
-                            handleWardChange={handleWardChange}
-                        />
+                    <ShippingAddressForm
+                        provinces={provinces}
+                        districts={districts}
+                        wards={wards}
+                        selectedProvince={selectedProvince}
+                        selectedDistrict={selectedDistrict}
+                        selectedWard={selectedWard}
+                        validationErrors={validationErrors}
+                        handleProvinceChange={handleProvinceChange}
+                        handleDistrictChange={handleDistrictChange}
+                        handleWardChange={handleWardChange}
+                    />
 
-                        <SelectPaymentMethodForm
-                            paymentMethod={paymentMethod}
-                            setPaymentMethod={setPaymentMethod}
-                        />
+                    <SelectPaymentMethodForm
+                        paymentMethod={paymentMethod}
+                        setPaymentMethod={setPaymentMethod}
+                    />
+                </div>
+
+                {/* Phần tổng kết đơn hàng */}
+                <div className="space-y-6">
+                    {/* Sản phẩm trong giỏ hàng */}
+                    <div className="rounded-lg border bg-white p-6">
+                        <h2 className="mb-4 text-lg font-semibold">Sản phẩm ({mockCartItems.length})</h2>
+
+                        <div className="space-y-4">
+                            {mockCartItems.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="flex items-center space-x-4 border-b border-gray-200 pb-4 last:border-b-0"
+                                >
+                                    <img
+                                        src={imageErrors[item.id] ? "/src/assets/product-image.jpg" : item.sanPham.image}
+                                        alt={item.sanPham.name}
+                                        className="h-16 w-16 rounded object-cover"
+                                        onError={() => handleImageError(item.id)}
+                                    />
+                                    <div className="flex-1">
+                                        <h3 className="text-sm font-medium">{item.sanPham.name}</h3>
+                                        <p className="text-sm text-gray-600">
+                                            {item.sanPham.price.toLocaleString()}₫ x {item.soLuong}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-medium">{(item.sanPham.price * item.soLuong).toLocaleString()}₫</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Phần tổng kết đơn hàng */}
-                    <div className="space-y-6">
-                        {/* Sản phẩm trong giỏ hàng */}
-                        <div className="rounded-lg border bg-white p-6">
-                            <h2 className="mb-4 text-lg font-semibold">Sản phẩm ({mockCartItems.length})</h2>
+                    {/* Tổng kết */}
+                    <div className="rounded-lg border bg-white p-6">
+                        <h2 className="mb-4 text-lg font-semibold">Tổng kết đơn hàng</h2>
 
-                            <div className="space-y-4">
-                                {mockCartItems.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="flex items-center space-x-4 border-b border-gray-200 pb-4 last:border-b-0"
-                                    >
-                                        <img
-                                            src={imageErrors[item.id] ? "/src/assets/product-image.jpg" : item.sanPham.image}
-                                            alt={item.sanPham.name}
-                                            className="h-16 w-16 rounded object-cover"
-                                            onError={() => handleImageError(item.id)}
-                                        />
-                                        <div className="flex-1">
-                                            <h3 className="text-sm font-medium">{item.sanPham.name}</h3>
-                                            <p className="text-sm text-gray-600">
-                                                {item.sanPham.price.toLocaleString()}₫ x {item.soLuong}
-                                            </p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="font-medium">{(item.sanPham.price * item.soLuong).toLocaleString()}₫</p>
-                                        </div>
-                                    </div>
-                                ))}
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Tạm tính</span>
+                                <span className="font-medium">{subtotal.toLocaleString()}₫</span>
+                            </div>
+
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Phí vận chuyển</span>
+                                <span className="font-medium">{shippingFee > 0 ? `${shippingFee.toLocaleString()}₫` : "Chưa tính"}</span>
+                            </div>
+
+                            <div className="border-t pt-3">
+                                <div className="flex justify-between text-lg font-semibold">
+                                    <span>Tổng cộng</span>
+                                    <span className="text-blue-600">{total.toLocaleString()}₫</span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Tổng kết */}
-                        <div className="rounded-lg border bg-white p-6">
-                            <h2 className="mb-4 text-lg font-semibold">Tổng kết đơn hàng</h2>
+                        {/* Error Message */}
+                        {error && <div className="mt-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">{error}</div>}
 
-                            <div className="space-y-3">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Tạm tính</span>
-                                    <span className="font-medium">{subtotal.toLocaleString()}₫</span>
-                                </div>
-
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Phí vận chuyển</span>
-                                    <span className="font-medium">{shippingFee > 0 ? `${shippingFee.toLocaleString()}₫` : "Chưa tính"}</span>
-                                </div>
-
-                                <div className="border-t pt-3">
-                                    <div className="flex justify-between text-lg font-semibold">
-                                        <span>Tổng cộng</span>
-                                        <span className="text-blue-600">{total.toLocaleString()}₫</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Error Message */}
-                            {error && <div className="mt-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-600">{error}</div>}
-
-                            {/* Nút đặt hàng */}
-                            <button
-                                onClick={handlePlaceOrder}
-                                className="mt-6 w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
-                            >
-                                Đặt hàng ngay
-                            </button>
-                        </div>
+                        {/* Nút đặt hàng */}
+                        <button
+                            onClick={handlePlaceOrder}
+                            className="mt-6 w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
+                        >
+                            Đặt hàng ngay
+                        </button>
                     </div>
                 </div>
             </div>
-        
+        </div>
     );
 };
 
