@@ -1,9 +1,11 @@
 import React from "react";
-import { PencilLine, Trash } from "lucide-react";
+import ProductVariantsModalContent from "@/components/Admin/ModalContent/ProductVariantsModalContent";
+import { Eye, PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteProduct } from "@/api/api";
 import toast from "react-hot-toast";
 import FormatDatetime from "@/hooks/FormatDatetime";
+import { useAdminModal } from "@/context/AdminModalContext";
 
 // Component hiển thị danh sách sản phẩm
 // - Hiển thị bảng với thông tin sản phẩm và số lượng biến thể
@@ -11,7 +13,7 @@ import FormatDatetime from "@/hooks/FormatDatetime";
 const ProductManagement = () => {
     const products = useLoaderData()?.items; // Lấy dữ liệu từ loader
     const navigate = useNavigate();
-
+    const { openModal } = useAdminModal();
     // Hàm xử lý xóa sản phẩm
     const handleDelete = async (id) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
@@ -23,6 +25,10 @@ const ProductManagement = () => {
                 toast.error(`Error deleting product: ${error.message}`);
             }
         }
+    };
+    // Hàm mở modal hiển thị biến thể
+    const handleShowVariants = (variants) => {
+        openModal(<ProductVariantsModalContent variants={variants} />, { className: "max-w-2xl" });
     };
 
     return (
@@ -79,7 +85,16 @@ const ProductManagement = () => {
                                         </td>
                                         <td className="table-cell px-4 py-2">{product.productName}</td>
                                         <td className="table-cell px-4 py-2 text-right">
-                                            {product.productVariants ? product.productVariants.length : 0} variant
+                                            <button
+                                                type="button"
+                                                onClick={() => handleShowVariants(product.productVariants)}
+                                                className="cursor-pointer inline-flex items-center gap-2 rounded-xl border bg-gray-200 px-3 py-1 text-gray-700 transition-colors duration-75 hover:border-gray-400 hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none"
+                                            >
+                                                <Eye size={20} />
+                                                <span className="text-sm font-medium">
+                                                    {product.productVariants ? product.productVariants.length : 0} Variant
+                                                </span>
+                                            </button>
                                         </td>
                                         <td className="table-cell px-4 py-2">
                                             {product.isActive ? (
