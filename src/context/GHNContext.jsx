@@ -66,6 +66,20 @@ export const GHNProvider = ({ children }) => {
         return result;
     };
 
+    // Helper: get province/district/ward name by ID
+    const getProvinceName = (provinceId) => {
+        const found = provinces.find((p) => String(p.ProvinceID) === String(provinceId));
+        return found ? found.ProvinceName : provinceId || "";
+    };
+    const getDistrictName = (districtId) => {
+        const found = districts.find((d) => String(d.DistrictID) === String(districtId));
+        return found ? found.DistrictName : districtId || "";
+    };
+    const getWardName = (wardCode) => {
+        const found = wards.find((w) => String(w.WardCode) === String(wardCode));
+        return found ? found.WardName : wardCode || "";
+    };
+
     return (
         <GHNContext.Provider
             value={{
@@ -86,6 +100,9 @@ export const GHNProvider = ({ children }) => {
                 setWards,
                 setServices,
                 setShippingFee,
+                getProvinceName,
+                getDistrictName,
+                getWardName,
             }}
         >
             {children}

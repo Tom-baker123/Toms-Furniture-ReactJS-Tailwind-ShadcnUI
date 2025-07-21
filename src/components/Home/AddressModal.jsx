@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { X, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useGHN } from "../../context/GHNContext";
 
 const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const [show, setShow] = useState(false);
@@ -40,6 +41,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
         formState: { errors },
         reset,
         setValue,
+        control,
     } = useForm({
         defaultValues: getDefaultValues(),
     });
@@ -56,6 +58,65 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, [open, editingAddress, setValue, reset]);
+    // GHN API context
+    const { provinces, districts, wards, fetchProvinces, fetchDistricts, fetchWards } = useGHN();
+    const [selectedProvince, setSelectedProvince] = useState("");
+    const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [selectedWard, setSelectedWard] = useState("");
+
+    // Khi mở modal, fetch provinces nếu chưa có
+    React.useEffect(() => {
+        fetchProvinces();
+    }, [fetchProvinces]);
+
+    // Khi mở modal hoặc edit, đồng bộ giá trị combobox với giá trị trong form
+    useEffect(() => {
+        if (open) {
+            const values = getDefaultValues();
+            setSelectedProvince(values.city || "");
+            setSelectedDistrict(values.district || "");
+            setSelectedWard(values.ward || "");
+        } else {
+            setSelectedProvince("");
+            setSelectedDistrict("");
+            setSelectedWard("");
+        }
+    }, [open, editingAddress]);
+
+    // Khi chọn tỉnh, fetch districts và đồng bộ cả state lẫn form (dùng ID)
+    const handleProvinceChange = async (e) => {
+        const provinceId = e.target.value;
+        setSelectedProvince(provinceId);
+        setSelectedDistrict("");
+        setSelectedWard("");
+        setValue("city", provinceId, { shouldValidate: true });
+        setValue("district", "", { shouldValidate: true });
+        setValue("ward", "", { shouldValidate: true });
+        if (provinceId) {
+            await fetchDistricts(provinceId);
+        }
+    };
+
+    // Khi chọn quận, fetch wards và đồng bộ cả state lẫn form (dùng ID)
+    const handleDistrictChange = async (e) => {
+        const districtId = e.target.value;
+        setSelectedDistrict(districtId);
+        setSelectedWard("");
+        setValue("district", districtId, { shouldValidate: true });
+        setValue("ward", "", { shouldValidate: true });
+        if (districtId) {
+            await fetchWards(districtId);
+        }
+    };
+
+    // Khi chọn phường, đồng bộ cả state lẫn form (dùng ID)
+    const handleWardChange = (e) => {
+        const wardCode = e.target.value;
+        setSelectedWard(wardCode);
+        setValue("ward", wardCode, { shouldValidate: true });
+    };
+
+    // ĐỒNG BỘ GIÁ TRỊ COMBOBOX: Đã xử lý trong useEffect([open, editingAddress]) và các handleChange, không cần watch hook ở đây.
 
     // Đóng modal bằng phím ESC
     useEffect(() => {
@@ -168,30 +229,95 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                         {/* Thành phố */}
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">City *</label>
-                            <input
-                                {...register("city", { required: "City is required" })}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter city"
+                            <Controller
+                                name="city"
+                                control={control}
+                                // rules={{ required: "City is required" }}
+                                render={({ field }) => (
+                                    <select
+                                        {...field}
+                                        value={field.value || ""}
+                                        onChange={async (e) => {
+                                            field.onChange(e);
+                                            handleProvinceChange(e);
+                                        }}
+                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.city ? "border-red-500" : "border-gray-300"}`}
+                                    >
+                                        <option value="">-- Chọn tỉnh/thành phố --</option>
+                                        {provinces.map((province) => (
+                                            <option
+                                                key={province.ProvinceID}
+                                                value={province.ProvinceID}
+                                            >
+                                                {province.ProvinceName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
                             />
                             {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>}
                         </div>
                         {/* Quận/Huyện */}
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">District *</label>
-                            <input
-                                {...register("district", { required: "District is required" })}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter district"
+                            <Controller
+                                name="district"
+                                control={control}
+                                // rules={{ required: "District is required" }}
+                                render={({ field }) => (
+                                    <select
+                                        {...field}
+                                        value={field.value || ""}
+                                        onChange={async (e) => {
+                                            field.onChange(e);
+                                            handleDistrictChange(e);
+                                        }}
+                                        disabled={!selectedProvince}
+                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince ? "bg-gray-100" : ""}`}
+                                    >
+                                        <option value="">-- Chọn quận/huyện --</option>
+                                        {districts.map((district) => (
+                                            <option
+                                                key={district.DistrictID}
+                                                value={district.DistrictID}
+                                            >
+                                                {district.DistrictName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
                             />
                             {errors.district && <p className="mt-1 text-sm text-red-500">{errors.district.message}</p>}
                         </div>
                         {/* Phường/Xã */}
                         <div>
                             <label className="mb-2 block text-sm font-medium text-gray-700">Ward *</label>
-                            <input
-                                {...register("ward", { required: "Ward is required" })}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter ward"
+                            <Controller
+                                name="ward"
+                                control={control}
+                                // rules={{ required: "Ward is required" }}
+                                render={({ field }) => (
+                                    <select
+                                        {...field}
+                                        value={field.value || ""}
+                                        onChange={(e) => {
+                                            field.onChange(e);
+                                            handleWardChange(e);
+                                        }}
+                                        disabled={!selectedDistrict}
+                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict ? "bg-gray-100" : ""}`}
+                                    >
+                                        <option value="">-- Chọn phường/xã --</option>
+                                        {wards.map((ward) => (
+                                            <option
+                                                key={ward.WardCode}
+                                                value={ward.WardCode}
+                                            >
+                                                {ward.WardName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                )}
                             />
                             {errors.ward && <p className="mt-1 text-sm text-red-500">{errors.ward.message}</p>}
                         </div>
