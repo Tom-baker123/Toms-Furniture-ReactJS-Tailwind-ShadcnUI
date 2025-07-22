@@ -16,28 +16,6 @@ export {
     API_BASE_URL,
 };
 
-//#region [Home Page 🏠]-----------------------------------------------
-
-
-
-
-// [Cart] Hợp nhất giỏ hàng (mergeCart)
-// Gọi API POST /Cart/merge để hợp nhất giỏ hàng từ cookie sang tài khoản khi đăng nhập
-// Tham số: mergedCartData (object, ví dụ: { cartItems: [...] })
-// Trả về giỏ hàng đã hợp nhất
-export const mergeCart = async (mergedCartData) => {
-    const response = await fetch(`${API_BASE_URL}/Cart/merge`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(mergedCartData),
-    });
-    if (!response.ok) throw new Error("Failed to merge cart");
-    return (await response.json()).cart;
-};
-
-//#endregion [Home Page 🏠 - End]--------------------------------------
-
 //#region [ADMIN Page 🪪]----------------------------------------------
 // [1.1] API lấy tất cả danh sách danh mục sản phẩm
 // - Gọi API GET /api/Category để lấy toàn bộ danh sách danh mục
