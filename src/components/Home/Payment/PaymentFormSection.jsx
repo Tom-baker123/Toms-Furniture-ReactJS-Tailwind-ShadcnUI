@@ -1,0 +1,69 @@
+import React from "react";
+import UserguestForm from "./UserguestForm";
+import ShippingAddressForm from "./ShippingAddressForm";
+import SelectPaymentMethodForm from "./SelectPaymentMethodForm";
+import UserInfoForm from "./UserInfoForm";
+
+const PaymentFormSection = ({
+    authStatus,
+    user,
+    addresses,
+    customerInfo,
+    validationErrors,
+    loading,
+    handleSaveAddress,
+    handleCustomerInfoChange,
+    provinces,
+    districts,
+    wards,
+    selectedProvince,
+    selectedDistrict,
+    selectedWard,
+    handleProvinceChange,
+    handleDistrictChange,
+    handleWardChange,
+    paymentMethod,
+    setPaymentMethod,
+}) => {
+    return (
+        <div className="space-y-6">
+            {/* Thông tin khách hàng */}
+            {authStatus?.isAuthenticated ? (
+                <UserInfoForm
+                    user={user}
+                    address={addresses && addresses.length > 0 ? addresses[0] : {}}
+                    onSave={handleSaveAddress}
+                    validationErrors={validationErrors}
+                    loading={loading}
+                    disabled={addresses && addresses.length > 0}
+                />
+            ) : (
+                <UserguestForm
+                    customerInfo={customerInfo}
+                    validationErrors={validationErrors}
+                    handleCustomerInfoChange={handleCustomerInfoChange}
+                />
+            )}
+
+            <ShippingAddressForm
+                provinces={provinces}
+                districts={districts}
+                wards={wards}
+                selectedProvince={selectedProvince}
+                selectedDistrict={selectedDistrict}
+                selectedWard={selectedWard}
+                validationErrors={validationErrors}
+                handleProvinceChange={handleProvinceChange}
+                handleDistrictChange={handleDistrictChange}
+                handleWardChange={handleWardChange}
+            />
+
+            <SelectPaymentMethodForm
+                paymentMethod={paymentMethod}
+                setPaymentMethod={setPaymentMethod}
+            />
+        </div>
+    );
+};
+
+export default PaymentFormSection;

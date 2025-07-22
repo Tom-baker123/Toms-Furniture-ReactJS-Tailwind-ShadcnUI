@@ -10,6 +10,7 @@ const PaymentCallbackVnpay = () => {
     const [loading, setLoading] = useState(true);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
+    const [countdown, setCountdown] = useState(3);
 
     useEffect(() => {
         const processCallback = async () => {
@@ -39,6 +40,24 @@ const PaymentCallbackVnpay = () => {
         };
         processCallback();
     }, [location.search, handleVnpayCallback]);
+
+    // Đếm ngược và tự động chuyển trang sau 3s khi đã xử lý xong (không loading)
+    useEffect(() => {
+        if (!loading) {
+            setCountdown(3);
+            const timer = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timer);
+                        navigate("/", { replace: true });
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [loading, navigate]);
 
     if (loading) {
         return (
@@ -103,7 +122,9 @@ const PaymentCallbackVnpay = () => {
                     </>
                 )}
 
-                <p className="mb-4 text-sm text-gray-500">You will be redirected to homepage in a few seconds...</p>
+                <p className="mb-4 text-sm text-gray-500">
+                    You will be redirected to homepage in {countdown} second{countdown !== 1 ? "s" : ""}...
+                </p>
 
                 <button
                     onClick={() => navigate("/")}
