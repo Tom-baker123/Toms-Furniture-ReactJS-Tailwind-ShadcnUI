@@ -287,6 +287,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                         hoverTextColor="group-hover:text-white"
                                         onClick={() => {
                                             navigate("/cart");
+                                            onClose();
                                         }}
                                     >
                                         View Cart
@@ -298,6 +299,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                         className="flex-1 !border-black"
                                         onClick={() => {
                                             navigate("/checkout");
+                                            onClose();
                                         }}
                                     >
                                         Checkout

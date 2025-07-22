@@ -87,6 +87,7 @@ import OrderStatusForm from "@/components/Admin/Form/OrderStatusForm";
 import OrderForm from "@/components/Admin/Form/OrderForm";
 import { getAllOrders } from "@/api/service/PaymentService";
 import { getAllTests } from "@/api/service/TestService";
+import OrderDetailsForm from "@/components/Admin/Form/OrderDetailsForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -340,7 +341,8 @@ const router = createBrowserRouter([
                     { path: "new_order", element: <OrderForm /> },
                     {
                         path: "edit_order/:id",
-                        element: <OrderForm />,
+                        element: <OrderDetailsForm />,
+                        loader: async ({ params }) => await getOrderById(params.id),
                     },
                 ],
             },

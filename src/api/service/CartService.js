@@ -32,3 +32,16 @@ export const removeFromCart = async (id) => {
     });
     return data.cart;
 };
+
+// [Cart] Hợp nhất giỏ hàng (mergeCart)
+// Gọi API POST /Cart/merge để hợp nhất giỏ hàng từ cookie sang tài khoản khi đăng nhập
+// Tham số: mergedCartData (object, ví dụ: { cartItems: [...] })
+// Trả về giỏ hàng đã hợp nhất
+export const mergeCart = async (mergedCartData) => {
+    const data = await apiRequest(`${API_BASE_URL}/Cart/merge`, {
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify(mergedCartData),
+    });
+    return data.cart;
+};
