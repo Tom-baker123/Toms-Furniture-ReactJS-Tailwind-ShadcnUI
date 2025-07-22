@@ -240,21 +240,21 @@ const ProductDetails = () => {
                     {/* Quantity and Add to Cart */}
                     <div className="mt-12 flex items-center gap-4">
                         <div className="flex items-center rounded-full border border-gray-300">
-                        <button
-                            onClick={() => handleQuantityChange("decrease")}
-                            className={`cursor-pointer rounded-l-full p-2 transition-colors ${quantity <= 1 ? 'text-gray-400' : ''}`}
-                            disabled={quantity <= 1}
-                        >
-                            <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="min-w-[60px] px-4 py-3 text-center font-medium">{quantity}</span>
-                        <button
-                            onClick={() => handleQuantityChange("increase")}
-                            className={`cursor-pointer rounded-r-full p-2 transition-colors ${!selectedVariant || quantity >= selectedVariant.stockQty ? 'text-gray-400' : ''}`}
-                            disabled={!selectedVariant || quantity >= selectedVariant.stockQty}
-                        >
-                            <Plus className="h-4 w-4" />
-                        </button>
+                            <button
+                                onClick={() => handleQuantityChange("decrease")}
+                                className={`cursor-pointer rounded-l-full p-2 transition-colors ${quantity <= 1 ? "text-gray-400" : ""}`}
+                                disabled={quantity <= 1}
+                            >
+                                <Minus className="h-4 w-4" />
+                            </button>
+                            <span className="min-w-[60px] px-4 py-3 text-center font-medium">{quantity}</span>
+                            <button
+                                onClick={() => handleQuantityChange("increase")}
+                                className={`cursor-pointer rounded-r-full p-2 transition-colors ${!selectedVariant || quantity >= selectedVariant.stockQty ? "text-gray-400" : ""}`}
+                                disabled={!selectedVariant || quantity >= selectedVariant.stockQty}
+                            >
+                                <Plus className="h-4 w-4" />
+                            </button>
                         </div>
                         <ButtonHovCT
                             className={"!flex-1 !border-none py-3 !font-semibold"}
