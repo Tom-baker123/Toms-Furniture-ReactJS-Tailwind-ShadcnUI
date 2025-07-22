@@ -2235,9 +2235,14 @@ export const deleteUnit = async (id) => {
 
 // ------------------------------------------------------------------
 // [11.1] API lấy tất cả danh sách khuyến mãi
-export const getAllPromotions = async () => {
+// Lấy tất cả khuyến mãi, có thể truyền vào tổng tiền để lọc theo điều kiện orderMinimum
+export const getAllPromotions = async (total) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/Promotion`, {
+        let url = `${API_BASE_URL}/Promotion`;
+        if (typeof total !== 'undefined' && total !== null) {
+            url += `?total=${encodeURIComponent(total)}`;
+        }
+        const response = await fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

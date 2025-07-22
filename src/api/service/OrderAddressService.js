@@ -17,9 +17,13 @@ const apiRequest = async (endpoint, options = {}) => {
     }
 };
 
-// [1.] Lấy tất cả địa chỉ đơn hàng của user
-export const getOrderAddresses = async (userId) => {
-    const url = userId ? `/OrderAddress?userId=${userId}` : "/OrderAddress";
+// [1.] Lấy tất cả địa chỉ đơn hàng của user, có thể lọc theo isDeafaultAddress
+export const getOrderAddresses = async (userId, isDeafaultAddress) => {
+    let url = "/OrderAddress";
+    const params = [];
+    if (userId) params.push(`userId=${userId}`);
+    if (typeof isDeafaultAddress !== 'undefined') params.push(`isDeafaultAddress=${isDeafaultAddress}`);
+    if (params.length > 0) url += `?${params.join("&")}`;
     const data = await apiRequest(url, { method: "GET" });
     if (data.error) {
         return { success: false, message: data.message };
