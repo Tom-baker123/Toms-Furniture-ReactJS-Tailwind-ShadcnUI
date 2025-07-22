@@ -6,6 +6,15 @@ import {
     updateOrderAddress,
     deleteOrderAddress,
 } from "../api/service/OrderAddressService";
+
+import {
+    processOrderPayment,
+    getOrderById,
+    getOrdersByUser,
+    getAllOrders,
+    createVnpayPaymentUrl,
+    vnpayCallback,
+} from "../api/service/PaymentService";
 import useApiFetch from "../hooks/useApiFetch";
 
 const PaymentContext = createContext();
@@ -19,9 +28,9 @@ export const PaymentProvider = ({ children }) => {
     // Sử dụng useApiFetch cho các hàm gọi API
     const fetchData = useApiFetch(setLoading, setError, (data) => data);
 
-    // Lấy danh sách địa chỉ
-    const fetchAddresses = async (userId) => {
-        const result = await fetchData(getOrderAddresses, "addresses", userId, (res) => res);
+    // Lấy danh sách địa chỉ, có thể lọc theo isDeafaultAddress
+    const fetchAddresses = async (userId, isDeafaultAddress) => {
+        const result = await fetchData(getOrderAddresses, "addresses", userId, isDeafaultAddress, (res) => res);
         setAddresses(Array.isArray(result) ? result : []);
         return result;
     };
@@ -51,6 +60,40 @@ export const PaymentProvider = ({ children }) => {
         return result;
     };
 
+    // ================== API ĐƠN HÀNG & THANH TOÁN ==================
+    // Gọi thanh toán đơn hàng
+    const handleOrderPayment = async (orderData) => {
+        return processOrderPayment(orderData);
+    };
+
+    // Lấy đơn hàng theo ID
+    const fetchOrderById = async (orderId) => {
+        return getOrderById(orderId);
+    };
+
+    // Lấy danh sách đơn hàng theo user
+    const fetchOrdersByUser = async (userId) => {
+        return getOrdersByUser(userId);
+    };
+
+    // Lấy tất cả đơn hàng (admin)
+    const fetchAllOrders = async () => {
+        return getAllOrders();
+    };
+
+    // Tạo URL thanh toán VNPAY
+    const getVnpayPaymentUrl = async (orderId) => {
+        return createVnpayPaymentUrl(orderId);
+    };
+
+    // Xử lý callback VNPAY (nếu cần)
+    const handleVnpayCallback = async (queryParams) => {
+        // Đảm bảo truyền đúng query string (không parse sang object)
+        return vnpayCallback(queryParams);
+    };
+
+    // ----------------------------------------------------------------------------------------------------------------
+
     return (
         <PaymentContext.Provider
             value={{
@@ -65,6 +108,13 @@ export const PaymentProvider = ({ children }) => {
                 removeAddress,
                 setAddresses,
                 setSelectedAddress,
+                // Thêm các hàm API đơn hàng/thanh toán
+                handleOrderPayment,
+                fetchOrderById,
+                fetchOrdersByUser,
+                fetchAllOrders,
+                getVnpayPaymentUrl,
+                handleVnpayCallback,
             }}
         >
             {children}

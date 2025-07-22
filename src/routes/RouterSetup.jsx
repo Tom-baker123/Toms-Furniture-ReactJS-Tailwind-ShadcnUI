@@ -69,6 +69,7 @@ import {
 } from "@/api/api";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
+import PaymentCallbackVnpay from "@/pages/PaymentCallbackVnpay";
 import ProductForm from "@/components/Admin/Form/ProductForm";
 import BrandForm from "@/components/Admin/Form/BrandForm";
 import CountryForm from "@/components/Admin/Form/CountryForm";
@@ -120,6 +121,7 @@ const router = createBrowserRouter([
             { path: "cart", element: <Cart /> },
             { path: "blog", element: <Blog /> },
             { path: "checkout", element: <Payment /> },
+            { path: "checkout/paymentcallbackvnpay", element: <PaymentCallbackVnpay /> },
             {
                 path: "profile",
                 element: <Profile />,

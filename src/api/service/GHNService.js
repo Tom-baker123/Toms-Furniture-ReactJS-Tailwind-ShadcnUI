@@ -97,10 +97,16 @@ export const calculateShippingFee = async (toDistrictId, toWardCode, items = [],
         if (!items.length) throw new Error("Cart items trống");
         if (!Number(toDistrictId) || !toWardCode) throw new Error("Invalid district or ward code");
 
-        const totalWeight = items.reduce((sum, item) => sum + (item.sanPham.weight || 1000) * item.soLuong, 0);
-        const maxLength = Math.max(...items.map((item) => item.sanPham.length || 20));
-        const maxWidth = Math.max(...items.map((item) => item.sanPham.width || 20));
-        const totalHeight = items.reduce((sum, item) => sum + (item.sanPham.height || 10) * item.soLuong, 0);
+        const totalWeight = items.reduce((sum, item) => {
+            const weight = item.productVariant?.weight || 300; // Giá trị mặc định 300g cho ghế
+            return sum + weight * item.quantity;
+        }, 0);
+        const maxLength = Math.max(...items.map((item) => item.productVariant?.length || 10)); // Giá trị mặc định 10cm
+        const maxWidth = Math.max(...items.map((item) => item.productVariant?.width || 10)); // Giá trị mặc định 10cm
+        const totalHeight = items.reduce((sum, item) => {
+            const height = item.productVariant?.height || 10; // Giá trị mặc định 10cm
+            return sum + height * item.quantity;
+        }, 0);
 
         if (totalWeight <= 0 || totalHeight <= 0 || maxLength <= 0 || maxWidth <= 0) {
             throw new Error("Invalid package dimensions or weight");
