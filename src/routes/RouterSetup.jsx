@@ -85,7 +85,7 @@ import PromotionTypeForm from "@/components/Admin/Form/PromotionTypeForm";
 import { storeInformationLoader } from "@/components/Admin/Form/StoreInformationForm";
 import OrderStatusForm from "@/components/Admin/Form/OrderStatusForm";
 import OrderForm from "@/components/Admin/Form/OrderForm";
-import { getAllOrders } from "@/api/service/PaymentService";
+import { getAllOrders, getOrderById } from "@/api/service/PaymentService";
 import { getAllTests } from "@/api/service/TestService";
 import OrderDetailsForm from "@/components/Admin/Form/OrderDetailsForm";
 
@@ -342,7 +342,7 @@ const router = createBrowserRouter([
                     {
                         path: "edit_order/:id",
                         element: <OrderDetailsForm />,
-                        loader: async ({ params }) => await getOrderById(params.id),
+                        // loader: async ({ params }) => await getOrderById(params.id),
                     },
                 ],
             },
