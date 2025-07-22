@@ -88,7 +88,7 @@ const ProductManagement = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => handleShowVariants(product.productVariants)}
-                                                className="cursor-pointer inline-flex items-center gap-2 rounded-xl border bg-gray-200 px-3 py-1 text-gray-700 transition-colors duration-75 hover:border-gray-400 hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none"
+                                                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border bg-gray-200 px-3 py-1 text-gray-700 transition-colors duration-75 hover:border-gray-400 hover:bg-gray-50 focus:ring-2 focus:ring-gray-200 focus:outline-none"
                                             >
                                                 <Eye size={20} />
                                                 <span className="text-sm font-medium">

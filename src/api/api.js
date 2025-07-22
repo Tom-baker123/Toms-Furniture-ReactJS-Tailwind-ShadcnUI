@@ -17,50 +17,7 @@ export {
 };
 
 //#region [Home Page 🏠]-----------------------------------------------
-// [Cart] Lấy giỏ hàng
-export const getCart = async () => {
-    const response = await fetch(`${API_BASE_URL}/Cart`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-    });
-    if (!response.ok) throw new Error("Failed to fetch cart");
-    return (await response.json()).cart;
-};
 
-// [Cart] Thêm vào giỏ hàng
-export const addToCart = async (cartItem) => {
-    const response = await fetch(`${API_BASE_URL}/Cart`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(cartItem),
-    });
-    if (!response.ok) throw new Error("Failed to add to cart");
-    return (await response.json()).cart;
-};
-
-// [Cart] Cập nhật giỏ hàng
-export const updateCart = async (cartItem) => {
-    const response = await fetch(`${API_BASE_URL}/Cart`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(cartItem),
-    });
-    if (!response.ok) throw new Error("Failed to update cart");
-    return (await response.json()).cart;
-};
-
-// [Cart] Xóa khỏi giỏ hàng
-export const removeFromCart = async (id) => {
-    const response = await fetch(`${API_BASE_URL}/Cart/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-    });
-    if (!response.ok) throw new Error("Failed to remove from cart");
-    return (await response.json()).cart;
-};
 
 
 

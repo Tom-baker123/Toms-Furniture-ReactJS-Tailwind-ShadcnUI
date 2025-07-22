@@ -34,6 +34,7 @@ import {
     UserManagement,
     PromotionTypeManagement,
     WebsiteManagement,
+    TestPage, // Dành cho test
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
 import HomeLayout from "@/pages/layouts/HomeLayout";
@@ -84,6 +85,8 @@ import PromotionTypeForm from "@/components/Admin/Form/PromotionTypeForm";
 import { storeInformationLoader } from "@/components/Admin/Form/StoreInformationForm";
 import OrderStatusForm from "@/components/Admin/Form/OrderStatusForm";
 import OrderForm from "@/components/Admin/Form/OrderForm";
+import { getAllOrders } from "@/api/service/PaymentService";
+import { getAllTests } from "@/api/service/TestService";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -332,6 +335,7 @@ const router = createBrowserRouter([
                     {
                         index: true,
                         element: <OrderManagement />,
+                        loader: async () => await getAllOrders(),
                     },
                     { path: "new_order", element: <OrderForm /> },
                     {
@@ -426,7 +430,12 @@ const router = createBrowserRouter([
                     },
                 ],
             },
-
+            // [19.] Trang Test
+            {
+                path: "test",
+                element: <TestPage />,
+                loader: async () => await getAllTests(),
+            },
             // Không tìm thấy trang phù hợp
             { path: "*", element: <PageNotFound /> },
         ],
