@@ -2,15 +2,15 @@ import React from "react";
 
 const Topbar = () => {
     return (
-        <div className="bg-[#1D349A] z-40">
+        <div className="z-40 bg-[#1D349A]">
             <div className="mx-auto px-4 py-[9px] text-[1rem] text-white lg:grid lg:grid-cols-3 lg:gap-3 2xl:max-w-7xl">
                 <ul className="hidden lg:flex lg:flex-wrap lg:gap-5">
-                    <li>Help Center</li>
-                    <li>Find a Store</li>
-                    <li>Contact</li>
+                    <li>Trung tâm hỗ trợ {/* Help Center */}</li>
+                    <li>Tìm cửa hàng {/* Find a Store */}</li>
+                    <li>Liên hệ {/* Contact */}</li>
                 </ul>
 
-                <p className="text-center"> ✌🏼 Free Express Shipping on orders $500! </p>
+                <p className="text-center">✌🏼 Free phí ship khi đơn hàng trên 5,000,000 VND {/* ✌🏼 Free Express Shipping on orders $500!  */}</p>
 
                 <ul className="hidden lg:flex lg:flex-wrap lg:items-center lg:justify-end lg:gap-4">
                     <li className="w-4">

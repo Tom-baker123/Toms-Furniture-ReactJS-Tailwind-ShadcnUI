@@ -164,7 +164,10 @@ const router = createBrowserRouter([
         ),
         children: [
             // [1.] Trang chủ admin
-            { index: true, element: <Dashboard /> },
+            {
+                index: true,
+                element: <Dashboard />,
+            },
             // [2.] Trang sản phẩm
             {
                 path: "products",
@@ -338,11 +341,10 @@ const router = createBrowserRouter([
                         element: <OrderManagement />,
                         loader: async () => await getAllOrders(),
                     },
-                    { path: "new_order", element: <OrderForm /> },
                     {
                         path: "edit_order/:id",
                         element: <OrderDetailsForm />,
-                        // loader: async ({ params }) => await getOrderById(params.id),
+                        loader: async ({ params }) => await getOrderById(params.id),
                     },
                 ],
             },

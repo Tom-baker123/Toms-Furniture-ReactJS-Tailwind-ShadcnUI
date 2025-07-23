@@ -30,8 +30,11 @@ const RegisterForm = () => {
     return (
         <div className="my-5 flex flex-col">
             {/* [1.] Tiêu đề */}
-            <h2 className="text-center text-2xl font-bold lg:text-3xl">Register</h2>
-            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">Create your account to start shopping.</p>
+            <h2 className="text-center text-2xl font-bold lg:text-3xl">Đăng Ký{/* Register */}</h2>
+            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">
+                Tạo tài khoản của bạn để bắt đầu mua sắm. 🛍️
+                {/* Create your account to start shopping. */}
+            </p>
 
             {/* [2.] Form đăng ký */}
             <form
@@ -40,7 +43,10 @@ const RegisterForm = () => {
             >
                 {/* [1.] User Name */}
                 <div className="Form-Field">
-                    <label className="Form-Label">User Name</label>
+                    <label className="Form-Label">
+                        Tên người dùng
+                        {/* User Name */}
+                    </label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="text"
@@ -103,21 +109,27 @@ const RegisterForm = () => {
 
                 {/* [5.] Gender */}
                 <div className="Form-Field">
-                    <label className="Form-Label">Gender</label>
+                    <label className="Form-Label">
+                        Giới tính
+                        {/* Gender */}
+                    </label>
                     <select
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg transition-all"
                         {...register("gender", { required: "Please select a gender" })}
                     >
-                        <option value="">Select Gender</option>
-                        <option value="true">Male</option>
-                        <option value="false">Female</option>
+                        <option value=""> Chọn giới tính {/* Select Gender */}</option>
+                        <option value="true">Nam {/* Male */}</option>
+                        <option value="false">Nữ {/* Female */}</option>
                     </select>
                     {errors.gender && <p className="mt-1 text-sm text-red-500">{errors.gender.message}</p>}
                 </div>
 
                 {/* [6.] Phone Number */}
                 <div className="Form-Field">
-                    <label className="Form-Label">Phone Number</label>
+                    <label className="Form-Label">
+                        Số điện thoại
+                        {/* Phone Number */}
+                    </label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="tel"
@@ -134,7 +146,10 @@ const RegisterForm = () => {
 
                 {/* [7.] Address */}
                 <div className="Form-Field">
-                    <label className="Form-Label">Address</label>
+                    <label className="Form-Label">
+                        Địa chỉ
+                        {/* Address */}
+                    </label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="text"
@@ -152,13 +167,17 @@ const RegisterForm = () => {
                     type="submit"
                     disabled={isSubmitting} // 🔒 Vô hiệu khi đang gửi
                 >
-                    {isSubmitting ? "Registering..." : "Register"}
+                    {/* {isSubmitting ? "Registering..." : "Register"} */}
+                    {isSubmitting ? "Đang Đăng Ký..." : "Đăng Ký"}
                 </ButtonHovCT>
             </form>
 
             {/* [3.] Nút quay lại modal Login */}
             <span className="mt-2 flex items-center justify-center gap-1 font-semibold">
-                <span className="text-gray-500">Already have an account</span>
+                <span className="text-gray-500">
+                    Đã có tài khoản?
+                    {/* Already have an account */}
+                </span>
                 <Link
                     to="/"
                     onClick={(e) => {
@@ -167,7 +186,8 @@ const RegisterForm = () => {
                     }}
                     className="text-center font-bold underline"
                 >
-                    Login here
+                    Đăng Nhập tại đây
+                    {/* Login here */}
                 </Link>
             </span>
         </div>

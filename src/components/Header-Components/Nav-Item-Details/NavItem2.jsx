@@ -27,7 +27,7 @@ const NavItem2 = () => {
                     <summary className="list-none appearance-none px-4 marker:hidden">
                         <span className="inline-block w-full py-1">
                             <p className="group underline-hover-text flex flex-wrap items-center gap-2">
-                                Shop By Room
+                                Mua theo phòng {/* Shop By Room */}
                                 <svg
                                     className="icon icon-caret-down icon--2xs icon--thick"
                                     viewBox="0 0 20 20"

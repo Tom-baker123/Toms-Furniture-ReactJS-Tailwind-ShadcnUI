@@ -1,8 +1,10 @@
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import FormatDatetime from "@/hooks/FormatDatetime";
+import { Pen, Pencil, Trash } from "lucide-react";
 
 const OrderManagement = () => {
+    const navigate = useNavigate();
     const orders = useLoaderData() || [];
 
     return (
@@ -67,13 +69,22 @@ const OrderManagement = () => {
                                         </td>
                                         <td className="table-cell px-4 py-2">{FormatDatetime(order.createdDate) || "N/A"}</td>
                                         <td className="table-cell px-4 py-2">
-                                            <div className="flex items-center gap-x-4">
+                                            <div className="flex items-center gap-x-2">
                                                 {/* Thêm các nút actions nếu cần */}
                                                 <button
-                                                    className="cursor-pointer text-blue-500 hover:text-blue-700"
-                                                    title="View Details"
+                                                    className="flex items-center gap-x-1 whitespace-nowrap cursor-pointer border-r pr-2 text-blue-500 hover:text-blue-700"
+                                                    onClick={() => navigate("/admin/order/edit_order/" + order.id)}
                                                 >
-                                                    View
+                                                    <Pencil size={16} />
+                                                    Xem
+                                                </button>
+                                                {/* Thêm các nút actions nếu cần */}
+                                                <button
+                                                    className="flex cursor-pointer items-center gap-x-1 pr-1 whitespace-nowrap text-red-500 hover:text-blue-700"
+                                                    onClick={() => navigate("/admin/order/edit_order/" + order.id)}
+                                                >
+                                                    <Trash size={16} />
+                                                    Hủy đơn
                                                 </button>
                                             </div>
                                         </td>

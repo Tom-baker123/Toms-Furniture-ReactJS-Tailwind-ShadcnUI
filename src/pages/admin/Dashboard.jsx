@@ -1,19 +1,51 @@
-import EditorCDN from "@/components/Admin/EditorCDN";
+import { getAllProducts } from "@/api/api";
+import AreaChartTemplate from "@/components/Admin/Chart/AreaChart";
+import BarChartTemplate from "@/components/Admin/Chart/BarChart";
+import PieChartTemplate from "@/components/Admin/Chart/PieChart";
 import { FooterAdmin } from "@/components/Admin/FooterAdmin";
-import MultiImageForm from "@/components/Admin/MultiImageForm";
-import { overviewData, recentSalesData, topProducts } from "@/constants";
+import { overviewData, topProducts } from "@/constants";
 import { useTheme } from "@/context/ThemeContext";
 import { Package, PencilLine, Star, Trash, TrendingUp } from "lucide-react";
-import React from "react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import React, { use, useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
 
 const Dashboard = () => {
+    const [allProducts, setAllProducts] = useState({ items: [] });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState();
     const { theme } = useTheme();
+
+    useEffect(() => {
+        const fetchAllProducts = async () => {
+            setLoading(true);
+            try {
+                const data = await getAllProducts();
+                setAllProducts(data);
+            } catch (err) {
+                setError("Không thể tải sản phẩm: " + err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAllProducts();
+    }, []);
 
     return (
         <div className="flex flex-col gap-y-4">
             {/* Title */}
             <h1 className="title">Dashboard</h1>
+
+            <div className="grid grid-cols-1 gap-4 ">
+                <div className="card">
+                    <h1 className="card-title">Sơ đồ piechart Cho Tổng số lượng sản phẩm theo loại gỗ</h1>
+                    <PieChartTemplate apiData={allProducts} />
+                </div>
+            </div>
+            <div className="card">
+                <h1 className="card-title">Sơ đồ piechart Cho Tổng số lượng sản phẩm theo loại gỗ</h1>
+                <BarChartTemplate />
+            </div>
 
             {/* Khu vực hiển thị grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
@@ -84,62 +116,10 @@ const Dashboard = () => {
 
                     {/* Biểu đồ */}
                     <div className="card-body p-0">
-                        <ResponsiveContainer
-                            width={"100%"}
-                            height={300}
-                        >
-                            <AreaChart
-                                data={overviewData}
-                                margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
-                            >
-                                <defs>
-                                    <linearGradient
-                                        id="colorTotal"
-                                        x1="0"
-                                        y1="0"
-                                        x2="0"
-                                        y2="1"
-                                    >
-                                        <stop
-                                            offset="5%"
-                                            stopColor="#2563eb"
-                                            stopOpacity={0.8}
-                                        />
-                                        <stop
-                                            offset="95%"
-                                            stopColor="#2563eb"
-                                            stopOpacity={0}
-                                        />
-                                    </linearGradient>
-                                </defs>
-
-                                {/* Tooltip hiển thị trong biểu đồ */}
-                                <Tooltip
-                                    cursor={false}
-                                    formatter={(value) => `$${value}`}
-                                />
-                                <XAxis
-                                    dataKey="name"
-                                    strokeWidth={0}
-                                    stroke={theme === "light" ? "#475569" : "#94a3b8"}
-                                    tickMargin={6}
-                                />
-                                <YAxis
-                                    dataKey="total"
-                                    strokeWidth={0}
-                                    stroke={theme === "light" ? "#475569" : "#94a3b8"}
-                                    tickFormatter={(value) => `$${value}`}
-                                    tickMargin={6}
-                                />
-                                <Area
-                                    type="monotone"
-                                    dataKey="total"
-                                    stroke="#2563eb"
-                                    fillOpacity={1}
-                                    fill="url(#colorTotal)"
-                                />
-                            </AreaChart>
-                        </ResponsiveContainer>
+                        <AreaChartTemplate
+                            data={overviewData}
+                            theme={theme}
+                        />
                     </div>
                 </div>
             </div>

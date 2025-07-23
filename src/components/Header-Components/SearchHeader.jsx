@@ -21,7 +21,7 @@ const SearchHeader = ({ id = "categories" }) => {
                     className="text-md block w-17 appearance-none rounded-full border-2 border-transparent bg-gray-200 px-5 py-3 font-bold text-gray-900 focus:border-black focus:bg-white md:w-40"
                     onChange={handleCategoryChange} // Thêm sự kiện onChange
                 >
-                    <option value="">All categories</option>
+                    <option value="">All danh mục {/* All categories */}</option>
                     {categories?.map((category) => (
                         <option
                             key={category.id}
