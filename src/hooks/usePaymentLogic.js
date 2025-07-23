@@ -33,7 +33,7 @@ const usePaymentLogic = (contexts) => {
         address: "",
         note: "",
     });
-
+    
     // Phương thức thanh toán
     const [paymentMethod, setPaymentMethod] = useState("cod");
 

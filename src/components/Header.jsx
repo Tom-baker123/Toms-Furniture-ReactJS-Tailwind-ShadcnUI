@@ -85,7 +85,7 @@ const Header = ({ onOpenCartModal }) => {
                         <div className="flex h-full items-center justify-end gap-4">
                             <button className="flex cursor-pointer gap-x-1 whitespace-nowrap">
                                 <FindLocationSvgCT />
-                                <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Find a store</p>
+                                <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Tìm cửa hàng{/* Find a store */}</p>
                             </button>
 
                             {/* Login / Register */}
@@ -136,7 +136,7 @@ const Header = ({ onOpenCartModal }) => {
                                     className="flex cursor-pointer gap-x-1 whitespace-nowrap"
                                 >
                                     <UserIconSvgCT />
-                                    <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Sign in/ Register</p>
+                                    <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Đăng nhập/Đăng ký{/* Sign in/ Register */}</p>
                                 </button>
                             )}
 

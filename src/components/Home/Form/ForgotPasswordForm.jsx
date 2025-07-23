@@ -31,10 +31,16 @@ const ForgotPasswordForm = () => {
             <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">Enter your email to receive an OTP for password reset.</p>
 
             {/* Form quên mật khẩu */}
-            <form className="mt-6 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+            <form
+                className="mt-6 flex flex-col"
+                onSubmit={handleSubmit(onSubmit)}
+            >
                 {/* Trường Email */}
                 <div className="Form-Field">
-                    <label htmlFor="email" className="Form-Label">
+                    <label
+                        htmlFor="email"
+                        className="Form-Label"
+                    >
                         Email
                     </label>
                     <input
@@ -77,7 +83,7 @@ const ForgotPasswordForm = () => {
                     }}
                     className="text-center font-bold underline"
                 >
-                    Login
+                    Đăng nhập {/* Login */}
                 </Link>
             </span>
         </div>

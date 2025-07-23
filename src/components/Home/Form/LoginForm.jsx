@@ -34,8 +34,10 @@ const LoginForm = () => {
     return (
         <div className="my-5 flex flex-col">
             {/* Tiêu đề form */}
-            <h2 className="text-center text-2xl font-bold lg:text-3xl">Login</h2>
-            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">If you have an account with us, please log in.</p>
+            <h2 className="text-center text-2xl font-bold lg:text-3xl">Đăng nhập {/* Login */}</h2>
+            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">
+                Nếu bạn đã có tài khoản, vui lòng đăng nhập.{/* If you have an account with us, please log in. */}
+            </p>
 
             {/* Form đăng nhập */}
             <form
@@ -92,7 +94,7 @@ const LoginForm = () => {
                     onClick={() => switchForm("forgot-password")}
                     className="mt-2 cursor-pointer text-left font-semibold text-gray-500 underline"
                 >
-                    Forgot Password
+                    Quên mật khẩu{/* Forgot Password */}
                 </button>
 
                 {/* Nút submit */}
@@ -104,7 +106,8 @@ const LoginForm = () => {
                     type="submit"
                     disabled={isSubmitting} // 🔒 Vô hiệu khi đang gửi
                 >
-                    {isSubmitting ? "Logging in..." : "Login"}
+                    {/* {isSubmitting ? "Logging in..." : "Login"} */}
+                    {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
                 </ButtonHovCT>
             </form>
 
@@ -117,7 +120,7 @@ const LoginForm = () => {
                     switchForm("register");
                 }}
             >
-                Create new account
+                Tạo tài khoản mới{/* Create new account */}
             </Link>
         </div>
     );
