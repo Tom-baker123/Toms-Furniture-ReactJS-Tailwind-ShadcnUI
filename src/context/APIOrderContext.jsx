@@ -62,7 +62,13 @@ export const APIOrderProvider = ({ children }) => {
 
     // Cập nhật trạng thái đơn hàng
     const handleUpdateOrderStatus = async (orderId, newStatusId) => {
-        const result = await fetchData(updateOrderStatus, "updateOrderStatus", orderId, newStatusId, (res) => res);
+        // Đảm bảo truyền đúng tham số cho updateOrderStatus (orderId, newStatusId là primitive)
+        const result = await fetchData(
+            ({ orderId, newStatusId }) => updateOrderStatus(orderId, newStatusId),
+            "updateOrderStatus",
+            { orderId, newStatusId },
+            (res) => res,
+        );
         if (result && orders.length > 0) {
             setOrders(
                 orders.map((order) =>
