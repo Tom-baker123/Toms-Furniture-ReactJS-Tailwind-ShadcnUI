@@ -1,4 +1,4 @@
-import { getAllProducts } from "@/api/api";
+import { getAllProducts } from "@/api/service/ProductService"; 
 import AreaChartTemplate from "@/components/Admin/Chart/AreaChart";
 import BarChartTemplate from "@/components/Admin/Chart/BarChart";
 import PieChartTemplate from "@/components/Admin/Chart/PieChart";

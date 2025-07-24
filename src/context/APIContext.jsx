@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from "react";
 import {
     getAllCategories,
     getAllStoreInformations,
-    getAllProducts,
     getAllColors,
     getAllUnits,
     getAllMaterials,
@@ -10,8 +9,9 @@ import {
     getAllCountries,
     getAllBrands,
     getAllSuppliers,
-    getProductById,
 } from "@/api/api";
+import { getProductById } from "@/api/service/ProductService";
+import {getAllProducts} from "@/api/service/ProductService";
 import useApiFetch from "@/hooks/useApiFetch";
 
 // Tạo Context chung cho ứng dụng

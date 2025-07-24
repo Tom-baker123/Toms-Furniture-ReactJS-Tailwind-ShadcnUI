@@ -1,14 +1,50 @@
-import React from "react";
-// import { useForm, Controller } from "react-hook-form";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { MoveLeft, Printer } from "lucide-react";
+import { useAPIOrder } from "@/context/APIOrderContext";
 
 const OrderDetailsForm = () => {
-    const OrderDetailResponse = useLoaderData();
-    const navigate = useNavigate();
     const orderData = useLoaderData();
-    // Chỉ hiển thị dữ liệu, không cho sửa, không submit
+    const navigate = useNavigate();
+    const { handleUpdateOrderStatus, orderStatuses, loading, error } = useAPIOrder();
+
     const order = orderData || {};
+    const { fetchAllOrderStatuses } = useAPIOrder();
+
+    // Lấy id trạng thái hiện tại dựa vào orderStatusName
+    const getCurrentStatusId = () => {
+        if (!order || !order.orderStatusName || !orderStatuses) return "";
+        const found = orderStatuses.find((status) => status.orderStatusName === order.orderStatusName);
+        return found ? found.id : "";
+    };
+    const [selectedStatusId, setSelectedStatusId] = useState(getCurrentStatusId());
+
+    // Luôn fetch danh sách trạng thái khi mount
+    useEffect(() => {
+        fetchAllOrderStatuses();
+        // eslint-disable-next-line
+    }, []);
+
+    // Khi order hoặc orderStatuses thay đổi, cập nhật selectedStatusId
+    useEffect(() => {
+        setSelectedStatusId(getCurrentStatusId());
+        // eslint-disable-next-line
+    }, [order.orderStatusName, orderStatuses]);
+
+    // Xử lý cập nhật trạng thái đơn hàng
+    const handleStatusUpdate = async () => {
+        if (!selectedStatusId) {
+            alert("Vui lòng chọn trạng thái mới!");
+            return;
+        }
+        try {
+            const result = await handleUpdateOrderStatus(order.id, selectedStatusId);
+            alert("Cập nhật trạng thái thành công!");
+            navigate(0); // Tải lại trang để cập nhật dữ liệu
+        } catch (err) {
+            alert("Lỗi khi cập nhật trạng thái: " + (err.message || "Vui lòng thử lại"));
+        }
+    };
 
     return (
         <div className="">
@@ -21,116 +57,22 @@ const OrderDetailsForm = () => {
                     Quay lại
                 </button>
             </div>
-            
+
             <div className="flex flex-col gap-y-6">
                 <div className="flex justify-between">
-                    <div className="title text-2xl font-bold text-slate-800">Chi Tiết Đơn Hàng</div>
+                    <div className="title text-2xl font-bold text-slate-800">Đơn Hàng #{order.id || "--"}</div>
                     <button
-                        className="flex gap-x-2 hover:text-blue-700 cursor-pointer transition-all rounded-md bg-gray-300 px-3 py-2.5 font-semibold"
+                        className="flex cursor-pointer gap-x-2 rounded-md bg-gray-300 px-3 py-2.5 font-semibold transition-all hover:text-blue-700"
                         onClick={() => {}}
                     >
                         <Printer />
-                        <span>In hóa đơn</span>
+                        <span>In hóa đơn</span>
                     </button>
                 </div>
 
-                {/* Layout chính theo kiểu Haravan */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     {/* Cột trái - Thông tin đơn hàng */}
                     <div className="space-y-6 lg:col-span-8">
-                        {/* Thông tin đơn hàng */}
-                        <div className="rounded-lg border bg-white">
-                            <div className="border-b p-4">
-                                <h3 className="text-lg font-semibold text-gray-900">Thông tin đơn hàng</h3>
-                            </div>
-                            <div className="space-y-4 p-4">
-                                <div className="grid grid-cols-1 gap-x-8 gap-y-3 md:grid-cols-2">
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">ID đơn hàng</span>
-                                        <span className="text-sm font-medium text-gray-900">#{order.id || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">User ID</span>
-                                        <span className="text-sm text-gray-900">{order.userId || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Khách vãng lai</span>
-                                        <span
-                                            className={`rounded px-2 py-1 text-xs font-medium ${order.isUserGuest ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}
-                                        >
-                                            {order.isUserGuest ? "Có" : "Không"}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">ID khách vãng lai</span>
-                                        <span className="text-sm text-gray-900">{order.userGuestId || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Trạng thái</span>
-                                        <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                                            {order.orderStatusName || "N/A"}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Trạng thái thanh toán</span>
-                                        <span
-                                            className={`rounded px-2 py-1 text-xs font-medium ${order.isPaid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
-                                        >
-                                            {order.paymentStatus || (order.isPaid ? "Đã thanh toán" : "Chưa thanh toán")}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Tên khách hàng</span>
-                                        <span className="text-sm text-gray-900">{order.customerName || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Số điện thoại</span>
-                                        <span className="text-sm text-gray-900">{order.phone || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between py-1 md:col-span-2">
-                                        <span className="text-sm text-gray-600">Địa chỉ</span>
-                                        <span className="text-right text-sm text-gray-900">{order.address || "N/A"}</span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Tổng tiền</span>
-                                        <span className="text-sm font-semibold text-gray-900">
-                                            {order.total ? `${order.total.toLocaleString("vi-VN")} ₫` : "0 ₫"}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Phí vận chuyển</span>
-                                        <span className="text-sm text-gray-900">
-                                            {order.shippingPrice ? `${order.shippingPrice.toLocaleString("vi-VN")} ₫` : "0 ₫"}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Phương thức thanh toán</span>
-                                        <span className="text-sm text-gray-900">
-                                            {order.paymentMethodId === 1
-                                                ? "Tiền mặt"
-                                                : order.paymentMethodId === 2
-                                                  ? "Chuyển khoản"
-                                                  : order.paymentMethodId || "N/A"}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between py-1">
-                                        <span className="text-sm text-gray-600">Ngày cập nhật</span>
-                                        <span className="text-sm text-gray-900">
-                                            {order.updatedDate ? new Date(order.updatedDate).toLocaleString("vi-VN") : "N/A"}
-                                        </span>
-                                    </div>
-                                </div>
-                                {order.note && (
-                                    <div className="mt-4 border-t pt-4">
-                                        <div className="flex justify-between py-1">
-                                            <span className="text-sm text-gray-600">Ghi chú</span>
-                                            <span className="text-sm text-gray-900">{order.note}</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
                         {/* Sản phẩm trong đơn hàng */}
                         <div className="rounded-lg border bg-white">
                             <div className="border-b p-4">
@@ -163,33 +105,35 @@ const OrderDetailsForm = () => {
                                                                 <div className="flex items-center space-x-3">
                                                                     <div className="flex-shrink-0">
                                                                         <div className="flex h-12 w-12 items-center justify-center rounded-md border bg-gray-100">
-                                                                            {item.productImage || item.image ? (
+                                                                            {item.productVariant?.images?.length > 0 ? (
                                                                                 <img
                                                                                     className="h-10 w-10 rounded object-cover"
-                                                                                    src={item.productImage || item.image}
-                                                                                    alt={item.productName || item.name || "Sản phẩm"}
+                                                                                    src={item.productVariant.images[0]}
+                                                                                    alt={item.productVariant.colorName || "Sản phẩm"}
                                                                                     loading="lazy"
                                                                                     onError={(e) => {
                                                                                         e.target.style.display = "none";
                                                                                         e.target.nextSibling.style.display = "flex";
                                                                                     }}
                                                                                 />
-                                                                            ) : null}
-                                                                            <div
-                                                                                className="flex h-10 w-10 items-center justify-center rounded bg-gray-200 text-xs text-gray-400"
-                                                                                style={{ display: item.productImage || item.image ? "none" : "flex" }}
-                                                                            >
-                                                                                IMG
-                                                                            </div>
+                                                                            ) : (
+                                                                                <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-200 text-xs text-gray-400">
+                                                                                    IMG
+                                                                                </div>
+                                                                            )}
                                                                         </div>
                                                                     </div>
                                                                     <div className="min-w-0 flex-1">
                                                                         <p className="truncate text-sm font-medium text-gray-900">
-                                                                            {item.productName || item.name || "Tên sản phẩm không có"}
+                                                                            {item.productVariant?.colorName || "Tên sản phẩm không có"}
+                                                                            {item.productVariant?.sizeName
+                                                                                ? ` - ${item.productVariant.sizeName}`
+                                                                                : ""}
+                                                                            {item.productVariant?.materialName
+                                                                                ? ` - ${item.productVariant.materialName}`
+                                                                                : ""}
                                                                         </p>
-                                                                        <p className="text-xs text-gray-500">
-                                                                            SKU: {item.productId || item.id || "N/A"}
-                                                                        </p>
+                                                                        <p className="text-xs text-gray-500">SKU: {item.proVarId || "--"}</p>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -197,7 +141,7 @@ const OrderDetailsForm = () => {
                                                                 {item.price ? `${item.price.toLocaleString("vi-VN")} ₫` : "0 ₫"}
                                                             </td>
                                                             <td className="px-4 py-3 text-center">
-                                                                <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                                                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-800">
                                                                     {item.quantity || 0}
                                                                 </span>
                                                             </td>
@@ -224,7 +168,6 @@ const OrderDetailsForm = () => {
                                                 </tfoot>
                                             </table>
                                         </div>
-
                                         {/* Mobile view */}
                                         <div className="divide-y divide-gray-200 md:hidden">
                                             {order.orderDetails.map((item, index) => (
@@ -235,31 +178,31 @@ const OrderDetailsForm = () => {
                                                     <div className="flex items-start space-x-3">
                                                         <div className="flex-shrink-0">
                                                             <div className="flex h-16 w-16 items-center justify-center rounded-md border bg-gray-100">
-                                                                {item.productImage || item.image ? (
+                                                                {item.productVariant?.images?.length > 0 ? (
                                                                     <img
                                                                         className="h-14 w-14 rounded object-cover"
-                                                                        src={item.productImage || item.image}
-                                                                        alt={item.productName || item.name || "Sản phẩm"}
+                                                                        src={item.productVariant.images[0]}
+                                                                        alt={item.productVariant.colorName || "Sản phẩm"}
                                                                         loading="lazy"
                                                                         onError={(e) => {
                                                                             e.target.style.display = "none";
                                                                             e.target.nextSibling.style.display = "flex";
                                                                         }}
                                                                     />
-                                                                ) : null}
-                                                                <div
-                                                                    className="flex h-14 w-14 items-center justify-center rounded bg-gray-200 text-xs text-gray-400"
-                                                                    style={{ display: item.productImage || item.image ? "none" : "flex" }}
-                                                                >
-                                                                    IMG
-                                                                </div>
+                                                                ) : (
+                                                                    <div className="flex h-14 w-14 items-center justify-center rounded bg-gray-200 text-xs text-gray-400">
+                                                                        IMG
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                         <div className="min-w-0 flex-1">
                                                             <p className="text-sm font-medium text-gray-900">
-                                                                {item.productName || item.name || "Tên sản phẩm không có"}
+                                                                {item.productVariant?.colorName || "Tên sản phẩm không có"}
+                                                                {item.productVariant?.sizeName ? ` - ${item.productVariant.sizeName}` : ""}
+                                                                {item.productVariant?.materialName ? ` - ${item.productVariant.materialName}` : ""}
                                                             </p>
-                                                            <p className="mb-2 text-xs text-gray-500">SKU: {item.productId || item.id || "N/A"}</p>
+                                                            <p className="mb-2 text-xs text-gray-500">SKU: {item.proVarId || "--"}</p>
                                                             <div className="flex justify-between text-sm">
                                                                 <span>Đơn giá: {item.price ? `${item.price.toLocaleString("vi-VN")} ₫` : "0 ₫"}</span>
                                                                 <span>SL: {item.quantity || 0}</span>
@@ -292,23 +235,139 @@ const OrderDetailsForm = () => {
                                 )}
                             </div>
                         </div>
-                    </div>
+                        {/* Thông tin đơn hàng */}
+                        <div className="rounded-lg border bg-white">
+                            <div className="border-b p-4">
+                                <h3 className="text-lg font-semibold text-gray-900">Thông tin đơn hàng</h3>
+                            </div>
+                            <div className="space-y-4 p-4">
+                                <div className="grid grid-cols-1 gap-x-8 gap-y-3 md:grid-cols-2">
+                                    <div className="flex flex-col justify-between">
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">ID đơn hàng</span>
+                                            <span className="text-sm font-medium text-gray-900">#{order.id || "--"}</span>
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            {order.isUserGuest == false ? (
+                                                <>
+                                                    <span className="text-sm text-gray-600">Tên khách hàng</span>
+                                                    <span className="text-sm font-medium text-gray-900">{order.userName || "--"}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <span className="text-sm text-gray-600">Tên khách vãng lai</span>
+                                                    <span className="text-sm font-medium text-gray-900">{order.userGuestFullName || "--"}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Khách vãng lai</span>
+                                            <span
+                                                className={`rounded px-2 py-1 text-xs font-medium ${order.isUserGuest ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}
+                                            >
+                                                {order.isUserGuest ? "Có" : "Không"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Trạng thái</span>
+                                            <span className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                                                {order.orderStatusName || "--"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Trạng thái thanh toán</span>
+                                            <span
+                                                className={`rounded px-2 py-1 text-xs font-medium ${order.isPaid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                                            >
+                                                {order.paymentStatus || (order.isPaid ? "Đã thanh toán" : "Chưa thanh toán")}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col ">
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Ngày cập nhật</span>
+                                            <span className="text-sm text-gray-900">
+                                                {order.updatedDate ? new Date(order.updatedDate).toLocaleString("vi-VN") : "--"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Phương thức thanh toán</span>
+                                            <span className="text-sm text-gray-900">
+                                                {order.paymentMethodId === 1
+                                                    ? "Tiền mặt"
+                                                    : order.paymentMethodId === 2
+                                                      ? "Chuyển khoản"
+                                                      : order.paymentMethodId || "--"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Phí vận chuyển</span>
+                                            <span className="text-sm text-gray-900">
+                                                {order.shippingPrice ? `${order.shippingPrice.toLocaleString("vi-VN")} ₫` : "0 ₫"}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between py-1">
+                                            <span className="text-sm text-gray-600">Tổng tiền</span>
+                                            <span className="text-sm font-semibold text-gray-900">
+                                                {order.total ? `${order.total.toLocaleString("vi-VN")} ₫` : "0 ₫"}
+                                            </span>
+                                        </div>
+                                    </div>
 
+                                    {order.note && (
+                                        <div className="mt-4 border-t pt-4 md:col-span-2">
+                                            <div className="flex justify-between py-1">
+                                                <span className="text-sm text-gray-600">Ghi chú</span>
+                                                <span className="text-sm text-gray-900">{order.note}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {/* Cột phải - Sidebar */}
                     <div className="space-y-6 lg:col-span-4">
                         {/* Hành động */}
                         <div className="rounded-lg border bg-white">
                             <div className="border-b p-4">
-                                <h3 className="text-lg font-semibold text-gray-900">Cập nhật trạng thái đơn hàng</h3>
+                                <h3 className="text-lg font-semibold text-gray-900">Cập nhật trạng thái đơn hàng</h3>
                             </div>
-                            <div className=""></div>
                             <div className="space-y-3 p-4">
-                                <button className="w-full rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700">
-                                    Cập nhật đơn hàng
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Chọn trạng thái mới</label>
+                                    <select
+                                        value={selectedStatusId}
+                                        onChange={(e) => setSelectedStatusId(Number(e.target.value))}
+                                        className="mt-1 block w-full rounded-md border border-gray-300 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                                    >
+                                        {orderStatuses && orderStatuses.length > 0 ? (
+                                            orderStatuses.map((status) => (
+                                                <option
+                                                    key={status.id}
+                                                    value={status.id}
+                                                >
+                                                    {status.orderStatusName}
+                                                </option>
+                                            ))
+                                        ) : (
+                                            <option value="">Không có trạng thái</option>
+                                        )}
+                                    </select>
+                                </div>
+                                {loading && <p className="text-sm text-gray-500">Đang cập nhật...</p>}
+                                {error && <p className="text-sm text-red-500">Lỗi: {error}</p>}
+                                <button
+                                    onClick={handleStatusUpdate}
+                                    disabled={loading || !selectedStatusId}
+                                    className={`w-full rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors ${
+                                        loading || !selectedStatusId ? "cursor-not-allowed bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                                    }`}
+                                >
+                                    Cập nhật trạng thái
                                 </button>
                             </div>
                         </div>
-
                         {/* Thông tin bổ sung */}
                         <div className="rounded-lg border bg-white">
                             <div className="border-b p-4">
@@ -317,28 +376,28 @@ const OrderDetailsForm = () => {
                             <div className="space-y-3 p-4">
                                 <div className="flex justify-between py-1">
                                     <span className="text-sm text-gray-600">Order Status ID</span>
-                                    <span className="text-sm text-gray-900">{order.orderStaId || "N/A"}</span>
+                                    <span className="text-sm text-gray-900">{order.orderStaId || "--"}</span>
                                 </div>
                                 <div className="flex justify-between py-1">
                                     <span className="text-sm text-gray-600">Order Address ID</span>
-                                    <span className="text-sm text-gray-900">{order.orderAddId || "N/A"}</span>
+                                    <span className="text-sm text-gray-900">{order.orderAddId || "--"}</span>
                                 </div>
                                 <div className="flex justify-between py-1">
                                     <span className="text-sm text-gray-600">Promotion ID</span>
-                                    <span className="text-sm text-gray-900">{order.promotionId || "N/A"}</span>
+                                    <span className="text-sm text-gray-900">{order.promotionId || "--"}</span>
                                 </div>
                                 <div className="flex justify-between py-1">
                                     <span className="text-sm text-gray-600">Người tạo</span>
-                                    <span className="text-sm text-gray-900">{order.createdBy || "N/A"}</span>
+                                    <span className="text-sm text-gray-900">{order.createdBy || "--"}</span>
                                 </div>
                                 <div className="flex justify-between py-1">
                                     <span className="text-sm text-gray-600">Người cập nhật</span>
-                                    <span className="text-sm text-gray-900">{order.updatedBy || "N/A"}</span>
+                                    <span className="text-sm text-gray-900">{order.updatedBy || "--"}</span>
                                 </div>
                                 <div className="flex justify-between py-1">
                                     <span className="text-sm text-gray-600">Ngày tạo</span>
                                     <span className="text-sm text-gray-900">
-                                        {order.createdDate ? new Date(order.createdDate).toLocaleString("vi-VN") : "N/A"}
+                                        {order.createdDate ? new Date(order.createdDate).toLocaleString("vi-VN") : "--"}
                                     </span>
                                 </div>
                             </div>

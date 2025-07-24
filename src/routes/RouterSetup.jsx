@@ -54,8 +54,6 @@ import {
     getColorById,
     getCountryById,
     getMaterialById,
-    getProductById,
-    getAllProducts,
     getSizeById,
     getSupplierById,
     getUnitById,
@@ -65,9 +63,8 @@ import {
     getPromotionById, // Thêm import
     getAllPromotionTypes, // Thêm import
     getPromotionTypeById, // Thêm import
-    getAllOrderStatuses, // Thêm import
-    getOrderStatusById, // Thêm import
 } from "@/api/api";
+import { getAllProducts, getProductById } from "@/api/service/ProductService";
 import CategoryForm from "@/components/Admin/Form/CategoryForm";
 import Payment from "@/pages/Payment";
 import PaymentCallbackVnpay from "@/pages/PaymentCallbackVnpay";
@@ -345,23 +342,6 @@ const router = createBrowserRouter([
                         path: "edit_order/:id",
                         element: <OrderDetailsForm />,
                         loader: async ({ params }) => await getOrderById(params.id),
-                    },
-                ],
-            },
-            // [12.2] Trạng thái Đơn hàng
-            {
-                path: "order_status",
-                children: [
-                    {
-                        index: true,
-                        element: <OrderStatusManagement />,
-                        loader: async () => await getAllOrderStatuses(),
-                    },
-                    { path: "new_order_status", element: <OrderStatusForm /> },
-                    {
-                        path: "edit_order_status/:id",
-                        element: <OrderStatusForm />,
-                        loader: async ({ params }) => await getOrderStatusById(params.id),
                     },
                 ],
             },

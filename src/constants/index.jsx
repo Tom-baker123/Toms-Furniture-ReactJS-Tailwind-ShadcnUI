@@ -49,11 +49,6 @@ export const navbarLinks = [
                 icon: Users,
                 path: "/admin/order",
             },
-            {
-                label: "Order Status",
-                icon: UserPlus,
-                path: "/admin/order_status",
-            },
         ],
     },
 

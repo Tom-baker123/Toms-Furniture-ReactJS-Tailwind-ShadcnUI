@@ -1,4 +1,3 @@
-
 import { API_BASE_URL } from '../apiConfig';
 
 // Hàm gọi API dùng chung
@@ -62,4 +61,21 @@ export const vnpayCallback = async (queryParams) => {
     // queryParams là string dạng "vnp_...=...&vnp_...=..."
     const url = `${API_BASE_URL}/Payment/vnpay-callback?${queryParams}`;
     return apiRequest(url, { method: 'GET' });
+};
+
+// Cập nhật trạng thái đơn hàng
+export const updateOrderStatus = async (orderId, newStatusId) => {
+    return apiRequest(`${API_BASE_URL}/Order/status/${orderId}?newStatusId=${newStatusId}`, {
+        method: 'PUT',
+    });
+};
+
+
+// [14.1] API lấy tất cả danh sách trạng thái đơn hàng
+export const getAllOrderStatuses = async () => {
+    return apiRequest(`${API_BASE_URL}/OrderStatus`);
+};
+// [14.2] API lấy trạng thái đơn hàng theo ID
+export const getOrderStatusById = async (id) => {
+    return apiRequest(`${API_BASE_URL}/OrderStatus/${id}`);
 };

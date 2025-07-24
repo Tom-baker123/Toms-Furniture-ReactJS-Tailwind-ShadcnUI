@@ -2,7 +2,7 @@ import React from "react";
 import ProductVariantsModalContent from "@/components/Admin/ModalContent/ProductVariantsModalContent";
 import { Eye, PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { deleteProduct } from "@/api/api";
+import { deleteProduct } from "@/api/service/ProductService"; 
 import toast from "react-hot-toast";
 import FormatDatetime from "@/hooks/FormatDatetime";
 import { useAdminModal } from "@/context/AdminModalContext";
