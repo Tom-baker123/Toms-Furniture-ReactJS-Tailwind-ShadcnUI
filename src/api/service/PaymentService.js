@@ -65,6 +65,7 @@ export const vnpayCallback = async (queryParams) => {
 
 // Cập nhật trạng thái đơn hàng
 export const updateOrderStatus = async (orderId, newStatusId) => {
+    // Đảm bảo newStatusId là số và không undefined
     return apiRequest(`${API_BASE_URL}/Order/status/${orderId}?newStatusId=${newStatusId}`, {
         method: 'PUT',
     });

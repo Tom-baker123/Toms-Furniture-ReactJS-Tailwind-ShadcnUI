@@ -13,32 +13,37 @@ const OrderDetailsForm = () => {
 
     // Lấy id trạng thái hiện tại dựa vào orderStatusName
     const getCurrentStatusId = () => {
-        if (!order || !order.orderStatusName || !orderStatuses) return "";
+        if (!order || !order.orderStatusName || !orderStatuses || orderStatuses.length === 0)
+            return orderStatuses && orderStatuses.length > 0 ? Number(orderStatuses[0].id) : null;
         const found = orderStatuses.find((status) => status.orderStatusName === order.orderStatusName);
-        return found ? found.id : "";
+        // Nếu không tìm thấy, trả về id đầu tiên trong orderStatuses (nếu có)
+        return found ? Number(found.id) : Number(orderStatuses[0]?.id) || null;
     };
-    const [selectedStatusId, setSelectedStatusId] = useState(getCurrentStatusId());
+    const [selectedStatusId, setSelectedStatusId] = useState(() => getCurrentStatusId());
 
     // Luôn fetch danh sách trạng thái khi mount
     useEffect(() => {
         fetchAllOrderStatuses();
-        // eslint-disable-next-line
     }, []);
 
     // Khi order hoặc orderStatuses thay đổi, cập nhật selectedStatusId
     useEffect(() => {
         setSelectedStatusId(getCurrentStatusId());
-        // eslint-disable-next-line
     }, [order.orderStatusName, orderStatuses]);
 
     // Xử lý cập nhật trạng thái đơn hàng
     const handleStatusUpdate = async () => {
-        if (!selectedStatusId) {
+        console.log("orderStatuses:", orderStatuses);
+        console.log("selectedStatusId:", selectedStatusId, typeof selectedStatusId);
+        if (selectedStatusId === null || selectedStatusId === undefined || selectedStatusId === "" || isNaN(selectedStatusId)) {
             alert("Vui lòng chọn trạng thái mới!");
             return;
         }
         try {
-            const result = await handleUpdateOrderStatus(order.id, selectedStatusId);
+            // Truyền newStatusId là số nguyên đúng chuẩn API
+            const statusIdNum = Number(selectedStatusId);
+            console.log("Gọi API với:", order.id, statusIdNum);
+            const result = await handleUpdateOrderStatus(order.id, statusIdNum);
             alert("Cập nhật trạng thái thành công!");
             navigate(0); // Tải lại trang để cập nhật dữ liệu
         } catch (err) {
@@ -283,7 +288,7 @@ const OrderDetailsForm = () => {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col ">
+                                    <div className="flex flex-col">
                                         <div className="flex justify-between py-1">
                                             <span className="text-sm text-gray-600">Ngày cập nhật</span>
                                             <span className="text-sm text-gray-900">
@@ -337,8 +342,11 @@ const OrderDetailsForm = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700">Chọn trạng thái mới</label>
                                     <select
-                                        value={selectedStatusId}
-                                        onChange={(e) => setSelectedStatusId(Number(e.target.value))}
+                                        value={selectedStatusId === null || selectedStatusId === undefined ? "" : selectedStatusId}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            setSelectedStatusId(val === "" ? null : Number(val));
+                                        }}
                                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     >
                                         {orderStatuses && orderStatuses.length > 0 ? (
