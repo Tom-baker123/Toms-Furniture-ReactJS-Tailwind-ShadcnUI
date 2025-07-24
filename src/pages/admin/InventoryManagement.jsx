@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { deleteProduct, updateProductVariant, getColorById, getSizeById, getMaterialById, getUnitById } from "@/api/api";
+import { deleteProduct, updateProductVariant } from "@/api/service/ProductService";
+import { getColorById, getSizeById, getMaterialById, getUnitById } from "@/api/api";
 import FormatDatetime from "@/hooks/FormatDatetime";
 
 const InventoryManagement = () => {

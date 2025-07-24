@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { createProduct, updateProduct, deleteSlider, deleteProductVariant } from "@/api/api";
+import { createProduct, updateProduct, deleteSlider, deleteProductVariant } from "@/api/service/ProductService";
 import toast from "react-hot-toast";
 import { AdminAPIContext } from "@/context/AdminAPIContext";
 

@@ -52,7 +52,7 @@ const SearchHeader = ({ id = "categories" }) => {
                 <input
                     type="text"
                     className="w-full bg-transparent outline-none"
-                    placeholder="What are you looking for?"
+                    placeholder="Bạn đang quan tâm đến sản phẩm gì?"
                 />
             </div>
         </form>

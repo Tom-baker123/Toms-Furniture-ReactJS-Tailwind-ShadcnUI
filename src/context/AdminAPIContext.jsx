@@ -9,7 +9,7 @@ import {
     getAllSizes,
     getAllMaterials,
     getAllUnits,
-    getAllOrderStatuses,
+    // getAllOrderStatuses,
 } from "@/api/api";
 import toast from "react-hot-toast";
 
@@ -28,7 +28,7 @@ export const AdminAPIProvider = ({ children }) => {
     const [units, setUnits] = useState([]);
     const [orderStatuses, setOrderStatuses] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState();
 
     // Hàm fetch tất cả dữ liệu
     const fetchData = useCallback(async () => {
@@ -45,7 +45,7 @@ export const AdminAPIProvider = ({ children }) => {
                     getAllSizes(),
                     getAllMaterials(),
                     getAllUnits(),
-                    getAllOrderStatuses(),
+                    // getAllOrderStatuses(),
                 ]);
             setCategories(categoriesData);
             setBrands(brandsData);
