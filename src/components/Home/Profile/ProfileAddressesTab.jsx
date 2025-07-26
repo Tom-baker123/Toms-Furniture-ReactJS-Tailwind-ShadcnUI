@@ -3,6 +3,7 @@ import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import { Plus, MapPin } from "lucide-react";
 import AddressModal from "@/components/Home/AddressModal";
 import { useGHN } from "../../../context/GHNContext";
+import { formatAddressDisplay } from "../../../lib/addressDropdownUtils";
 
 const ProfileAddressesTab = ({
     savedAddresses,
@@ -79,8 +80,9 @@ const ProfileAddressesTab = ({
                                         <p className="text-gray-600">{address.phone || address.phoneNumber}</p>
                                         <p className="text-gray-600">{address.address || address.addressDetailRecipient}</p>
                                         <p className="text-gray-600">
-                                            <b>City:</b> {getProvinceName(address.city)} - <b>District:</b> {getDistrictName(address.district)} -{" "}
-                                            <b>Ward:</b> {getWardName(address.ward)}
+                                            <b>City:</b> {formatAddressDisplay(getProvinceName(address.city))} - <b>District:</b>{" "}
+                                            {formatAddressDisplay(getDistrictName(address.district))} - <b>Ward:</b>{" "}
+                                            {formatAddressDisplay(getWardName(address.ward))}
                                         </p>
                                     </div>
                                 </div>

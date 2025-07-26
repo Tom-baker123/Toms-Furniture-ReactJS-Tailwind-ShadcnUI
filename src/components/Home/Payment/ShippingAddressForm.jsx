@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDropdownValue, parseDropdownValue } from "../../../lib/addressDropdownUtils";
 
 const ShippingAddressForm = ({
     provinces,
@@ -19,27 +20,52 @@ const ShippingAddressForm = ({
                 <div>
                     <label className="mb-1 block text-sm font-medium">Tỉnh / Thành phố *</label>
                     <select
-                        value={selectedProvince}
-                        onChange={handleProvinceChange}
+                        value={
+                            provinces.find((p) => String(p.ProvinceID) === String(selectedProvince))
+                                ? formatDropdownValue(
+                                      selectedProvince,
+                                      provinces.find((p) => String(p.ProvinceID) === String(selectedProvince)).ProvinceName,
+                                  )
+                                : ""
+                        }
+                        onChange={(e) => {
+                            const { id } = parseDropdownValue(e.target.value);
+                            handleProvinceChange(id);
+                        }}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.province ? "border-red-500" : "border-gray-300"}`}
                     >
                         <option value="">-- Chọn tỉnh --</option>
-                        {provinces.map((province) => (
-                            <option
-                                key={province.ProvinceID}
-                                value={province.ProvinceID}
-                            >
-                                {province.ProvinceName}
-                            </option>
-                        ))}
+                        {provinces
+                            .filter(
+                                (province) =>
+                                    ["Hà Nội 02", "Test - Alert - Tỉnh - 001", "Ngoc test", "Test"].indexOf(province.ProvinceName.trim()) === -1,
+                            )
+                            .map((province, index) => (
+                                <option
+                                    key={index}
+                                    value={formatDropdownValue(province.ProvinceID, province.ProvinceName)}
+                                >
+                                    {province.ProvinceName}
+                                </option>
+                            ))}
                     </select>
                     {validationErrors.province && <span className="text-sm text-red-500">{validationErrors.province}</span>}
                 </div>
                 <div>
                     <label className="mb-1 block text-sm font-medium">Quận / Huyện *</label>
                     <select
-                        value={selectedDistrict}
-                        onChange={handleDistrictChange}
+                        value={
+                            districts.find((d) => String(d.DistrictID) === String(selectedDistrict))
+                                ? formatDropdownValue(
+                                      selectedDistrict,
+                                      districts.find((d) => String(d.DistrictID) === String(selectedDistrict)).DistrictName,
+                                  )
+                                : ""
+                        }
+                        onChange={(e) => {
+                            const { id } = parseDropdownValue(e.target.value);
+                            handleDistrictChange(id);
+                        }}
                         disabled={!selectedProvince}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince ? "bg-gray-100" : ""}`}
                     >
@@ -47,7 +73,7 @@ const ShippingAddressForm = ({
                         {districts.map((district) => (
                             <option
                                 key={district.DistrictID}
-                                value={district.DistrictID}
+                                value={formatDropdownValue(district.DistrictID, district.DistrictName)}
                             >
                                 {district.DistrictName}
                             </option>
@@ -58,8 +84,15 @@ const ShippingAddressForm = ({
                 <div>
                     <label className="mb-1 block text-sm font-medium">Phường / Xã *</label>
                     <select
-                        value={selectedWard}
-                        onChange={handleWardChange}
+                        value={
+                            wards.find((w) => String(w.WardCode) === String(selectedWard))
+                                ? formatDropdownValue(selectedWard, wards.find((w) => String(w.WardCode) === String(selectedWard)).WardName)
+                                : ""
+                        }
+                        onChange={(e) => {
+                            const { id } = parseDropdownValue(e.target.value);
+                            handleWardChange(id);
+                        }}
                         disabled={!selectedDistrict}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict ? "bg-gray-100" : ""}`}
                     >
@@ -67,7 +100,7 @@ const ShippingAddressForm = ({
                         {wards.map((ward) => (
                             <option
                                 key={ward.WardCode}
-                                value={ward.WardCode}
+                                value={formatDropdownValue(ward.WardCode, ward.WardName)}
                             >
                                 {ward.WardName}
                             </option>

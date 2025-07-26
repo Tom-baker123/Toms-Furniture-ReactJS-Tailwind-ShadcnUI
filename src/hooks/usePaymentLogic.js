@@ -33,7 +33,7 @@ const usePaymentLogic = (contexts) => {
         address: "",
         note: "",
     });
-    
+
     // Phương thức thanh toán
     const [paymentMethod, setPaymentMethod] = useState("cod");
 
@@ -82,8 +82,7 @@ const usePaymentLogic = (contexts) => {
     };
 
     // Location change handlers
-    const handleProvinceChange = async (e) => {
-        const provinceId = e.target.value;
+    const handleProvinceChange = async (provinceId) => {
         console.log("Selected Province ID:", provinceId, typeof provinceId);
         setSelectedProvince(provinceId);
         setSelectedDistrict("");
@@ -91,16 +90,14 @@ const usePaymentLogic = (contexts) => {
         await fetchDistricts(provinceId);
     };
 
-    const handleDistrictChange = async (e) => {
-        const districtId = e.target.value;
+    const handleDistrictChange = async (districtId) => {
         console.log("Selected District ID:", districtId, typeof districtId);
         setSelectedDistrict(districtId);
         setSelectedWard("");
         await fetchWards(districtId);
     };
 
-    const handleWardChange = (e) => {
-        const wardCode = e.target.value;
+    const handleWardChange = (wardCode) => {
         console.log("Selected Ward Code:", wardCode, typeof wardCode);
         setSelectedWard(wardCode);
     };
