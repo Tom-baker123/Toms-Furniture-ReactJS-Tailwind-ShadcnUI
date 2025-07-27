@@ -56,6 +56,7 @@ const PaymentFormSection = ({
                 handleProvinceChange={handleProvinceChange}
                 handleDistrictChange={handleDistrictChange}
                 handleWardChange={handleWardChange}
+                isAddressLocked={addresses && addresses.length > 0}
             />
 
             <SelectPaymentMethodForm

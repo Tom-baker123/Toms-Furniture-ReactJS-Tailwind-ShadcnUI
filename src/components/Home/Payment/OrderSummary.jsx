@@ -9,12 +9,12 @@ const OrderSummary = ({ subtotal, shippingFee, discountAmount, total, promotionP
             <div className="space-y-3">
                 <div className="flex justify-between">
                     <span className="text-gray-600">Tạm tính</span>
-                    <span className="font-medium">{subtotal.toLocaleString()}$</span>
+                    <span className="font-medium">{subtotal.toLocaleString()}đ</span>
                 </div>
 
                 <div className="flex justify-between">
                     <span className="text-gray-600">Phí vận chuyển</span>
-                    <span className="font-medium">{shippingFee > 0 ? `${shippingFee.toLocaleString()}$` : "Chưa tính"}</span>
+                    <span className="font-medium">{shippingFee > 0 ? `${shippingFee.toLocaleString()}đ` : "Chưa tính"}</span>
                 </div>
 
                 {/* Chọn mã giảm giá */}
@@ -31,7 +31,9 @@ const OrderSummary = ({ subtotal, shippingFee, discountAmount, total, promotionP
                 <div className="border-t pt-3">
                     <div className="flex justify-between text-lg font-semibold">
                         <span>Tổng cộng</span>
-                        <span className="text-blue-600">{(total - discountAmount).toLocaleString()}$</span>
+                        <span className="text-2xl font-bold text-slate-700">
+                            {(total - discountAmount).toLocaleString()} <span className="underline">đ</span>{" "}
+                        </span>
                     </div>
                 </div>
             </div>

@@ -24,19 +24,15 @@ const ProfileAddressesTab = ({
         const provinceIds = Array.from(
             new Set(
                 savedAddresses
-                    .map((addr) => addr.city)
+                    .map((addr) => addr.cityCode)
                     .filter(Boolean)
-                    .map((city) => parseDropdownValue(city).id) // Tách lấy chỉ ID số
-                    .filter(Boolean),
             ),
         );
         const districtIds = Array.from(
             new Set(
                 savedAddresses
-                    .map((addr) => addr.district)
+                    .map((addr) => addr.districtCode)
                     .filter(Boolean)
-                    .map((district) => parseDropdownValue(district).id) // Tách lấy chỉ ID số
-                    .filter(Boolean),
             ),
         );
 
