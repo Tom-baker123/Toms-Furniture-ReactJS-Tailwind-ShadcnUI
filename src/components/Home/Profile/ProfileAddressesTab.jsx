@@ -21,20 +21,8 @@ const ProfileAddressesTab = ({
     // Ensure districts and wards are loaded for all addresses (for name lookup)
     useEffect(() => {
         // Get all unique province and district IDs from addresses, parse to get only numeric IDs
-        const provinceIds = Array.from(
-            new Set(
-                savedAddresses
-                    .map((addr) => addr.cityCode)
-                    .filter(Boolean)
-            ),
-        );
-        const districtIds = Array.from(
-            new Set(
-                savedAddresses
-                    .map((addr) => addr.districtCode)
-                    .filter(Boolean)
-            ),
-        );
+        const provinceIds = Array.from(new Set(savedAddresses.map((addr) => addr.cityCode).filter(Boolean)));
+        const districtIds = Array.from(new Set(savedAddresses.map((addr) => addr.districtCode).filter(Boolean)));
 
         // Fetch districts for all provinces
         provinceIds.forEach((pid) => {
@@ -93,9 +81,7 @@ const ProfileAddressesTab = ({
                                         <p className="text-gray-600">{address.phone || address.phoneNumber}</p>
                                         <p className="text-gray-600">{address.address || address.addressDetailRecipient}</p>
                                         <p className="text-gray-600">
-                                            <b>City:</b> {formatAddressDisplay(getProvinceName(parseDropdownValue(address.city).id))} -{" "}
-                                            <b>District:</b> {formatAddressDisplay(getDistrictName(parseDropdownValue(address.district).id))} -{" "}
-                                            <b>Ward:</b> {formatAddressDisplay(getWardName(parseDropdownValue(address.ward).id))}
+                                            <b>City:</b> {address.city} - <b>District:</b> {address.district} - <b>Ward:</b> {address.ward}
                                         </p>
                                     </div>
                                 </div>
