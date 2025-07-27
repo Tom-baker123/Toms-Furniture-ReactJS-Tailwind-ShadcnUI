@@ -55,8 +55,8 @@ const BarChartTemplate = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6">
-            <div className="mx-auto max-w-4xl">
+        <div className="card">
+            <div className="mx-auto">
                 <h2 className="mb-4 text-2xl font-bold text-gray-800">Order Variant Quantity Chart</h2>
 
                 {/* Dropdown for selecting orders */}
@@ -71,7 +71,7 @@ const BarChartTemplate = () => {
                         id="orderSelect"
                         value={selectedOrderId}
                         onChange={handleOrderChange}
-                        className="block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="block w-full rounded-md border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     >
                         {orders.map((order) => (
                             <option
@@ -85,7 +85,7 @@ const BarChartTemplate = () => {
                 </div>
 
                 {/* Bar Chart */}
-                <div className="rounded-lg bg-white p-4 shadow-md">
+                <div className="rounded-lg bg-white p-4">
                     <ResponsiveContainer
                         width="100%"
                         height={400}

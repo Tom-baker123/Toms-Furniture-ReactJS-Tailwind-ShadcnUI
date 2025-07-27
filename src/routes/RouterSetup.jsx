@@ -164,6 +164,7 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <Dashboard />,
+                loader: async () => await getAllProducts(), // Loader để lấy danh sách sản phẩm
             },
             // [2.] Trang sản phẩm
             {

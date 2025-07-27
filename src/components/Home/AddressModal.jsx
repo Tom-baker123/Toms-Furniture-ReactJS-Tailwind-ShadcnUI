@@ -66,7 +66,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const [selectedWard, setSelectedWard] = useState("");
 
     // Khi mở modal, fetch provinces nếu chưa có
-    React.useEffect(() => {
+    useEffect(() => {
         fetchProvinces();
     }, [fetchProvinces]);
 
@@ -88,14 +88,14 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const handleProvinceChange = async (e) => {
         const value = e.target.value;
         const { id: provinceId } = parseDropdownValue(value);
-        setSelectedProvince(value);
+        setSelectedProvince(value); // vẫn lưu id-name cho UI
         setSelectedDistrict("");
         setSelectedWard("");
         setValue("city", value, { shouldValidate: true });
         setValue("district", "", { shouldValidate: true });
         setValue("ward", "", { shouldValidate: true });
         if (provinceId) {
-            await fetchDistricts(provinceId);
+            await fetchDistricts(provinceId); // LUÔN truyền id dạng số
         }
     };
 
@@ -103,12 +103,12 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const handleDistrictChange = async (e) => {
         const value = e.target.value;
         const { id: districtId } = parseDropdownValue(value);
-        setSelectedDistrict(value);
+        setSelectedDistrict(value); // vẫn lưu id-name cho UI
         setSelectedWard("");
         setValue("district", value, { shouldValidate: true });
         setValue("ward", "", { shouldValidate: true });
         if (districtId) {
-            await fetchWards(districtId);
+            await fetchWards(districtId); // LUÔN truyền id dạng số
         }
     };
 
@@ -143,8 +143,24 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
 
     // Không cần normalize lại vì đã đúng API
     const onSubmit = (data) => {
+        // Chuyển đổi giá trị dropdown về dạng ID
+        const { id: cityCode, name: city } = parseDropdownValue(data.city || "");
+        const { id: districtCode, name: district } = parseDropdownValue(data.district || "");
+        const { id: wardCode, name: ward } = parseDropdownValue(data.ward || "");
+
+        // Build object đúng chuẩn backend
+        const addressPayload = {
+            ...data,
+            city,
+            cityCode: cityCode ? Number(cityCode) : undefined,
+            district,
+            districtCode: districtCode ? Number(districtCode) : undefined,
+            ward,
+            wardCode: wardCode ? Number(wardCode) : undefined,
+        };
+
         if (onSave) {
-            onSave(data);
+            onSave(addressPayload);
         }
         toast.success(editingAddress ? "Address updated successfully!" : "Address saved successfully!");
         reset();
