@@ -10,7 +10,7 @@ const Topbar = () => {
                     <li>Liên hệ {/* Contact */}</li>
                 </ul>
 
-                <p className="text-center">✌🏼 Free phí ship khi đơn hàng trên 5,000,000 VND {/* ✌🏼 Free Express Shipping on orders $500!  */}</p>
+                <p className="text-center">✌🏼 Free ship khi đơn hàng trên 5,000,000 VND {/* ✌🏼 Free Express Shipping on orders $500!  */}</p>
 
                 <ul className="hidden lg:flex lg:flex-wrap lg:items-center lg:justify-end lg:gap-4">
                     <li className="w-4">

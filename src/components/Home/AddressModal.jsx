@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import { formatDropdownValue, parseDropdownValue } from "../../lib/addressDropdownUtils";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { X, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
@@ -12,15 +11,15 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const timeoutRef = useRef();
 
     // Chuẩn hóa dữ liệu khi edit (từ API về)
-    const getDefaultValues = () => {
+    const getDefaultValues = useCallback(() => {
         if (editingAddress) {
             return {
                 recipient: editingAddress.recipient || "",
                 phoneNumber: editingAddress.phoneNumber || "",
                 addressDetailRecipient: editingAddress.addressDetailRecipient || "",
-                city: editingAddress.city || "",
-                district: editingAddress.district || "",
-                ward: editingAddress.ward || "",
+                city: editingAddress.city || "", // Chỉ lưu tên
+                district: editingAddress.district || "", // Chỉ lưu tên
+                ward: editingAddress.ward || "", // Chỉ lưu tên
                 isDeafaultAddress: editingAddress.isDeafaultAddress || false,
             };
         }
@@ -34,7 +33,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
             isDeafaultAddress: false,
             userId: 0,
         };
-    };
+    }, [editingAddress]);
 
     const {
         register,
@@ -50,74 +49,124 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     // Quản lý hiển thị modal giống CartModal
     useEffect(() => {
         if (open) {
+            // Debug: log dữ liệu editingAddress
+            console.log("🔍 AddressModal opened with editingAddress:", editingAddress);
+
             const values = getDefaultValues();
+            console.log("🔍 Default values:", values);
+
             Object.keys(values).forEach((key) => setValue(key, values[key]));
         } else {
-            reset(getDefaultValues());
+            reset();
         }
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, [open, editingAddress, setValue, reset]);
+    }, [open, editingAddress]);
     // GHN API context
     const { provinces, districts, wards, fetchProvinces, fetchDistricts, fetchWards } = useGHN();
-    const [selectedProvince, setSelectedProvince] = useState("");
-    const [selectedDistrict, setSelectedDistrict] = useState("");
-    const [selectedWard, setSelectedWard] = useState("");
+    // State để lưu ID được chọn
+    const [selectedProvinceId, setSelectedProvinceId] = useState("");
+    const [selectedDistrictId, setSelectedDistrictId] = useState("");
+    const [selectedWardId, setSelectedWardId] = useState("");
 
     // Khi mở modal, fetch provinces nếu chưa có
     useEffect(() => {
-        fetchProvinces();
-    }, [fetchProvinces]);
+        if (open) {
+            fetchProvinces();
+        }
+    }, [open]);
 
     // Khi mở modal hoặc edit, đồng bộ giá trị combobox với giá trị trong form
     useEffect(() => {
         if (open) {
             const values = getDefaultValues();
-            setSelectedProvince(values.city || "");
-            setSelectedDistrict(values.district || "");
-            setSelectedWard(values.ward || "");
+            console.log("🔍 Setting combobox values:", {
+                city: values.city,
+                district: values.district,
+                ward: values.ward,
+            });
+
+            // Nếu đang edit, lưu lại ID để gửi về API
+            if (editingAddress) {
+                setSelectedProvinceId(editingAddress.cityCode || "");
+                setSelectedDistrictId(editingAddress.districtCode || "");
+                setSelectedWardId(editingAddress.wardCode || "");
+            }
         } else {
-            setSelectedProvince("");
-            setSelectedDistrict("");
-            setSelectedWard("");
+            setSelectedProvinceId("");
+            setSelectedDistrictId("");
+            setSelectedWardId("");
         }
     }, [open, editingAddress]);
 
-    // Khi chọn tỉnh, fetch districts và đồng bộ cả state lẫn form (dùng ID)
-    const handleProvinceChange = async (e) => {
-        const value = e.target.value;
-        const { id: provinceId } = parseDropdownValue(value);
-        setSelectedProvince(value); // vẫn lưu id-name cho UI
-        setSelectedDistrict("");
-        setSelectedWard("");
-        setValue("city", value, { shouldValidate: true });
-        setValue("district", "", { shouldValidate: true });
-        setValue("ward", "", { shouldValidate: true });
-        if (provinceId) {
-            await fetchDistricts(provinceId); // LUÔN truyền id dạng số
+    // Tách riêng useEffect để fetch districts/wards khi edit
+    useEffect(() => {
+        if (open && editingAddress && editingAddress.cityCode) {
+            console.log("🔍 Fetching districts for cityCode:", editingAddress.cityCode);
+            fetchDistricts(editingAddress.cityCode);
         }
-    };
+    }, [open, editingAddress?.cityCode]);
 
-    // Khi chọn quận, fetch wards và đồng bộ cả state lẫn form (dùng ID)
-    const handleDistrictChange = async (e) => {
-        const value = e.target.value;
-        const { id: districtId } = parseDropdownValue(value);
-        setSelectedDistrict(value); // vẫn lưu id-name cho UI
-        setSelectedWard("");
-        setValue("district", value, { shouldValidate: true });
-        setValue("ward", "", { shouldValidate: true });
-        if (districtId) {
-            await fetchWards(districtId); // LUÔN truyền id dạng số
+    useEffect(() => {
+        if (open && editingAddress && editingAddress.districtCode) {
+            console.log("🔍 Fetching wards for districtCode:", editingAddress.districtCode);
+            fetchWards(editingAddress.districtCode);
         }
-    };
+    }, [open, editingAddress?.districtCode]);
 
-    // Khi chọn phường, đồng bộ cả state lẫn form (dùng ID)
-    const handleWardChange = (e) => {
-        const value = e.target.value;
-        setSelectedWard(value);
-        setValue("ward", value, { shouldValidate: true });
-    };
+    // Khi chọn tỉnh, fetch districts và đồng bộ cả state lẫn form
+    const handleProvinceChange = useCallback(
+        async (e) => {
+            const selectedOption = e.target.selectedOptions[0];
+            const provinceName = selectedOption.text;
+            const provinceId = selectedOption.getAttribute("data-id");
+
+            setSelectedProvinceId(provinceId);
+            setSelectedDistrictId("");
+            setSelectedWardId("");
+            setValue("city", provinceName, { shouldValidate: true });
+            setValue("district", "", { shouldValidate: true });
+            setValue("ward", "", { shouldValidate: true });
+
+            if (provinceId) {
+                await fetchDistricts(provinceId);
+            }
+        },
+        [setValue, fetchDistricts],
+    );
+
+    // Khi chọn quận, fetch wards và đồng bộ cả state lẫn form
+    const handleDistrictChange = useCallback(
+        async (e) => {
+            const selectedOption = e.target.selectedOptions[0];
+            const districtName = selectedOption.text;
+            const districtId = selectedOption.getAttribute("data-id");
+
+            setSelectedDistrictId(districtId);
+            setSelectedWardId("");
+            setValue("district", districtName, { shouldValidate: true });
+            setValue("ward", "", { shouldValidate: true });
+
+            if (districtId) {
+                await fetchWards(districtId);
+            }
+        },
+        [setValue, fetchWards],
+    );
+
+    // Khi chọn phường, đồng bộ cả state lẫn form
+    const handleWardChange = useCallback(
+        (e) => {
+            const selectedOption = e.target.selectedOptions[0];
+            const wardName = selectedOption.text;
+            const wardId = selectedOption.getAttribute("data-id");
+
+            setSelectedWardId(wardId);
+            setValue("ward", wardName, { shouldValidate: true });
+        },
+        [setValue],
+    );
 
     // ĐỒNG BỘ GIÁ TRỊ COMBOBOX: Đã xử lý trong useEffect([open, editingAddress]) và các handleChange, không cần watch hook ở đây.
 
@@ -141,36 +190,34 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
         return () => document.body.classList.remove("overflow-hidden");
     }, [open]);
 
-    // Không cần normalize lại vì đã đúng API
-    const onSubmit = (data) => {
-        // Chuyển đổi giá trị dropdown về dạng ID
-        const { id: cityCode, name: city } = parseDropdownValue(data.city || "");
-        const { id: districtCode, name: district } = parseDropdownValue(data.district || "");
-        const { id: wardCode, name: ward } = parseDropdownValue(data.ward || "");
+    // Submit form với ID thay vì parse từ dropdown value
+    const onSubmit = useCallback(
+        (data) => {
+            // Build object đúng chuẩn backend sử dụng ID đã lưu
+            const addressPayload = {
+                ...data,
+                city: data.city, // Tên tỉnh
+                cityCode: selectedProvinceId ? Number(selectedProvinceId) : undefined,
+                district: data.district, // Tên quận
+                districtCode: selectedDistrictId ? Number(selectedDistrictId) : undefined,
+                ward: data.ward, // Tên phường
+                wardCode: selectedWardId ? Number(selectedWardId) : undefined,
+            };
 
-        // Build object đúng chuẩn backend
-        const addressPayload = {
-            ...data,
-            city,
-            cityCode: cityCode ? Number(cityCode) : undefined,
-            district,
-            districtCode: districtCode ? Number(districtCode) : undefined,
-            ward,
-            wardCode: wardCode ? Number(wardCode) : undefined,
-        };
+            if (onSave) {
+                onSave(addressPayload);
+            }
+            toast.success(editingAddress ? "Address updated successfully!" : "Address saved successfully!");
+            reset();
+            onClose();
+        },
+        [editingAddress, onSave, reset, onClose, selectedProvinceId, selectedDistrictId, selectedWardId],
+    );
 
-        if (onSave) {
-            onSave(addressPayload);
-        }
-        toast.success(editingAddress ? "Address updated successfully!" : "Address saved successfully!");
+    const handleClose = useCallback(() => {
         reset();
         onClose();
-    };
-
-    const handleClose = () => {
-        reset();
-        onClose();
-    };
+    }, [reset, onClose]);
 
     return (
         <>
@@ -274,7 +321,8 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                                             .map((province) => (
                                                 <option
                                                     key={province.ProvinceID}
-                                                    value={formatDropdownValue(province.ProvinceID, province.ProvinceName)}
+                                                    value={province.ProvinceName}
+                                                    data-id={province.ProvinceID}
                                                 >
                                                     {province.ProvinceName}
                                                 </option>
@@ -299,14 +347,15 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                                             field.onChange(e);
                                             handleDistrictChange(e);
                                         }}
-                                        disabled={!selectedProvince}
-                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince ? "bg-gray-100" : ""}`}
+                                        disabled={!selectedProvinceId}
+                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvinceId ? "bg-gray-100" : ""}`}
                                     >
                                         <option value="">-- Chọn quận/huyện --</option>
                                         {districts.map((district) => (
                                             <option
                                                 key={district.DistrictID}
-                                                value={formatDropdownValue(district.DistrictID, district.DistrictName)}
+                                                value={district.DistrictName}
+                                                data-id={district.DistrictID}
                                             >
                                                 {district.DistrictName}
                                             </option>
@@ -331,14 +380,15 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                                             field.onChange(e);
                                             handleWardChange(e);
                                         }}
-                                        disabled={!selectedDistrict}
-                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict ? "bg-gray-100" : ""}`}
+                                        disabled={!selectedDistrictId}
+                                        className={`w-full rounded-lg border px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 ${errors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrictId ? "bg-gray-100" : ""}`}
                                     >
                                         <option value="">-- Chọn phường/xã --</option>
                                         {wards.map((ward) => (
                                             <option
                                                 key={ward.WardCode}
-                                                value={formatDropdownValue(ward.WardCode, ward.WardName)}
+                                                value={ward.WardName}
+                                                data-id={ward.WardCode}
                                             >
                                                 {ward.WardName}
                                             </option>
