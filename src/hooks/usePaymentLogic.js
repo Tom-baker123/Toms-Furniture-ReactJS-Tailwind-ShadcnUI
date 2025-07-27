@@ -31,6 +31,27 @@ const usePaymentLogic = (contexts) => {
     const [districtName, setDistrictName] = useState("");
     const [wardName, setWardName] = useState("");
 
+    // Nếu addresses có dữ liệu, tự động set dropdown và disable
+    const isAddressLocked = addresses && addresses.length > 0;
+
+    // Khi addresses thay đổi và có dữ liệu, set lại dropdown
+    useEffect(() => {
+        const setAddressDropdowns = async () => {
+            if (isAddressLocked) {
+                const addr = addresses[0];
+                setSelectedProvince(formatDropdownValue(addr.cityCode, addr.city));
+                setProvinceName(addr.city);
+                await fetchDistricts(addr.cityCode);
+                setSelectedDistrict(formatDropdownValue(addr.districtCode, addr.district));
+                setDistrictName(addr.district);
+                await fetchWards(addr.districtCode);
+                setSelectedWard(formatDropdownValue(addr.wardCode, addr.ward));
+                setWardName(addr.ward);
+            }
+        };
+        setAddressDropdowns();
+    }, [isAddressLocked, addresses]);
+
     // Thông tin người nhận cho guest
     const [customerInfo, setCustomerInfo] = useState({
         fullName: "",
@@ -353,6 +374,7 @@ const usePaymentLogic = (contexts) => {
         cartLoading,
         cartError,
         authStatus,
+        isAddressLocked,
 
         // Handlers
         handleSaveAddress,

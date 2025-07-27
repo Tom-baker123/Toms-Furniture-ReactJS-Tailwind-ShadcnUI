@@ -12,6 +12,7 @@ const ShippingAddressForm = ({
     handleProvinceChange,
     handleDistrictChange,
     handleWardChange,
+    isAddressLocked,
 }) => {
     return (
         <div className="rounded-lg border bg-white p-6">
@@ -23,10 +24,10 @@ const ShippingAddressForm = ({
                         value={selectedProvince || ""}
                         onChange={(e) => {
                             const { id, name } = parseDropdownValue(e.target.value);
-                            console.log("Chọn tỉnh:", { id, name });
                             handleProvinceChange(id, name);
                         }}
-                        className={`w-full rounded border px-3 py-2 ${validationErrors.province ? "border-red-500" : "border-gray-300"}`}
+                        disabled={isAddressLocked}
+                        className={`w-full rounded border px-3 py-2 ${validationErrors.province ? "border-red-500" : "border-gray-300"} ${isAddressLocked ? "bg-gray-100" : ""}`}
                     >
                         <option value="">-- Chọn tỉnh --</option>
                         {provinces
@@ -51,11 +52,10 @@ const ShippingAddressForm = ({
                         value={selectedDistrict || ""}
                         onChange={(e) => {
                             const { id, name } = parseDropdownValue(e.target.value);
-                            console.log("Chọn quận:", { id, name });
                             handleDistrictChange(id, name);
                         }}
-                        disabled={!selectedProvince}
-                        className={`w-full rounded border px-3 py-2 ${validationErrors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince ? "bg-gray-100" : ""}`}
+                        disabled={!selectedProvince || isAddressLocked}
+                        className={`w-full rounded border px-3 py-2 ${validationErrors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince || isAddressLocked ? "bg-gray-100" : ""}`}
                     >
                         <option value="">-- Chọn quận --</option>
                         {districts.map((district) => (
@@ -75,11 +75,10 @@ const ShippingAddressForm = ({
                         value={selectedWard || ""}
                         onChange={(e) => {
                             const { id, name } = parseDropdownValue(e.target.value);
-                            console.log("Chọn phường:", { id, name });
                             handleWardChange(id, name);
                         }}
-                        disabled={!selectedDistrict}
-                        className={`w-full rounded border px-3 py-2 ${validationErrors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict ? "bg-gray-100" : ""}`}
+                        disabled={!selectedDistrict || isAddressLocked}
+                        className={`w-full rounded border px-3 py-2 ${validationErrors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict || isAddressLocked ? "bg-gray-100" : ""}`}
                     >
                         <option value="">-- Chọn phường --</option>
                         {wards.map((ward) => (

@@ -41,14 +41,14 @@ const CartSummary = ({ cart, cartLoading, imageErrors, handleImageError }) => {
                         <div className="flex-1">
                             <h3 className="text-sm font-medium">{item.productName}</h3>
                             <p className="text-sm text-gray-600">
-                                {(item.productVariant?.discountedPrice ?? item.productVariant?.originalPrice ?? 0).toLocaleString()}$ x{" "}
+                                {(item.productVariant?.discountedPrice ?? item.productVariant?.originalPrice ?? 0).toLocaleString()} đ x{" "}
                                 {item.quantity}
                             </p>
                         </div>
                         <div className="text-right">
                             <p className="font-medium">
                                 {((item.productVariant?.discountedPrice ?? item.productVariant?.originalPrice ?? 0) * item.quantity).toLocaleString()}
-                                $
+                                đ
                             </p>
                         </div>
                     </div>
