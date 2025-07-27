@@ -107,14 +107,33 @@ export const createProduct = async (productData, sliders) => {
         }
 
         // Bước 2: Gửi request tạo sản phẩm
-        const response = await fetch(`${API_BASE_URL}/Product`, {
+        // Debug: Log dữ liệu trước khi gửi
+        console.log("Creating product with data:", productData);
+
+        // Try with productModel wrapper first
+        let requestBody = { productModel: productData };
+
+        let response = await fetch(`${API_BASE_URL}/Product`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify(productData),
+            body: JSON.stringify(requestBody),
         });
+
+        // If failed with productModel wrapper, try direct data
+        if (!response.ok) {
+            console.log("Failed with productModel wrapper, trying direct data...");
+            response = await fetch(`${API_BASE_URL}/Product`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(productData),
+            });
+        }
 
         if (!response.ok) {
             const contentType = response.headers.get("content-type");
@@ -256,14 +275,33 @@ export const updateProduct = async (productData, sliders) => {
         }
 
         // Bước 3: Gửi request cập nhật sản phẩm
-        const response = await fetch(`${API_BASE_URL}/Product`, {
+        // Debug: Log dữ liệu trước khi gửi
+        console.log("Updating product with data:", productData);
+
+        // Try with productModel wrapper first
+        let requestBody = { productModel: productData };
+
+        let response = await fetch(`${API_BASE_URL}/Product`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify(productData),
+            body: JSON.stringify(requestBody),
         });
+
+        // If failed with productModel wrapper, try direct data
+        if (!response.ok) {
+            console.log("Failed with productModel wrapper, trying direct data...");
+            response = await fetch(`${API_BASE_URL}/Product`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(productData),
+            });
+        }
 
         if (!response.ok) {
             const contentType = response.headers.get("content-type");

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { getUserById } from "../api/api";
 
+import { formatDropdownValue, parseDropdownValue } from "../lib/addressDropdownUtils";
+
 const usePaymentLogic = (contexts) => {
     const {
         provinces,
@@ -21,9 +23,13 @@ const usePaymentLogic = (contexts) => {
 
     // State variables
     const [user, setUser] = useState(null);
+    // Lưu value dạng "id|name" để select value khớp option
     const [selectedProvince, setSelectedProvince] = useState("");
     const [selectedDistrict, setSelectedDistrict] = useState("");
     const [selectedWard, setSelectedWard] = useState("");
+    const [provinceName, setProvinceName] = useState("");
+    const [districtName, setDistrictName] = useState("");
+    const [wardName, setWardName] = useState("");
 
     // Thông tin người nhận cho guest
     const [customerInfo, setCustomerInfo] = useState({
@@ -35,7 +41,7 @@ const usePaymentLogic = (contexts) => {
     });
 
     // Phương thức thanh toán
-    const [paymentMethod, setPaymentMethod] = useState("cod");
+    const [paymentMethod, setPaymentMethod] = useState("");
 
     // Validation errors
     const [validationErrors, setValidationErrors] = useState({});
@@ -82,32 +88,45 @@ const usePaymentLogic = (contexts) => {
     };
 
     // Location change handlers
-    const handleProvinceChange = async (provinceId) => {
-        console.log("Selected Province ID:", provinceId, typeof provinceId);
-        setSelectedProvince(provinceId);
+    // provinceName, districtName, wardName là string
+    // provinceId, provinceName là string
+
+
+    const handleProvinceChange = async (provinceId, provinceName) => {
+        const value = provinceId ? formatDropdownValue(provinceId, provinceName) : "";
+        setSelectedProvince(value);
+        setProvinceName(provinceName);
         setSelectedDistrict("");
+        setDistrictName("");
         setSelectedWard("");
-        await fetchDistricts(provinceId);
+        setWardName("");
+        if (provinceId) await fetchDistricts(provinceId);
     };
 
-    const handleDistrictChange = async (districtId) => {
-        console.log("Selected District ID:", districtId, typeof districtId);
-        setSelectedDistrict(districtId);
+    const handleDistrictChange = async (districtId, districtName) => {
+        const value = districtId ? formatDropdownValue(districtId, districtName) : "";
+        setSelectedDistrict(value);
+        setDistrictName(districtName);
         setSelectedWard("");
-        await fetchWards(districtId);
+        setWardName("");
+        if (districtId) await fetchWards(districtId);
     };
 
-    const handleWardChange = (wardCode) => {
-        console.log("Selected Ward Code:", wardCode, typeof wardCode);
-        setSelectedWard(wardCode);
+    const handleWardChange = (wardId, wardName) => {
+        const value = wardId ? formatDropdownValue(wardId, wardName) : "";
+        setSelectedWard(value);
+        setWardName(wardName);
     };
 
     // Fetch shipping fee when location is selected
     useEffect(() => {
-        if (selectedDistrict && selectedWard) {
-            fetchShippingFee(selectedDistrict, selectedWard, cart);
+        // Dùng parseDropdownValue để lấy id chuẩn
+        const districtId = parseDropdownValue(selectedDistrict).id;
+        const wardId = parseDropdownValue(selectedWard).id;
+        if (districtId && wardId) {
+            fetchShippingFee(districtId, wardId, cart);
         }
-    }, [selectedDistrict, selectedWard]);
+    }, [selectedDistrict, selectedWard, cart]);
 
     // Xử lý thay đổi thông tin khách hàng
     const handleCustomerInfoChange = (e) => {
@@ -304,6 +323,9 @@ const usePaymentLogic = (contexts) => {
         selectedProvince,
         selectedDistrict,
         selectedWard,
+        provinceName,
+        districtName,
+        wardName,
         customerInfo,
         paymentMethod,
         setPaymentMethod,

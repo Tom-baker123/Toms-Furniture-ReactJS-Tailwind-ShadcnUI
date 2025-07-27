@@ -20,17 +20,11 @@ const ShippingAddressForm = ({
                 <div>
                     <label className="mb-1 block text-sm font-medium">Tỉnh / Thành phố *</label>
                     <select
-                        value={
-                            provinces.find((p) => String(p.ProvinceID) === String(selectedProvince))
-                                ? formatDropdownValue(
-                                      selectedProvince,
-                                      provinces.find((p) => String(p.ProvinceID) === String(selectedProvince)).ProvinceName,
-                                  )
-                                : ""
-                        }
+                        value={selectedProvince || ""}
                         onChange={(e) => {
-                            const { id } = parseDropdownValue(e.target.value);
-                            handleProvinceChange(id);
+                            const { id, name } = parseDropdownValue(e.target.value);
+                            console.log("Chọn tỉnh:", { id, name });
+                            handleProvinceChange(id, name);
                         }}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.province ? "border-red-500" : "border-gray-300"}`}
                     >
@@ -54,17 +48,11 @@ const ShippingAddressForm = ({
                 <div>
                     <label className="mb-1 block text-sm font-medium">Quận / Huyện *</label>
                     <select
-                        value={
-                            districts.find((d) => String(d.DistrictID) === String(selectedDistrict))
-                                ? formatDropdownValue(
-                                      selectedDistrict,
-                                      districts.find((d) => String(d.DistrictID) === String(selectedDistrict)).DistrictName,
-                                  )
-                                : ""
-                        }
+                        value={selectedDistrict || ""}
                         onChange={(e) => {
-                            const { id } = parseDropdownValue(e.target.value);
-                            handleDistrictChange(id);
+                            const { id, name } = parseDropdownValue(e.target.value);
+                            console.log("Chọn quận:", { id, name });
+                            handleDistrictChange(id, name);
                         }}
                         disabled={!selectedProvince}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.district ? "border-red-500" : "border-gray-300"} ${!selectedProvince ? "bg-gray-100" : ""}`}
@@ -84,14 +72,11 @@ const ShippingAddressForm = ({
                 <div>
                     <label className="mb-1 block text-sm font-medium">Phường / Xã *</label>
                     <select
-                        value={
-                            wards.find((w) => String(w.WardCode) === String(selectedWard))
-                                ? formatDropdownValue(selectedWard, wards.find((w) => String(w.WardCode) === String(selectedWard)).WardName)
-                                : ""
-                        }
+                        value={selectedWard || ""}
                         onChange={(e) => {
-                            const { id } = parseDropdownValue(e.target.value);
-                            handleWardChange(id);
+                            const { id, name } = parseDropdownValue(e.target.value);
+                            console.log("Chọn phường:", { id, name });
+                            handleWardChange(id, name);
                         }}
                         disabled={!selectedDistrict}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.ward ? "border-red-500" : "border-gray-300"} ${!selectedDistrict ? "bg-gray-100" : ""}`}

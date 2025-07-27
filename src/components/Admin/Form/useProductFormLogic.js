@@ -136,17 +136,34 @@ export function useProductFormLogic() {
         try {
             const productPayload = {
                 ...data,
+                // Convert string IDs to numbers, but handle empty strings properly
+                Id: data.Id ? Number(data.Id) : undefined,
+                BrandId: data.BrandId && data.BrandId !== "" ? Number(data.BrandId) : null,
+                CategoryId: data.CategoryId && data.CategoryId !== "" ? Number(data.CategoryId) : null,
+                CountriesId: data.CountriesId && data.CountriesId !== "" ? Number(data.CountriesId) : null,
+                SupplierId: data.SupplierId && data.SupplierId !== "" ? Number(data.SupplierId) : null,
+                // Ensure ProductName is not empty
+                ProductName: data.ProductName?.trim() || "",
+                SpecificationDescription: data.SpecificationDescription?.trim() || "",
+                // Convert IsActive to boolean if it's a string
+                IsActive: typeof data.IsActive === 'string' ?
+                    (data.IsActive === 'true' ? true : false) :
+                    data.IsActive,
                 ProductVariants: data.ProductVariants.map((pv) => ({
                     ...pv,
-                    OriginalPrice: Number(pv.OriginalPrice),
-                    DiscountedPrice: pv.DiscountedPrice ? Number(pv.DiscountedPrice) : null,
-                    StockQty: Number(pv.StockQty),
-                    ColorId: Number(pv.ColorId),
-                    SizeId: Number(pv.SizeId),
-                    MaterialId: Number(pv.MaterialId),
-                    UnitId: Number(pv.UnitId),
+                    Id: pv.Id ? Number(pv.Id) : 0,
+                    OriginalPrice: Number(pv.OriginalPrice) || 0,
+                    DiscountedPrice: pv.DiscountedPrice && pv.DiscountedPrice !== "" ? Number(pv.DiscountedPrice) : null,
+                    StockQty: Number(pv.StockQty) || 0,
+                    ColorId: pv.ColorId && pv.ColorId !== "" ? Number(pv.ColorId) : null,
+                    SizeId: pv.SizeId && pv.SizeId !== "" ? Number(pv.SizeId) : null,
+                    MaterialId: pv.MaterialId && pv.MaterialId !== "" ? Number(pv.MaterialId) : null,
+                    UnitId: pv.UnitId && pv.UnitId !== "" ? Number(pv.UnitId) : null,
                 })),
             };
+
+            // Debug: Log payload before sending
+            console.log("Product payload to be sent:", productPayload);
             const formatSliderIndex = (index) => String(index + 1).padStart(3, "0");
             const sliders = images.map((img, index) => ({
                 imageFile: img.file,

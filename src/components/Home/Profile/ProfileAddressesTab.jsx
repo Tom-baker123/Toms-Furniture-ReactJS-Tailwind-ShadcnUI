@@ -3,7 +3,7 @@ import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import { Plus, MapPin } from "lucide-react";
 import AddressModal from "@/components/Home/AddressModal";
 import { useGHN } from "../../../context/GHNContext";
-import { formatAddressDisplay } from "../../../lib/addressDropdownUtils";
+import { formatAddressDisplay, parseDropdownValue } from "../../../lib/addressDropdownUtils";
 
 const ProfileAddressesTab = ({
     savedAddresses,
@@ -20,26 +20,43 @@ const ProfileAddressesTab = ({
 
     // Ensure districts and wards are loaded for all addresses (for name lookup)
     useEffect(() => {
-        // Get all unique province and district IDs from addresses
-        const provinceIds = Array.from(new Set(savedAddresses.map((addr) => addr.city).filter(Boolean)));
-        const districtIds = Array.from(new Set(savedAddresses.map((addr) => addr.district).filter(Boolean)));
+        // Get all unique province and district IDs from addresses, parse to get only numeric IDs
+        const provinceIds = Array.from(
+            new Set(
+                savedAddresses
+                    .map((addr) => addr.city)
+                    .filter(Boolean)
+                    .map((city) => parseDropdownValue(city).id) // Tách lấy chỉ ID số
+                    .filter(Boolean),
+            ),
+        );
+        const districtIds = Array.from(
+            new Set(
+                savedAddresses
+                    .map((addr) => addr.district)
+                    .filter(Boolean)
+                    .map((district) => parseDropdownValue(district).id) // Tách lấy chỉ ID số
+                    .filter(Boolean),
+            ),
+        );
+
         // Fetch districts for all provinces
         provinceIds.forEach((pid) => {
             if (pid && !districts.some((d) => String(d.ProvinceID) === String(pid))) {
-                fetchDistricts(pid);
+                fetchDistricts(pid); // Giờ đây truyền chỉ ID số
             }
         });
         // Fetch wards for all districts
         districtIds.forEach((did) => {
             if (did && !wards.some((w) => String(w.DistrictID) === String(did))) {
-                fetchWards(did);
+                fetchWards(did); // Giờ đây truyền chỉ ID số
             }
         });
     }, [savedAddresses]);
     return (
         <div>
             <div className="mb-8 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-black">Saved Addresses</h2>
+                <h2 className="text-2xl font-bold text-black">Thông tin địa chỉ</h2>
                 <ButtonHovCT
                     onClick={() => {
                         setEditingAddress(null);
@@ -53,7 +70,7 @@ const ProfileAddressesTab = ({
                 >
                     <div className="flex items-center space-x-2">
                         <Plus className="h-4 w-4" />
-                        <span>Add New Address</span>
+                        <span>Thêm địa chỉ</span>
                     </div>
                 </ButtonHovCT>
             </div>
@@ -80,9 +97,9 @@ const ProfileAddressesTab = ({
                                         <p className="text-gray-600">{address.phone || address.phoneNumber}</p>
                                         <p className="text-gray-600">{address.address || address.addressDetailRecipient}</p>
                                         <p className="text-gray-600">
-                                            <b>City:</b> {formatAddressDisplay(getProvinceName(address.city))} - <b>District:</b>{" "}
-                                            {formatAddressDisplay(getDistrictName(address.district))} - <b>Ward:</b>{" "}
-                                            {formatAddressDisplay(getWardName(address.ward))}
+                                            <b>City:</b> {formatAddressDisplay(getProvinceName(parseDropdownValue(address.city).id))} -{" "}
+                                            <b>District:</b> {formatAddressDisplay(getDistrictName(parseDropdownValue(address.district).id))} -{" "}
+                                            <b>Ward:</b> {formatAddressDisplay(getWardName(parseDropdownValue(address.ward).id))}
                                         </p>
                                     </div>
                                 </div>

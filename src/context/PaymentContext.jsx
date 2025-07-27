@@ -42,15 +42,27 @@ export const PaymentProvider = ({ children }) => {
         return result;
     };
 
-    // Tạo mới địa chỉ
+    // Tạo mới địa chỉ: chỉ truyền city, district, ward là tên
     const addAddress = async (addressData) => {
-        const result = await fetchData(createOrderAddress, "addAddress", addressData, (res) => res);
+        const payload = {
+            ...addressData,
+            city: addressData.city,
+            district: addressData.district,
+            ward: addressData.ward,
+        };
+        const result = await fetchData(createOrderAddress, "addAddress", payload, (res) => res);
         return result;
     };
 
-    // Cập nhật địa chỉ
+    // Cập nhật địa chỉ: chỉ truyền city, district, ward là tên
     const updateAddress = async (addressData) => {
-        const result = await fetchData(updateOrderAddress, "updateAddress", addressData, (res) => res);
+        const payload = {
+            ...addressData,
+            city: addressData.city,
+            district: addressData.district,
+            ward: addressData.ward,
+        };
+        const result = await fetchData(updateOrderAddress, "updateAddress", payload, (res) => res);
         return result;
     };
 

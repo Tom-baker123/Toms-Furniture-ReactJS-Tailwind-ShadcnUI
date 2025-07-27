@@ -9,6 +9,12 @@ const SelectPaymentMethodForm = ({ paymentMethod, setPaymentMethod }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if ((!paymentMethod || paymentMethod === "") && paymentMethods && paymentMethods.length > 0) {
+            setPaymentMethod(String(paymentMethods[0].id));
+        }
+    }, [paymentMethod, paymentMethods, setPaymentMethod]);
+
     return (
         <div className="rounded-lg border bg-white p-6">
             <h2 className="mb-4 text-lg font-semibold">Phương thức thanh toán</h2>

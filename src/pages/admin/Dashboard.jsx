@@ -1,4 +1,3 @@
-import { getAllProducts } from "@/api/service/ProductService"; 
 import AreaChartTemplate from "@/components/Admin/Chart/AreaChart";
 import BarChartTemplate from "@/components/Admin/Chart/BarChart";
 import PieChartTemplate from "@/components/Admin/Chart/PieChart";
@@ -6,46 +5,31 @@ import { FooterAdmin } from "@/components/Admin/FooterAdmin";
 import { overviewData, topProducts } from "@/constants";
 import { useTheme } from "@/context/ThemeContext";
 import { Package, PencilLine, Star, Trash, TrendingUp } from "lucide-react";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 
 const Dashboard = () => {
     const [allProducts, setAllProducts] = useState({ items: [] });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState();
     const { theme } = useTheme();
+    const ProductsListAPI = useLoaderData();
 
     useEffect(() => {
-        const fetchAllProducts = async () => {
-            setLoading(true);
-            try {
-                const data = await getAllProducts();
-                setAllProducts(data);
-            } catch (err) {
-                setError("Không thể tải sản phẩm: " + err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAllProducts();
-    }, []);
+        setAllProducts(ProductsListAPI);
+    }, [ProductsListAPI]);
 
     return (
         <div className="flex flex-col gap-y-4">
             {/* Title */}
             <h1 className="title">Dashboard</h1>
 
-            <div className="grid grid-cols-1 gap-4 ">
+            <div className="grid grid-cols-1 gap-4">
                 <div className="card">
                     <h1 className="card-title">Sơ đồ piechart Cho Tổng số lượng sản phẩm theo loại gỗ</h1>
                     <PieChartTemplate apiData={allProducts} />
                 </div>
             </div>
-            <div className="card">
-                <h1 className="card-title">Sơ đồ piechart Cho Tổng số lượng sản phẩm theo loại gỗ</h1>
-                <BarChartTemplate />
-            </div>
+
+            <BarChartTemplate />
 
             {/* Khu vực hiển thị grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">

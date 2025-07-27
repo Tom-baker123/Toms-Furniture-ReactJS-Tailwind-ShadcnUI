@@ -1,9 +1,5 @@
 import { useCallback } from "react";
 
-/**
- * Custom hook để fetch dữ liệu từ API và cập nhật state
- * @returns {fetchData} - Hàm fetch tổng quát
- */
 const useApiFetch = (setLoading, setError, setState) => {
     const fetchData = useCallback(
         async (apiFunc, setterKey, params = undefined, postProcess) => {
