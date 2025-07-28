@@ -34,6 +34,7 @@ import {
     UserManagement,
     PromotionTypeManagement,
     WebsiteManagement,
+    RoomTypeManagement,
     TestPage, // Dành cho test
 } from "../pages";
 import { createBrowserRouter, RouterProvider, Outlet, redirect, useNavigate, Navigate } from "react-router-dom";
@@ -85,6 +86,8 @@ import OrderForm from "@/components/Admin/Form/OrderForm";
 import { getAllOrders, getOrderById } from "@/api/service/PaymentService";
 import { getAllTests } from "@/api/service/TestService";
 import OrderDetailsForm from "@/components/Admin/Form/OrderDetailsForm";
+import { getAllRoomTypes, getRoomTypeById } from "@/api/service/RoomTypeService";
+import RoomTypeForm from "@/components/Admin/Form/RoomTypeForm";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -420,6 +423,27 @@ const router = createBrowserRouter([
                 path: "test",
                 element: <TestPage />,
                 loader: async () => await getAllTests(),
+            },
+            // [20.] Trang loại phòng
+            {
+                path: "room_types",
+                children: [
+                    {
+                        index: true,
+                        element: <RoomTypeManagement />,
+                        loader: async () => await getAllRoomTypes(),
+                    },
+                    {
+                        path: "New_RoomType",
+                        element: <RoomTypeForm />,
+                        loader: async () => ({}) 
+                    },
+                    {
+                        path: "Edit_RoomType/:id",
+                        element: <RoomTypeForm />,
+                        loader: async ({ params }) => await getRoomTypeById(params.id),
+                    },
+                ],
             },
             // Không tìm thấy trang phù hợp
             { path: "*", element: <PageNotFound /> },

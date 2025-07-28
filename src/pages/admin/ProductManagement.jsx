@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import ProductVariantsModalContent from "@/components/Admin/ModalContent/ProductVariantsModalContent";
 import { Eye, PencilLine, Trash } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { deleteProduct } from "@/api/service/ProductService"; 
+import { deleteProduct, updateProduct } from "@/api/service/ProductService";
 import toast from "react-hot-toast";
 import FormatDatetime from "@/hooks/FormatDatetime";
 import { useAdminModal } from "@/context/AdminModalContext";
-
+import buildProductUpdatePayload from "@/lib/buildProductUpdatePayload";
 // Component hiển thị danh sách sản phẩm
 // - Hiển thị bảng với thông tin sản phẩm và số lượng biến thể
 // - Các cột: ID, Image, Product Name, Variants Count, Status, Created Date, Updated Date, Actions
 const ProductManagement = () => {
-    const products = useLoaderData()?.items; // Lấy dữ liệu từ loader
+    const [products, setProducts] = useState(useLoaderData()?.items);
     const navigate = useNavigate();
     const { openModal } = useAdminModal();
     // Hàm xử lý xóa sản phẩm
@@ -29,6 +29,22 @@ const ProductManagement = () => {
     // Hàm mở modal hiển thị biến thể
     const handleShowVariants = (variants) => {
         openModal(<ProductVariantsModalContent variants={variants} />, { className: "max-w-2xl" });
+    };
+
+    // Cập nhật trạng thái trực tiếp
+    const handleToggleActive = async (product) => {
+        try {
+            const productData = buildProductUpdatePayload(product, { isActive: !product.isActive });
+            const updated = await updateProduct(productData);
+            setProducts((prev) =>
+                prev.map((p) =>
+                    p.id === product.id ? { ...p, isActive: !p.isActive, updatedDate: updated.product?.updatedDate || new Date().toISOString() } : p,
+                ),
+            );
+            toast.success("Status updated!");
+        } catch (error) {
+            toast.error("Failed to update status");
+        }
     };
 
     return (
@@ -97,11 +113,17 @@ const ProductManagement = () => {
                                             </button>
                                         </td>
                                         <td className="table-cell px-4 py-2">
-                                            {product.isActive ? (
-                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Active</div>
-                                            ) : (
-                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Inactive</div>
-                                            )}
+                                            <button
+                                                className={`relative inline-flex h-6 w-12 items-center rounded-full transition ${product.isActive ? "bg-teal-500" : "bg-gray-300"}`}
+                                                onClick={() => handleToggleActive(product)}
+                                                title="Toggle status"
+                                            >
+                                                <span
+                                                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${product.isActive ? "translate-x-6" : "translate-x-1"}`}
+                                                />
+                                                <span className="absolute left-1 text-xs font-bold text-gray-400 select-none"></span>
+                                                <span className="absolute right-1 text-xs font-bold text-teal-700 select-none"></span>
+                                            </button>
                                         </td>
                                         <td className="table-cell px-4 py-2">{FormatDatetime(product.createdDate) || "N/A"}</td>
                                         <td className="table-cell px-4 py-2">{FormatDatetime(product.updatedDate) || "N/A"}</td>

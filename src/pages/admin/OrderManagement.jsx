@@ -22,7 +22,7 @@ const OrderManagement = () => {
                             <thead className="table-header bg-gray-50">
                                 <tr className="table-row">
                                     <th className="table-head px-4 py-2 whitespace-nowrap">#</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">User ID</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">User Name</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Total</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Status</th>
                                     <th className="table-head px-4 py-2 whitespace-nowrap">Payment Status</th>
@@ -38,7 +38,7 @@ const OrderManagement = () => {
                                         className="table-row hover:bg-gray-50"
                                     >
                                         <td className="table-cell px-4 py-2">{order.id}</td>
-                                        <td className="table-cell px-4 py-2">{order.userId}</td>
+                                        <td className="table-cell px-4 py-2">{order.userName}</td>
                                         <td className="table-cell px-4 py-2">{order.total?.toLocaleString() || 0}</td>
                                         <td className="table-cell px-4 py-2">
                                             {order.isActive ? (
@@ -72,7 +72,7 @@ const OrderManagement = () => {
                                             <div className="flex items-center gap-x-2">
                                                 {/* Thêm các nút actions nếu cần */}
                                                 <button
-                                                    className="flex items-center gap-x-1 whitespace-nowrap cursor-pointer border-r pr-2 text-blue-500 hover:text-blue-700"
+                                                    className="flex cursor-pointer items-center gap-x-1 border-r pr-2 whitespace-nowrap text-blue-500 hover:text-blue-700"
                                                     onClick={() => navigate("/admin/order/edit_order/" + order.id)}
                                                 >
                                                     <Pencil size={16} />

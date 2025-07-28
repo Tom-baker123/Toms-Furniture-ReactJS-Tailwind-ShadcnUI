@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { PencilLine, Trash, ChevronUp, ChevronDown } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { deleteUser } from "@/api/api";
+import { deleteUser, updateUser } from "@/api/api";
+import buildUserUpdatePayload from "@/lib/buildUserUpdatePayload";
 import toast from "react-hot-toast";
 import FormatDatetime from "@/hooks/FormatDatetime";
 
 const UserManagement = () => {
-  const data = useLoaderData();
+    const data = useLoaderData();
     const users = data?.users || []; // Lấy danh sách người dùng từ loader
     const navigate = useNavigate();
 
@@ -26,6 +27,18 @@ const UserManagement = () => {
             } catch (error) {
                 toast.error(`Lỗi khi xóa người dùng: ${error.message}`);
             }
+        }
+    };
+
+    // Hàm cập nhật trạng thái trực tiếp
+    const handleToggleActive = async (user) => {
+        try {
+            const payload = buildUserUpdatePayload(user);
+            await updateUser(user.id, payload);
+            toast.success("Cập nhật trạng thái thành công!");
+            navigate(0); // Reload trang để cập nhật danh sách
+        } catch (error) {
+            toast.error("Cập nhật trạng thái thất bại");
         }
     };
 
@@ -147,23 +160,30 @@ const UserManagement = () => {
                             </thead>
                             <tbody className="table-body">
                                 {sortedUsers.map((user) => (
-                                    <tr key={user.id} className="table-row">
+                                    <tr
+                                        key={user.id}
+                                        className="table-row"
+                                    >
                                         <td className="table-cell">{user.id}</td>
                                         <td className="table-cell">{user.userName}</td>
                                         <td className="table-cell">{user.email}</td>
                                         <td className="table-cell">{user.gender}</td>
                                         <td className="table-cell">{user.roleName}</td>
                                         <td className="table-cell">
-                                            {user.isActive ? (
-                                                <div className="w-fit rounded-full bg-teal-100 px-5 py-1 text-sm text-teal-700">Kích hoạt</div>
-                                            ) : (
-                                                <div className="w-fit rounded-full bg-red-100 px-5 py-1 text-sm text-red-700">Chưa kích hoạt</div>
-                                            )}
+                                            <button
+                                                className={`relative inline-flex h-6 w-12 items-center rounded-full transition ${user.isActive ? "bg-teal-500" : "bg-gray-300"}`}
+                                                onClick={() => handleToggleActive(user)}
+                                                title="Toggle status"
+                                            >
+                                                <span
+                                                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${user.isActive ? "translate-x-6" : "translate-x-1"}`}
+                                                />
+                                                <span className="absolute left-1 text-xs font-bold text-gray-400 select-none"></span>
+                                                <span className="absolute right-1 text-xs font-bold text-teal-700 select-none"></span>
+                                            </button>
                                         </td>
                                         <td className="table-cell">{FormatDatetime(user.createdDate) || "N/A"}</td>
-                                        <td className="table-cell">
-                                            {FormatDatetime(user.updatedDate) || "N/A"}
-                                        </td>
+                                        <td className="table-cell">{FormatDatetime(user.updatedDate) || "N/A"}</td>
                                         <td className="table-cell">
                                             <div className="flex items-center gap-x-4">
                                                 <button
@@ -191,4 +211,4 @@ const UserManagement = () => {
     );
 };
 
-export default UserManagement
+export default UserManagement;
