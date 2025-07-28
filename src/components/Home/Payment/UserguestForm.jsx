@@ -3,7 +3,7 @@ import React from "react";
 const UserguestForm = ({ customerInfo, validationErrors, handleCustomerInfoChange }) => {
     return (
         <div className="rounded-lg border bg-white p-6">
-            <h2 className="mb-4 text-lg font-semibold">Thông tin khách hàng</h2>
+            <h2 className="mb-4 text-lg font-semibold">Thông tin khách vãng lai</h2>
             <div className="space-y-4">
                 <div>
                     <label className="mb-1 block text-sm font-medium">Họ và tên *</label>

@@ -22,6 +22,7 @@ import {
     DiamondPercent,
     Store,
     StoreIcon,
+    BedDouble,
 } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
@@ -66,6 +67,12 @@ export const navbarLinks = [
                 // icon: PackagePlus,
                 icon: ScrollText,
                 path: "/admin/categories",
+            },
+            {
+                label: "Rooom Types",
+                // icon: PackagePlus,
+                icon: BedDouble,
+                path: "/admin/room_types",
             },
             {
                 label: "Inventory",

@@ -319,15 +319,24 @@ const usePaymentLogic = (contexts) => {
             // Sửa điều kiện để nhận cả số, chuỗi, hoặc 'vnpay' cho VNPAY
             const isVnpay = paymentMethod === "vnpay" || paymentMethod === 2 || paymentMethod === "2";
             if (isVnpay && response?.data?.paymentUrl) {
-                toast.success("Redirecting to VNPAY payment page...");
+                toast.success("Bạn đã đặt hàng thành công! Đang chuyển hướng đến cổng thanh toán...", {
+                    duration: 1200,
+                    id: "vnpay-success"
+                });
                 setTimeout(() => {
                     window.open(response.data.paymentUrl, "_self");
-                }, 1000);
-                window.__orderProcessing = false;
+                    window.__orderProcessing = false;
+                }, 1200);
                 return;
             }
             // Default: show success alert
-            alert("Order placed successfully! Thank you for your purchase.");
+            toast.success("Bạn đã đặt hàng thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.", {
+                duration: 1200,
+                id: "order-success"
+            });
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1200);
         } catch (error) {
             console.error("Error placing order:", error);
             setOrderError(typeof error === "string" ? error : error?.message || "Order placement failed. Please try again.");
