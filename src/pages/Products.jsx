@@ -8,6 +8,7 @@ import showHeader from "@/hooks/showHeader";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Grid2x2, List } from "lucide-react";
 import React, { useCallback, useContext, useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { APIContext } from "@/context/APIContext";
 import { Link, useNavigate } from "react-router-dom";
 import Pagination from "@/components/ui/Pagination";
@@ -17,6 +18,20 @@ const Products = () => {
     const showHead = showHeader();
     const navigate = useNavigate();
     const { products, loading, error, refetch } = useContext(APIContext);
+
+    // Lấy category param từ query string
+    const location = useLocation();
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const categoryParam = params.get("category");
+        console.log("categoryParam from query:", categoryParam);
+        if (categoryParam) {
+            setFilters((prev) => ({
+                ...prev,
+                categoryNames: [categoryParam],
+            }));
+        }
+    }, [location.search]);
 
     // State cho pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -38,84 +53,179 @@ const Products = () => {
         sortOrder: "",
     });
 
-    // Xử lý thay đổi bộ lọc
-    const handleFilterChange = useCallback(
-        (filterType, value) => {
-            setFilters((prevFilters) => {
-                const newFilters = { ...prevFilters };
+    // Hàm lọc và sắp xếp sản phẩm phía client
+    const getFilteredAndSortedProducts = () => {
+        if (!products?.items) return [];
 
-                // Xử lý các bộ lọc dạng danh sách (checkbox)
-                if (["category", "brand", "country", "color", "size", "material"].includes(filterType)) {
-                    const key = `${filterType}Names`;
-                    if (newFilters[key].includes(value)) {
-                        newFilters[key] = newFilters[key].filter((item) => item !== value);
-                    } else {
-                        newFilters[key] = [...newFilters[key], value];
-                    }
-                }
-                // Xử lý khoảng giá
-                else if (filterType === "price") {
-                    newFilters.minPrice = value[0];
-                    newFilters.maxPrice = value[1];
-                }
-                // Xử lý trạng thái tồn kho
-                else if (filterType === "availability") {
-                    if (value === "In stock") {
-                        newFilters.inStock = true;
-                    } else if (value === "Out of stock") {
-                        newFilters.inStock = false;
-                    } else {
-                        newFilters.inStock = null;
-                    }
-                }
-                // Xử lý sắp xếp
-                else if (filterType === "sortBy") {
-                    newFilters.sortBy = value;
-                    newFilters.sortOrder = value.includes("descending") ? "desc" : "asc";
-                }
+        let filteredProducts = [...products.items];
 
-                // Reset về trang 1 khi có thay đổi filter
-                setCurrentPage(1);
+        // Áp dụng các bộ lọc
+        if (filters.categoryNames.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => filters.categoryNames.includes(String(product.categoryId)));
+        }
 
-                // Gọi lại API với bộ lọc mới và pagination
-                console.log("[FilterChange] pageSize gửi lên API:", pageSize);
-                refetch({ ...newFilters, pageNumber: 1, pageSize });
-                return newFilters;
+        if (filters.brandNames.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => filters.brandNames.includes(product.brandName));
+        }
+
+        if (filters.countryNames.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => filters.countryNames.includes(product.countryName));
+        }
+
+        if (filters.colorNames.length > 0) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productVariants.some((variant) => filters.colorNames.includes(variant.colorName)),
+            );
+        }
+
+        if (filters.sizeNames.length > 0) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productVariants.some((variant) => filters.sizeNames.includes(variant.sizeName)),
+            );
+        }
+
+        if (filters.materialNames.length > 0) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productVariants.some((variant) => filters.materialNames.includes(variant.materialName)),
+            );
+        }
+
+        // Lọc theo giá
+        if (filters.minPrice !== null || filters.maxPrice !== null) {
+            filteredProducts = filteredProducts.filter((product) => {
+                const minPrice = Math.min(...product.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+
+                if (filters.minPrice !== null && minPrice < filters.minPrice) return false;
+                if (filters.maxPrice !== null && minPrice > filters.maxPrice) return false;
+                return true;
             });
-        },
-        [refetch, pageSize],
-    );
+        }
 
-    // Xử lý thay đổi trang với delay 2s và scroll lên toolbar
-    const handlePageChange = useCallback(
-        (newPage) => {
-            setCurrentPage(newPage);
-            // Scroll lên toolbar (header) sau khi đổi trang
-            setTimeout(() => {
-                const toolbar = document.getElementById("products-toolbar");
-                if (toolbar) {
-                    toolbar.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Lọc theo trạng thái tồn kho
+        if (filters.inStock !== null) {
+            filteredProducts = filteredProducts.filter((product) => {
+                const totalStock = product.productVariants.reduce((sum, variant) => sum + (variant.stockQty || 0), 0);
+                return filters.inStock ? totalStock > 0 : totalStock === 0;
+            });
+        }
+
+        // Sắp xếp
+        if (filters.sortBy) {
+            filteredProducts.sort((a, b) => {
+                let comparison = 0;
+
+                switch (filters.sortBy) {
+                    case "title-ascending":
+                        comparison = a.productName.localeCompare(b.productName);
+                        break;
+                    case "title-descending":
+                        comparison = b.productName.localeCompare(a.productName);
+                        break;
+                    case "price-ascending":
+                        const priceA = Math.min(...a.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                        const priceB = Math.min(...b.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                        comparison = priceA - priceB;
+                        break;
+                    case "price-descending":
+                        const priceA2 = Math.min(...a.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                        const priceB2 = Math.min(...b.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                        comparison = priceB2 - priceA2;
+                        break;
+                    case "created-ascending":
+                        comparison = new Date(a.createdAt) - new Date(b.createdAt);
+                        break;
+                    case "created-descending":
+                        comparison = new Date(b.createdAt) - new Date(a.createdAt);
+                        break;
+                    default:
+                        comparison = 0;
                 }
-            }, 0);
-            // Delay 2s trước khi gọi API
-            setTimeout(() => {
-                console.log("[PageChange] pageSize gửi lên API:", pageSize);
-                refetch({ ...filters, pageNumber: newPage, pageSize });
-            }, 500);
-        },
-        [refetch, filters, pageSize],
-    );
 
-    // Xử lý thay đổi số sản phẩm trên mỗi trang với debounce
-    const handlePageSizeChange = useCallback(
-        (newPageSize) => {
-            setPageSize(newPageSize);
+                return comparison;
+            });
+        }
+
+        return filteredProducts;
+    };
+
+    // Lấy danh sách sản phẩm đã lọc và sắp xếp
+    const filteredProducts = getFilteredAndSortedProducts();
+
+    // Tính toán pagination
+    const totalItems = filteredProducts.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+
+    // Xử lý thay đổi bộ lọc
+    const handleFilterChange = useCallback((filterType, value) => {
+        setFilters((prevFilters) => {
+            const newFilters = { ...prevFilters };
+
+            // Xử lý filter category theo id
+            if (filterType === "category") {
+                const key = "categoryNames";
+                // value phải là id (string hoặc number)
+                if (newFilters[key].includes(String(value))) {
+                    newFilters[key] = newFilters[key].filter((item) => item !== String(value));
+                } else {
+                    newFilters[key] = [...newFilters[key], String(value)];
+                }
+            }
+            // Các filter khác giữ nguyên
+            else if (["brand", "country", "color", "size", "material"].includes(filterType)) {
+                const key = `${filterType}Names`;
+                if (newFilters[key].includes(value)) {
+                    newFilters[key] = newFilters[key].filter((item) => item !== value);
+                } else {
+                    newFilters[key] = [...newFilters[key], value];
+                }
+            }
+            // Xử lý khoảng giá
+            else if (filterType === "price") {
+                newFilters.minPrice = value[0];
+                newFilters.maxPrice = value[1];
+            }
+            // Xử lý trạng thái tồn kho
+            else if (filterType === "availability") {
+                if (value === "In stock") {
+                    newFilters.inStock = true;
+                } else if (value === "Out of stock") {
+                    newFilters.inStock = false;
+                } else {
+                    newFilters.inStock = null;
+                }
+            }
+            // Xử lý sắp xếp
+            else if (filterType === "sortBy") {
+                newFilters.sortBy = value;
+                newFilters.sortOrder = value.includes("descending") ? "desc" : "asc";
+            }
+
+            // Reset về trang 1 khi có thay đổi filter
             setCurrentPage(1);
-            console.log("[PageSizeChange] pageSize gửi lên API:", newPageSize);
-            refetch({ ...filters, pageNumber: 1, pageSize: newPageSize });
-        },
-        [refetch, filters],
-    );
+            return newFilters;
+        });
+    }, []);
+
+    // Xử lý thay đổi trang
+    const handlePageChange = useCallback((newPage) => {
+        setCurrentPage(newPage);
+        // Scroll lên toolbar sau khi đổi trang
+        setTimeout(() => {
+            const toolbar = document.getElementById("products-toolbar");
+            if (toolbar) {
+                toolbar.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        }, 0);
+    }, []);
+
+    // Xử lý thay đổi số sản phẩm trên mỗi trang
+    const handlePageSizeChange = useCallback((newPageSize) => {
+        setPageSize(newPageSize);
+        setCurrentPage(1);
+    }, []);
 
     // Debounce cho input page size
     const handlePageSizeInputChange = (e) => {
@@ -136,12 +246,6 @@ const Products = () => {
         const value = e.target.value;
         handleFilterChange("sortBy", value);
     };
-
-    // Tính toán thông tin pagination
-    const totalPages = Math.ceil((products?.totalCount || 0) / pageSize);
-    const totalItems = products?.totalCount || 0;
-    // Log số lượng sản phẩm thực tế trả về
-    console.log("[Render] Số sản phẩm trả về từ API:", products?.items?.length, "pageSize:", pageSize);
 
     const goToProductDetail = (param) => {
         navigate(`/products/${param}`, { replace: true });
@@ -279,48 +383,64 @@ const Products = () => {
                                 showHead={showHead}
                                 title="Availability"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Price */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Price"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Category */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Category"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Brand */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Brand"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Country */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Country"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Color */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Color"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Size */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Size"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                             {/* Bộ lọc Material */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Material"
                                 onFilterChange={handleFilterChange}
+                                products={products?.items || []}
+                                currentFilters={filters}
                             />
                         </div>
 
@@ -329,81 +449,99 @@ const Products = () => {
                             {/* [4.2.1] Product List */}
                             <div className="grid h-fit grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
                                 {/* Hiển thị trạng thái loading */}
-                                {/* {loading && <p>Loading products...</p>} */}
+                                {loading && (
+                                    <div className="col-span-full flex items-center justify-center py-8">
+                                        <p className="text-gray-500">Loading products...</p>
+                                    </div>
+                                )}
                                 {/* Hiển thị lỗi nếu có */}
-                                {error && <p className="text-red-500">Error: {error}</p>}
-                                {/* Hiển thị danh sách sản phẩm từ API */}
-                                {products?.items?.map((product) => (
-                                    <div
-                                        key={product.id}
-                                        className="group cursor-pointer"
-                                    >
-                                        {/* Product Image */}
-                                        <div className="relative mb-3 overflow-hidden rounded-md">
-                                            <Link to={`/products/${product.id}`}>
-                                                <img
-                                                    className="aspect-square w-full rounded-md object-cover transition-transform duration-300 group-hover:scale-105"
-                                                    src={product.sliders[0]?.imageUrl || "/img/placeholder.jpg"}
-                                                    alt={product.productName}
-                                                />
-                                            </Link>
-                                            {/* Hiển thị promotion nếu có giảm giá */}
-                                            {product.productVariants.some((pv) => pv.discountedPrice < pv.originalPrice) && (
-                                                <div className="absolute top-2 left-2 rounded bg-red-500 px-2 py-1 text-xs font-bold text-white">
-                                                    Sale
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {/* Product Info */}
-                                        <div className="space-y-1">
-                                            {/* Category */}
-                                            <p className="text-sm font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
-                                            {/* Product Name */}
-                                            <Link
-                                                to={`/products/${product.id}`}
-                                                className="line-clamp-2 text-lg font-bold text-gray-900"
-                                            >
-                                                {product.productName}
-                                            </Link>
-                                            {/* Price */}
-                                            <p className="text-lg font-bold text-gray-900">
-                                                $
-                                                {Math.min(
-                                                    ...product.productVariants.map((pv) => pv.discountedPrice ?? pv.originalPrice),
-                                                ).toLocaleString()}
-                                            </p>
-                                            {/* Color Options */}
-                                            <div className="mt-2 flex items-center gap-2">
-                                                {[...new Set(product.productVariants.map((pv) => pv.colorName))].map((color, idx) => (
-                                                    <Link
-                                                        key={idx}
-                                                        className="h-5 w-5 cursor-pointer rounded-xs border border-gray-300 transition-transform hover:scale-110"
-                                                        style={{
-                                                            backgroundColor:
-                                                                product.productVariants.find((pv) => pv.colorName === color)?.colorCode || "#000",
-                                                        }}
+                                {error && (
+                                    <div className="col-span-full flex items-center justify-center py-8">
+                                        <p className="text-red-500">Error: {error}</p>
+                                    </div>
+                                )}
+                                {/* Hiển thị thông báo khi không có sản phẩm */}
+                                {!loading && !error && currentPageProducts?.length === 0 && (
+                                    <div className="col-span-full flex items-center justify-center py-8">
+                                        <p className="text-gray-500">No products found matching your criteria.</p>
+                                    </div>
+                                )}
+                                {/* Hiển thị danh sách sản phẩm đã phân trang */}
+                                {!loading &&
+                                    !error &&
+                                    currentPageProducts?.map((product) => (
+                                        <div
+                                            key={product.id}
+                                            className="group cursor-pointer"
+                                        >
+                                            {/* Product Image */}
+                                            <div className="relative mb-3 overflow-hidden rounded-md">
+                                                <Link to={`/products/${product.id}`}>
+                                                    <img
+                                                        className="aspect-square w-full rounded-md object-cover transition-transform duration-300 group-hover:scale-105"
+                                                        src={product.sliders[0]?.imageUrl || "/img/placeholder.jpg"}
+                                                        alt={product.productName}
                                                     />
-                                                ))}
+                                                </Link>
+                                                {/* Hiển thị promotion nếu có giảm giá */}
+                                                {product.productVariants.some((pv) => pv.discountedPrice < pv.originalPrice) && (
+                                                    <div className="absolute top-2 left-2 rounded bg-red-500 px-2 py-1 text-xs font-bold text-white">
+                                                        Sale
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Product Info */}
+                                            <div className="space-y-1">
+                                                {/* Category */}
+                                                <p className="text-sm font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
+                                                {/* Product Name */}
+                                                <Link
+                                                    to={`/products/${product.id}`}
+                                                    className="line-clamp-2 text-lg font-bold text-gray-900"
+                                                >
+                                                    {product.productName}
+                                                </Link>
+                                                {/* Price */}
+                                                <p className="text-lg font-bold text-gray-900">
+                                                    $
+                                                    {Math.min(
+                                                        ...product.productVariants.map((pv) => pv.discountedPrice ?? pv.originalPrice),
+                                                    ).toLocaleString()}
+                                                </p>
+                                                {/* Color Options */}
+                                                <div className="mt-2 flex items-center gap-2">
+                                                    {[...new Set(product.productVariants.map((pv) => pv.colorName))].map((color, idx) => (
+                                                        <Link
+                                                            key={idx}
+                                                            className="h-5 w-5 cursor-pointer rounded-xs border border-gray-300 transition-transform hover:scale-110"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    product.productVariants.find((pv) => pv.colorName === color)?.colorCode || "#000",
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
 
                             {/* [4.2.2] Pagination */}
-                            <div className="mt-3 flex flex-col items-center gap-4">
-                                {/* Pagination Component */}
-                                <Pagination
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                    totalItems={totalItems}
-                                    itemsPerPage={pageSize}
-                                    showPages={3} // Reduced for mobile
-                                    className="w-full"
-                                />
-                            </div>
+                            {totalItems > 0 && (
+                                <div className="mt-3 flex flex-col items-center gap-4">
+                                    {/* Pagination Component */}
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                        totalItems={totalItems}
+                                        itemsPerPage={pageSize}
+                                        showPages={3} // Reduced for mobile
+                                        className="w-full"
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

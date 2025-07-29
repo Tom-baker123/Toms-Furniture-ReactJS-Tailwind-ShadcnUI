@@ -89,7 +89,14 @@ export const createCategory = async (categoryData, imageFile) => {
         const formData = new FormData();
         formData.append("categoryVModel.CategoryName", categoryData.CategoryName);
         formData.append("categoryVModel.Descriptions", categoryData.Descriptions || "");
-        if (imageFile) {
+
+        // Thêm ParentId nếu có
+        if (categoryData.ParentId) {
+            formData.append("categoryVModel.ParentId", categoryData.ParentId.toString());
+        }
+
+        // Chỉ append imageFile khi có file thật sự
+        if (imageFile && imageFile.size > 0) {
             formData.append("imageFile", imageFile);
         }
 
@@ -104,7 +111,7 @@ export const createCategory = async (categoryData, imageFile) => {
             let errorMessage = "Failed to create category";
             if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
-                errorMessage = errorData.message || errorMessage;
+                errorMessage = JSON.stringify(errorData) || errorMessage;
             } else {
                 errorMessage = await response.text();
             }
@@ -128,6 +135,12 @@ export const updateCategory = async (categoryData, imageFile) => {
         formData.append("categoryVModel.CategoryName", categoryData.CategoryName);
         formData.append("categoryVModel.Descriptions", categoryData.Descriptions || "");
         formData.append("categoryVModel.IsActive", categoryData.IsActive.toString());
+
+        // Thêm ParentId nếu có
+        if (categoryData.ParentId) {
+            formData.append("categoryVModel.ParentId", categoryData.ParentId.toString());
+        }
+
         if (imageFile) {
             formData.append("imageFile", imageFile);
         }

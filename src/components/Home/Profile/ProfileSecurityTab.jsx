@@ -12,7 +12,7 @@ const ProfileSecurityTab = ({ showPassword, setShowPassword, handlePasswordSubmi
     };
     return (
         <div>
-            <h2 className="mb-3 text-2xl font-bold text-black">Security Settings</h2>
+            <h2 className="mb-3 text-2xl font-bold text-black">Đặt lại mật khẩu</h2>
             <form
                 onSubmit={handleSubmit}
                 className="space-y-6"

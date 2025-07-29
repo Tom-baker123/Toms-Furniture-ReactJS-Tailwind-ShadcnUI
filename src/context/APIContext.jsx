@@ -11,7 +11,7 @@ import {
     getAllSuppliers,
 } from "@/api/api";
 import { getProductById } from "@/api/service/ProductService";
-import {getAllProducts} from "@/api/service/ProductService";
+import { getAllProducts } from "@/api/service/ProductService";
 import useApiFetch from "@/hooks/useApiFetch";
 
 // Tạo Context chung cho ứng dụng
@@ -45,8 +45,9 @@ export const APIProvider = ({ children }) => {
     const fetchCategories = () => fetchData(getAllCategories, "categories");
     const fetchStoreInformation = () => fetchData(getAllStoreInformations, "storeInformation", undefined, (res) => (res.length > 0 ? res[0] : null));
     const fetchProducts = (filters = {}) => {
-        const filtersWithPagination = { pageNumber: 1, pageSize: 8, ...filters };
-        return fetchData(getAllProducts, "products", filtersWithPagination);
+        // Lấy tất cả sản phẩm mà không có phân trang
+        const filtersWithoutPagination = { pageNumber: 1, pageSize: 1000, ...filters };
+        return fetchData(getAllProducts, "products", filtersWithoutPagination);
     };
     const fetchProductById = (id) => fetchData(getProductById, "product", id);
     const fetchColors = () => fetchData(getAllColors, "colors");

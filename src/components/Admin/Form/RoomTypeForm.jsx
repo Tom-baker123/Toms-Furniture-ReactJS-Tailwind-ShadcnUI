@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 const RoomTypeForm = () => {
     const navigate = useNavigate();
     const roomTypeData = useLoaderData();
-    const isEditing = !!roomTypeData;
+    const isEditing = !!(roomTypeData && Object.keys(roomTypeData).length > 0);
     const [isLoading, setIsLoading] = useState(false);
 
     const {

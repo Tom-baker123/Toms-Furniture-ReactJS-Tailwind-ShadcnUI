@@ -64,8 +64,8 @@ const CategorySwiper = () => {
                     width={120}
                     className="mx-auto"
                 />
-                <span className="text-xl font-extrabold text-slate-500">NO RESULT FOUND</span>
-                <p className="text-sm font-semibold text-slate-500">Please try again later</p>
+                <span className="text-xl font-extrabold text-slate-500">Danh mục rỗng</span>
+                <p className="text-sm font-semibold text-slate-500">Vui lòng thử lại sau</p>
             </div>
         );
     }
@@ -119,7 +119,7 @@ const CategorySwiper = () => {
                                 {/* Logo Category */}
                                 <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-transparent select-none max-md:w-15">
                                     <img
-                                        className="mx-auto block rounded-full object-cover max-sm:w-20"
+                                        className="mx-auto block rounded-full object-cover max-sm:w-20 bg-gray-100"
                                         src={category.imageUrl || `/img/category-menu/default.jpg`}
                                         alt={category.name}
                                         width={800}

@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback, useContext, useMemo } from "react";
 import { APIContext } from "@/context/APIContext";
 
-const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
+const FilterComponents = ({ showHead, title = "", onFilterChange, products = [], currentFilters = {} }) => {
     const [AccordionOpen, setAccordionOpen] = useState(true);
     const [priceRange, setPriceRange] = useState([0, 3429]);
     const maxPrice = 3429; // Giá tối đa cố định
@@ -15,30 +15,165 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
     // Lấy dữ liệu từ APIContext
     const { categories, colors, materials, sizes, brands, countries } = useContext(APIContext);
 
-    // Danh sách các tùy chọn lọc dựa trên title
-    const getFilterOptions = () => {
+    // Hàm lọc sản phẩm (giống như trong Products.jsx)
+    const getFilteredProducts = (tempFilters = currentFilters) => {
+        if (!products?.length) return [];
+
+        let filteredProducts = [...products];
+
+        // Áp dụng các bộ lọc
+        if (tempFilters.categoryNames?.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => tempFilters.categoryNames.includes(product.categoryName));
+        }
+
+        if (tempFilters.brandNames?.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => tempFilters.brandNames.includes(product.brandName));
+        }
+
+        if (tempFilters.countryNames?.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => tempFilters.countryNames.includes(product.countryName));
+        }
+
+        if (tempFilters.colorNames?.length > 0) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productVariants.some((variant) => tempFilters.colorNames.includes(variant.colorName)),
+            );
+        }
+
+        if (tempFilters.sizeNames?.length > 0) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productVariants.some((variant) => tempFilters.sizeNames.includes(variant.sizeName)),
+            );
+        }
+
+        if (tempFilters.materialNames?.length > 0) {
+            filteredProducts = filteredProducts.filter((product) =>
+                product.productVariants.some((variant) => tempFilters.materialNames.includes(variant.materialName)),
+            );
+        }
+
+        // Lọc theo giá
+        if (tempFilters.minPrice !== null || tempFilters.maxPrice !== null) {
+            filteredProducts = filteredProducts.filter((product) => {
+                const minPrice = Math.min(...product.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+
+                if (tempFilters.minPrice !== null && minPrice < tempFilters.minPrice) return false;
+                if (tempFilters.maxPrice !== null && minPrice > tempFilters.maxPrice) return false;
+                return true;
+            });
+        }
+
+        // Lọc theo trạng thái tồn kho
+        if (tempFilters.inStock !== null) {
+            filteredProducts = filteredProducts.filter((product) => {
+                const totalStock = product.productVariants.reduce((sum, variant) => sum + (variant.stockQty || 0), 0);
+                return tempFilters.inStock ? totalStock > 0 : totalStock === 0;
+            });
+        }
+
+        return filteredProducts;
+    };
+
+    // Hàm tính số lượng sản phẩm cho mỗi filter option
+    const getProductCountForOption = (filterType, optionValue) => {
+        if (!products?.length) return 0;
+
+        // Tạo bản sao của filters hiện tại, bỏ filter hiện tại để tính count chính xác
+        const tempFilters = { ...currentFilters };
+        const filterKey = `${filterType}Names`;
+
+        if (filterType === "availability") {
+            // Tạm thời bỏ inStock filter
+            const { inStock, ...filtersWithoutStock } = tempFilters;
+
+            // Thêm inStock mới
+            if (optionValue === "In stock") {
+                filtersWithoutStock.inStock = true;
+            } else if (optionValue === "Out of stock") {
+                filtersWithoutStock.inStock = false;
+            }
+
+            return getFilteredProducts(filtersWithoutStock).length;
+        } else {
+            // Tạm thời bỏ filter hiện tại
+            const filtersWithoutCurrent = { ...tempFilters };
+            delete filtersWithoutCurrent[filterKey];
+
+            // Thêm option này
+            filtersWithoutCurrent[filterKey] = [optionValue];
+
+            return getFilteredProducts(filtersWithoutCurrent).length;
+        }
+    };
+
+    // Danh sách các tùy chọn lọc dựa trên title với memoization
+    const getFilterOptions = useMemo(() => {
         switch (title.toLowerCase()) {
             case "category":
-                return categories?.map((category) => ({ value: category.categoryName, label: category.categoryName, count: 1 })) || [];
+                return (
+                    categories?.map((category) => ({
+                        value: category.categoryName,
+                        label: category.categoryName,
+                        count: getProductCountForOption("category", category.categoryName),
+                    })) || []
+                );
             case "color":
-                return colors?.map((color) => ({ value: color.colorName, label: color.colorName, count: 1 })) || [];
+                return (
+                    colors?.map((color) => ({
+                        value: color.colorName,
+                        label: color.colorName,
+                        count: getProductCountForOption("color", color.colorName),
+                    })) || []
+                );
             case "material":
-                return materials?.map((material) => ({ value: material.materialName, label: material.materialName, count: 1 })) || [];
+                return (
+                    materials?.map((material) => ({
+                        value: material.materialName,
+                        label: material.materialName,
+                        count: getProductCountForOption("material", material.materialName),
+                    })) || []
+                );
             case "size":
-                return sizes?.map((size) => ({ value: size.sizeName, label: size.sizeName, count: 1 })) || [];
+                return (
+                    sizes?.map((size) => ({
+                        value: size.sizeName,
+                        label: size.sizeName,
+                        count: getProductCountForOption("size", size.sizeName),
+                    })) || []
+                );
             case "brand":
-                return brands?.map((brand) => ({ value: brand.brandName, label: brand.brandName, count: 1 })) || [];
+                return (
+                    brands?.map((brand) => ({
+                        value: brand.brandName,
+                        label: brand.brandName,
+                        count: getProductCountForOption("brand", brand.brandName),
+                    })) || []
+                );
             case "country":
-                return countries?.map((country) => ({ value: country.countryName, label: country.countryName, count: 1 })) || [];
+                return (
+                    countries?.map((country) => ({
+                        value: country.countryName,
+                        label: country.countryName,
+                        count: getProductCountForOption("country", country.countryName),
+                    })) || []
+                );
             case "availability":
                 return [
-                    { value: "In stock", label: "In stock", count: 1 },
-                    { value: "Out of stock", label: "Out of stock", count: 1 },
+                    {
+                        value: "In stock",
+                        label: "In stock",
+                        count: getProductCountForOption("availability", "In stock"),
+                    },
+                    {
+                        value: "Out of stock",
+                        label: "Out of stock",
+                        count: getProductCountForOption("availability", "Out of stock"),
+                    },
                 ];
             default:
                 return [];
         }
-    };
+    }, [title, categories, colors, materials, sizes, brands, countries, products, currentFilters]);
 
     // Xử lý thay đổi giá từ slider hoặc input
     const handleRangeChange = useCallback(
@@ -65,10 +200,7 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
         setIsDragging(false);
         setDragIndex(null);
         // Chỉ gọi API nếu giá trị thay đổi
-        if (
-            pendingPriceRange[0] !== priceRange[0] ||
-            pendingPriceRange[1] !== priceRange[1]
-        ) {
+        if (pendingPriceRange[0] !== priceRange[0] || pendingPriceRange[1] !== priceRange[1]) {
             setPriceRange(pendingPriceRange);
             if (onFilterChange && title.toLowerCase().includes("price")) {
                 console.log("Calling API with price range (mouse up):", pendingPriceRange); // Debug
@@ -114,10 +246,7 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
 
         // Cập nhật và gọi API nếu giá trị thay đổi
         const newRange = handleRangeChange(indexToMove, value);
-        if (
-            newRange[0] !== priceRange[0] ||
-            newRange[1] !== priceRange[1]
-        ) {
+        if (newRange[0] !== priceRange[0] || newRange[1] !== priceRange[1]) {
             setPriceRange(newRange);
             if (onFilterChange && title.toLowerCase().includes("price")) {
                 console.log("Calling API with price range (track click):", newRange); // Debug
@@ -131,10 +260,7 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
             const numValue = parseInt(value) || 0;
             // Cập nhật và gọi API nếu giá trị thay đổi
             const newRange = handleRangeChange(index, numValue);
-            if (
-                newRange[0] !== priceRange[0] ||
-                newRange[1] !== priceRange[1]
-            ) {
+            if (newRange[0] !== priceRange[0] || newRange[1] !== priceRange[1]) {
                 setPriceRange(newRange);
                 if (onFilterChange && title.toLowerCase().includes("price")) {
                     console.log("Calling API with price range (input):", newRange); // Debug
@@ -147,6 +273,21 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
 
     const getSliderPosition = (value) => {
         return ((value - minPrice) / (maxPrice - minPrice)) * 100;
+    };
+
+    // Hàm kiểm tra xem option có được chọn hay không
+    const isOptionChecked = (filterType, optionValue) => {
+        if (filterType === "availability") {
+            if (optionValue === "In stock") {
+                return currentFilters.inStock === true;
+            } else if (optionValue === "Out of stock") {
+                return currentFilters.inStock === false;
+            }
+            return false;
+        } else {
+            const filterKey = `${filterType}Names`;
+            return currentFilters[filterKey]?.includes(optionValue) || false;
+        }
     };
 
     // Xử lý thay đổi checkbox
@@ -267,7 +408,7 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
                     {/* Checkbox Filter Options */}
                     {!title.toLowerCase().includes("price") && (
                         <ul className="grid w-full gap-3 pt-6">
-                            {getFilterOptions().map((option, index) => (
+                            {getFilterOptions.map((option, index) => (
                                 <li
                                     key={index}
                                     className="flex w-full items-center gap-2"
@@ -278,6 +419,7 @@ const FilterComponents = ({ showHead, title = "", onFilterChange }) => {
                                         className="checkbox h-5 w-5"
                                         id={`vertical-filter.v.${title.toLowerCase()}-${index}`}
                                         type="checkbox"
+                                        checked={isOptionChecked(title.toLowerCase(), option.value)}
                                         onChange={(e) => handleCheckboxChange(e.target.value)}
                                     />
                                     <label

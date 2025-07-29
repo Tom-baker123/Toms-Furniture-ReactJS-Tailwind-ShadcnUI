@@ -126,13 +126,13 @@ const ProductForm = () => {
                     />
 
                     {/* Debug Info */}
-                    <DebugInfo
+                    {/* <DebugInfo
                         debugData={{
                             "Number of Images": images.length,
                             "Product Name": watch("ProductName"),
                             "Images Selected": images.filter((img) => img.file || img.preview).length,
                         }}
-                    />
+                    /> */}
                 </div>
             </form>
         </div>
