@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { createCategory, updateCategory } from "@/api/api";
+import { createCategory, updateCategory, getAllCategories } from "@/api/api";
 import { MoveLeft, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -12,6 +12,7 @@ const CategoryForm = () => {
     const categoryData = useLoaderData(); // Lấy dữ liệu danh mục nếu đang sửa
     const isEditing = !!categoryData; // Kiểm tra xem có đang sửa hay không
     const [isLoading, setIsLoading] = useState(false); // Trạng thái loading khi gửi form
+    const [allCategories, setAllCategories] = useState([]); // Danh sách tất cả danh mục để chọn parent
 
     // Khởi tạo form với React Hook Form
     const {
@@ -24,11 +25,13 @@ const CategoryForm = () => {
             ? {
                   CategoryName: categoryData.categoryName || "",
                   Descriptions: categoryData.descriptions || "",
+                  ParentId: categoryData.parentId || "",
                   IsActive: categoryData.isActive || true,
               }
             : {
                   CategoryName: "",
                   Descriptions: "",
+                  ParentId: "",
                   IsActive: true,
               },
     });
@@ -37,12 +40,27 @@ const CategoryForm = () => {
     const [imagePreview, setImagePreview] = useState(categoryData?.imageUrl || null);
     const [imageFile, setImageFile] = useState(null);
 
+    // Lấy danh sách tất cả danh mục khi component mount
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categories = await getAllCategories();
+                setAllCategories(categories);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                toast.error("Failed to load categories list");
+            }
+        };
+        fetchCategories();
+    }, []);
+
     // Cập nhật form khi dữ liệu danh mục thay đổi (trong trường hợp sửa)
     useEffect(() => {
         if (isEditing) {
             reset({
                 CategoryName: categoryData.categoryName,
                 Descriptions: categoryData.descriptions,
+                ParentId: categoryData.parentId || "",
                 IsActive: categoryData.isActive,
             });
             setImagePreview(categoryData.imageUrl);
@@ -62,15 +80,28 @@ const CategoryForm = () => {
     // Xử lý submit form
     const onSubmit = async (data) => {
         if (isLoading) return; // Ngăn gửi lại yêu cầu
+
+        // Kiểm tra imageFile khi tạo mới
+        if (!isEditing && !imageFile) {
+            toast.error("Please select an image for the category");
+            return;
+        }
+
         setIsLoading(true);
         try {
+            // Chuẩn bị dữ liệu để gửi, chuyển ParentId thành số hoặc null
+            const submitData = {
+                ...data,
+                ParentId: data.ParentId && data.ParentId !== "" ? parseInt(data.ParentId) : null,
+            };
+
             if (isEditing) {
                 // Gọi API cập nhật danh mục
-                await updateCategory({ Id: categoryData.id, ...data }, imageFile);
+                await updateCategory({ Id: categoryData.id, ...submitData }, imageFile);
                 toast.success("Category updated successfully!");
             } else {
                 // Gọi API tạo mới danh mục
-                await createCategory(data, imageFile);
+                await createCategory(submitData, imageFile);
                 toast.success("Category created successfully!");
             }
             navigate("/admin/categories"); // Điều hướng về trang danh sách danh mục
@@ -102,34 +133,46 @@ const CategoryForm = () => {
                     {/* Phần upload hình ảnh */}
                     <div className="col-span-12 h-fit w-full overflow-hidden rounded-sm bg-white shadow-xs md:col-span-4">
                         <div className="p-4 text-lg font-bold text-slate-800">
-                            Category Image <span className="text-lg text-gray-500">(optional)</span>
+                            Category Image {!isEditing && <span className="text-lg text-red-500">*</span>}
                         </div>
                         <hr />
                         <div className="flex flex-col gap-5 px-4 py-4">
                             <Controller
                                 name="imageFile"
                                 control={control}
+                                rules={
+                                    !isEditing
+                                        ? {
+                                              required: "Category image is required",
+                                          }
+                                        : {}
+                                }
                                 render={({ field: { onChange } }) => (
-                                    <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-sm border bg-gray-50 p-2 transition outline-dashed hover:bg-gray-100">
-                                        {imagePreview ? (
-                                            <img
-                                                src={imagePreview}
-                                                alt="Preview"
-                                                className="h-32 w-32 rounded object-cover"
+                                    <div>
+                                        <label className="flex w-full cursor-pointer flex-col items-center justify-center rounded-sm border bg-gray-50 p-2 transition outline-dashed hover:bg-gray-100">
+                                            {imagePreview ? (
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="Preview"
+                                                    className="h-32 w-32 rounded object-cover"
+                                                />
+                                            ) : (
+                                                <>
+                                                    <ImageIcon className="mb-2 h-8 w-8 text-gray-400" />
+                                                    <span className="text-sm text-gray-500">
+                                                        {!isEditing ? "Select image (required)" : "Select image"}
+                                                    </span>
+                                                </>
+                                            )}
+                                            <input
+                                                type="file"
+                                                className="hidden"
+                                                accept=".jpg,.jpeg,.png,.gif,.webp"
+                                                onChange={(e) => handleImageChange(e, onChange)}
                                             />
-                                        ) : (
-                                            <>
-                                                <ImageIcon className="mb-2 h-8 w-8 text-gray-400" />
-                                                <span className="text-sm text-gray-500">Select image</span>
-                                            </>
-                                        )}
-                                        <input
-                                            type="file"
-                                            className="hidden"
-                                            accept=".jpg,.jpeg,.png,.gif,.webp"
-                                            onChange={(e) => handleImageChange(e, onChange)}
-                                        />
-                                    </label>
+                                        </label>
+                                        {errors.imageFile && <p className="mt-1 text-sm text-red-500">{errors.imageFile.message}</p>}
+                                    </div>
                                 )}
                             />
                         </div>
@@ -189,6 +232,37 @@ const CategoryForm = () => {
                                     )}
                                 />
                                 {errors.Descriptions && <p className="mt-1 text-sm text-red-500">{errors.Descriptions.message}</p>}
+                            </label>
+                            {/* Danh mục cha */}
+                            <label className="font-bold text-slate-500">
+                                <span className="flex items-center gap-1">
+                                    <p className="text-md">Parent Category</p>
+                                    <span className="text-sm text-gray-400">(optional)</span>
+                                </span>
+                                <Controller
+                                    name="ParentId"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <select
+                                            className="mt-2 w-full rounded-sm border px-1.5 py-2"
+                                            {...field}
+                                            value={field.value || ""}
+                                            onChange={(e) => field.onChange(e.target.value || null)}
+                                        >
+                                            <option value="">-- Select Parent Category --</option>
+                                            {allCategories
+                                                .filter((cat) => !isEditing || cat.id !== categoryData?.id) // Không cho chọn chính nó làm parent
+                                                .map((category) => (
+                                                    <option
+                                                        key={category.id}
+                                                        value={category.id}
+                                                    >
+                                                        {category.categoryName}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    )}
+                                />
                             </label>
                             {/* Trạng thái (chỉ hiển thị khi sửa) */}
                             {isEditing && (

@@ -31,7 +31,7 @@ import ProductImage from "@/assets/product-image.jpg";
 export const navbarLinks = [
     // Trang chủ Admin
     {
-        title: "General",
+        title: "Tổng quan",
         links: [
             {
                 label: "Dashboard",
@@ -41,12 +41,12 @@ export const navbarLinks = [
         ],
     },
 
-    // Trang quản lý Order Admin
+    // Trang quản lý đơn hàng
     {
-        title: "Orders",
+        title: "Đơn hàng",
         links: [
             {
-                label: "All Orders",
+                label: "Tất cả đơn hàng",
                 icon: Users,
                 path: "/admin/order",
             },
@@ -55,27 +55,25 @@ export const navbarLinks = [
 
     // Trang quản lý sản phẩm
     {
-        title: "Products",
+        title: "Sản phẩm",
         links: [
             {
-                label: "Products",
+                label: "Sản phẩm",
                 icon: Package,
                 path: "/admin/products",
             },
             {
-                label: "Category",
-                // icon: PackagePlus,
+                label: "Danh mục",
                 icon: ScrollText,
                 path: "/admin/categories",
             },
             {
-                label: "Rooom Types",
-                // icon: PackagePlus,
+                label: "Bộ sưu tập",
                 icon: BedDouble,
                 path: "/admin/room_types",
             },
             {
-                label: "Inventory",
+                label: "Tồn kho",
                 icon: ShoppingBag,
                 path: "/admin/inventory",
             },
@@ -84,79 +82,74 @@ export const navbarLinks = [
 
     // Trang quản lý khách hàng
     {
-        title: "Users",
+        title: "Khách hàng",
         links: [
             {
-                label: "Users",
+                label: "Khách hàng",
                 icon: Users,
                 path: "/admin/users",
             },
             {
-                label: "New customer",
+                label: "Khách hàng mới",
                 icon: UserPlus,
                 path: "/admin/users/New_User",
             },
-            // {
-            //     label: "Verified customers",
-            //     icon: UserCheck,
-            //     path: "/admin/verified-customers",
-            // },
         ],
     },
 
-    // Trang quản lý Giảm giá
+    // Trang quản lý giảm giá
     {
-        title: "Promotions",
+        title: "Khuyến mãi",
         links: [
             {
-                label: "Promotions",
+                label: "Khuyến mãi",
                 icon: TicketPercent,
                 path: "/admin/promotions",
             },
             {
-                label: "Discount method",
+                label: "Loại giảm giá",
                 icon: DiamondPercent,
                 path: "/admin/promotiontypes",
             },
         ],
     },
 
-    // Trang quản lý thuộc tính biến thể
+    // Trang quản lý thuộc tính sản phẩm
     {
-        title: "Product Attribute",
+        title: "Thuộc tính sản phẩm",
         links: [
             {
-                label: "Materials",
+                label: "Chất liệu",
                 icon: Layers,
                 path: "/admin/materials",
             },
             {
-                label: "Units",
+                label: "Đơn vị tính",
                 icon: Weight,
                 path: "/admin/units",
             },
             {
-                label: "Colors",
+                label: "Màu sắc",
                 icon: Palette,
                 path: "/admin/Colors",
             },
             {
-                label: "Sizes",
+                label: "Kích thước",
                 icon: Ruler,
                 path: "/admin/sizes",
             },
             {
-                label: "vendor",
+                label: "Nhà cung cấp",
                 icon: Truck,
                 path: "/admin/suppliers",
             },
             {
-                label: "Brands",
+                label: "Thương hiệu",
                 icon: Tag,
                 path: "/admin/brands",
             },
             {
-                label: "Countries",
+                label: "Quốc gia",
                 icon: Globe,
                 path: "/admin/countries",
             },
@@ -165,10 +158,10 @@ export const navbarLinks = [
 
     // Trang Quản lý thông tin website
     {
-        title: "Website Config",
+        title: "Cấu hình website",
         links: [
             {
-                label: "Store Information",
+                label: "Thông tin cửa hàng",
                 icon: StoreIcon,
                 path: "/admin/store_information",
             },
@@ -177,10 +170,10 @@ export const navbarLinks = [
 
     // Trang thiết lập
     {
-        title: "Settings",
+        title: "Thiết lập",
         links: [
             {
-                label: "Settings",
+                label: "Thiết lập",
                 icon: Settings,
                 path: "/admin/settings",
             },

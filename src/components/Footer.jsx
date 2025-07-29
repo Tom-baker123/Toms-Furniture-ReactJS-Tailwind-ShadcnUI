@@ -83,10 +83,10 @@ const Footer = () => {
                 {/* 2.1 New Seltter */}
                 <div className="mb-3 flex-1/3 lg:mb-0">
                     <div className="flex flex-col">
-                        <h3 className="text-3xl font-bold">Join Our Newsletter</h3>
+                        <h3 className="text-3xl font-bold">Đăng ký nhận bản tin</h3>
 
                         <div className="mt-4 font-semibold text-gray-500">
-                            <p>Sign up to our newsletter &amp; receive 10% off your first order.</p>
+                            <p>Đăng ký nhận bản tin để nhận ngay 10% giảm giá cho đơn hàng đầu tiên.</p>
                         </div>
                     </div>
 
@@ -105,7 +105,7 @@ const Footer = () => {
                                     autoCorrect="off"
                                     autoCapitalize="off"
                                     autoComplete="email"
-                                    placeholder="Enter your email"
+                                    placeholder="Nhập email của bạn"
                                     required=""
                                 />
                             </div>
@@ -115,27 +115,27 @@ const Footer = () => {
                                 hoverBgColor=" bg-white" // lớp trượt màu đen
                                 textColor="text-white"
                             >
-                                Sign Up
+                                Đăng ký
                             </ButtonHovCT>
                         </div>
                     </form>
 
                     <p className="mt-5 font-semibold text-gray-500 max-lg:pb-3">
-                        By subscribing you agree to the{" "}
+                        Khi đăng ký, bạn đồng ý với{" "}
                         <a
                             href="/policies/terms-of-service"
-                            title="Terms of Service"
+                            title="Điều khoản dịch vụ"
                             className="underline"
                         >
-                            Terms of Services
+                            Điều khoản dịch vụ
                         </a>{" "}
-                        and{" "}
+                        và{" "}
                         <a
                             href="/policies/privacy-policy"
-                            title="Privacy Policy"
+                            title="Chính sách bảo mật"
                             className="underline"
                         >
-                            Privacy Policy.
+                            Chính sách bảo mật.
                         </a>
                     </p>
                 </div>
@@ -195,7 +195,7 @@ const Footer = () => {
                 <div className="mt-10 flex flex-col justify-between gap-6 font-semibold md:flex-row md:items-end md:gap-0">
                     {/* footer__copyright - Left */}
                     <div className="flex flex-col gap-2">
-                        <div className="block">All The Payment</div>
+                        <div className="block">Các phương thức thanh toán</div>
                         <div className="block">
                             <ul className="flex gap-x-2">
                                 {FooterPaymentIcon.map((t, index) => (
@@ -226,18 +226,18 @@ const Footer = () => {
                     {/* footer__copyright - Left */}
                     <div>
                         <p className="block">
-                            &copy;{"2025 "}
+                            &copy;2025
                             <a
                                 href="#"
                                 className="inline"
                             >
-                                Hyper Garace.{" "}
+                                Hyper Garace.
                             </a>
                             <a
                                 href="#"
                                 className="inline"
                             >
-                                Powered by React Js
+                                Vận hành bởi React Js
                             </a>
                         </p>
                     </div>
@@ -245,8 +245,8 @@ const Footer = () => {
                     {/* footer__copyright - Right*/}
                     <div>
                         <ul className="flex items-center gap-6">
-                            <li>Terms of Service</li>
-                            <li>Privacy Policy</li>
+                            <li>Điều khoản dịch vụ</li>
+                            <li>Chính sách bảo mật</li>
                         </ul>
                     </div>
                 </div>
