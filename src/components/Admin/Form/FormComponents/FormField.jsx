@@ -29,8 +29,14 @@ const FormField = ({ field, control, getFieldError, getFieldClassName }) => {
                     <select
                         className={getFieldClassName(field.name)}
                         {...controllerField}
+                        value={controllerField.value || ""}
                         onChange={(e) => {
                             let value = e.target.value;
+
+                            // Convert empty string to null for select fields
+                            if (value === "") {
+                                value = null;
+                            }
 
                             // Convert string boolean values to actual boolean for IsActive field
                             if (field.name === "IsActive") {

@@ -503,7 +503,7 @@ const Products = () => {
                                                     {product.productName}
                                                 </Link>
                                                 {/* Price */}
-                                                <p className="text-lg font-bold text-gray-900">
+                                                <p className="text-lg font-bold text-gray-500">
                                                     $
                                                     {Math.min(
                                                         ...product.productVariants.map((pv) => pv.discountedPrice ?? pv.originalPrice),

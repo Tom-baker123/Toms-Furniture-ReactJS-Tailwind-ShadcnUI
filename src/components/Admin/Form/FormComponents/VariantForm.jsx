@@ -1,240 +1,147 @@
 import React from "react";
-import { Controller } from "react-hook-form";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, Edit } from "lucide-react";
 
-const VariantForm = ({ fields, control, errors, colors, sizes, materials, units, deletingVariant, handleDeleteVariant, append }) => {
+const VariantForm = ({
+    fields,
+    control,
+    errors,
+    colors,
+    sizes,
+    materials,
+    units,
+    deletingVariant,
+    handleDeleteVariant,
+    append,
+    remove,
+    watch,
+    setValue,
+    isModalOpen,
+    editingVariant,
+    handleAddVariant,
+    handleEditVariant,
+    handleModalClose,
+    handleSaveVariant,
+}) => {
+    // Get variant display names helper functions
+    const getColorName = (colorId) => {
+        const color = colors.find((c) => c.id == colorId);
+        return color ? color.colorName : "N/A";
+    };
+
+    const getSizeName = (sizeId) => {
+        const size = sizes.find((s) => s.id == sizeId);
+        return size ? size.sizeName : "N/A";
+    };
+
+    const getMaterialName = (materialId) => {
+        const material = materials.find((m) => m.id == materialId);
+        return material ? material.materialName : "N/A";
+    };
+
+    const getUnitName = (unitId) => {
+        const unit = units.find((u) => u.id == unitId);
+        return unit ? unit.unitName : "N/A";
+    };
+
     return (
         <div className="rounded-xl bg-white p-6 shadow-lg lg:col-span-3">
             <h2 className="mb-4 text-xl font-semibold text-gray-900">Product Variants</h2>
-            <div className="space-y-6">
-                {fields.map((field, index) => (
-                    <div
-                        key={field.id}
-                        className="relative rounded-lg border border-gray-200 p-4"
-                    >
-                        <button
-                            type="button"
-                            className="absolute top-2 right-2 text-red-500 transition-colors duration-200 hover:text-red-600"
-                            onClick={() => handleDeleteVariant(index)}
-                            disabled={deletingVariant === index}
-                        >
-                            {deletingVariant === index ? <span className="animate-spin">⌛</span> : <Trash size={20} />}
-                        </button>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                            {/* Original Price */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Original Price</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].OriginalPrice`}
-                                    control={control}
-                                    rules={{
-                                        required: "Original price is required",
-                                        min: { value: 0, message: "Price must be non-negative" },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            className={`mt-1 w-full rounded-md border ${
-                                                errors.ProductVariants?.[index]?.OriginalPrice ? "border-red-500" : "border-gray-300"
-                                            } px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500`}
-                                            placeholder="Enter original price"
-                                            {...field}
-                                        />
+            <div className="space-y-4">
+                {/* Variants List */}
+                {fields.length > 0 ? (
+                    <div className="space-y-3">
+                        {fields.map((field, index) => {
+                            const variant = watch(`ProductVariants[${index}]`) || {};
+                            return (
+                                <div
+                                    key={field.id}
+                                    className="relative cursor-pointer rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:border-blue-300 hover:shadow-md"
+                                    onClick={() => handleEditVariant(index)}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+                                                <div>
+                                                    <span className="text-xs font-medium text-gray-500">Original Price</span>
+                                                    <p className="text-sm font-semibold text-gray-900">${variant.OriginalPrice || 0}</p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-xs font-medium text-gray-500">Discounted Price</span>
+                                                    <p className="text-sm text-gray-700">
+                                                        {variant.DiscountedPrice ? `$${variant.DiscountedPrice}` : "No discount"}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-xs font-medium text-gray-500">Stock Quantity</span>
+                                                    <p className="text-sm text-gray-700">{variant.StockQty || 0}</p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-xs font-medium text-gray-500">Attributes</span>
+                                                    <p className="text-sm text-gray-700">
+                                                        {[
+                                                            variant.ColorId ? getColorName(variant.ColorId) : null,
+                                                            variant.SizeId ? getSizeName(variant.SizeId) : null,
+                                                            variant.MaterialId ? getMaterialName(variant.MaterialId) : null,
+                                                            variant.UnitId ? getUnitName(variant.UnitId) : null,
+                                                        ]
+                                                            .filter(Boolean)
+                                                            .join(", ") || "No attributes"}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="ml-4 flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleEditVariant(index);
+                                                }}
+                                                className="text-blue-500 transition-colors duration-200 hover:text-blue-600"
+                                                title="Edit variant"
+                                            >
+                                                <Edit size={16} />
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteVariant(index);
+                                                }}
+                                                disabled={deletingVariant === index}
+                                                className="text-red-500 transition-colors duration-200 hover:text-red-600"
+                                                title="Delete variant"
+                                            >
+                                                {deletingVariant === index ? <span className="animate-spin">⌛</span> : <Trash size={16} />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {/* Error display for this variant */}
+                                    {(errors.ProductVariants?.[index]?.OriginalPrice || errors.ProductVariants?.[index]?.StockQty) && (
+                                        <div className="mt-2 text-sm text-red-600">
+                                            {errors.ProductVariants[index]?.OriginalPrice?.message ||
+                                                errors.ProductVariants[index]?.StockQty?.message}
+                                        </div>
                                     )}
-                                />
-                                {errors.ProductVariants?.[index]?.OriginalPrice && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.ProductVariants[index].OriginalPrice.message}</p>
-                                )}
-                            </div>
-
-                            {/* Discounted Price */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Discounted Price</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].DiscountedPrice`}
-                                    control={control}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Enter discounted price"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                            </div>
-
-                            {/* Stock Quantity */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Stock Quantity</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].StockQty`}
-                                    control={control}
-                                    rules={{
-                                        required: "Stock quantity is required",
-                                        min: {
-                                            value: 0,
-                                            message: "Stock quantity must be non-negative",
-                                        },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            className={`mt-1 w-full rounded-md border ${
-                                                errors.ProductVariants?.[index]?.StockQty ? "border-red-500" : "border-gray-300"
-                                            } px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500`}
-                                            placeholder="Enter stock quantity"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.ProductVariants?.[index]?.StockQty && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.ProductVariants[index].StockQty.message}</p>
-                                )}
-                            </div>
-
-                            {/* Color */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Color</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].ColorId`}
-                                    control={control}
-                                    // rules={{ required: "Color is required" }}
-                                    render={({ field }) => (
-                                        <select
-                                            className={`mt-1 w-full rounded-md border ${
-                                                errors.ProductVariants?.[index]?.ColorId ? "border-red-500" : "border-gray-300"
-                                            } px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500`}
-                                            {...field}
-                                        >
-                                            <option value="">Select color</option>
-                                            {colors.map((color) => (
-                                                <option
-                                                    key={color.id}
-                                                    value={color.id}
-                                                >
-                                                    {color.colorName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                />
-                                {errors.ProductVariants?.[index]?.ColorId && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.ProductVariants[index].ColorId.message}</p>
-                                )}
-                            </div>
-
-                            {/* Size */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Size</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].SizeId`}
-                                    control={control}
-                                    // rules={{ required: "Size is required" }}
-                                    render={({ field }) => (
-                                        <select
-                                            className={`mt-1 w-full rounded-md border ${
-                                                errors.ProductVariants?.[index]?.SizeId ? "border-red-500" : "border-gray-300"
-                                            } px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500`}
-                                            {...field}
-                                        >
-                                            <option value="">Select size</option>
-                                            {sizes.map((size) => (
-                                                <option
-                                                    key={size.id}
-                                                    value={size.id}
-                                                >
-                                                    {size.sizeName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                />
-                                {errors.ProductVariants?.[index]?.SizeId && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.ProductVariants[index].SizeId.message}</p>
-                                )}
-                            </div>
-
-                            {/* Material */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Material</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].MaterialId`}
-                                    control={control}
-                                    // rules={{ required: "Material is required" }}
-                                    render={({ field }) => (
-                                        <select
-                                            className={`mt-1 w-full rounded-md border ${
-                                                errors.ProductVariants?.[index]?.MaterialId ? "border-red-500" : "border-gray-300"
-                                            } px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500`}
-                                            {...field}
-                                        >
-                                            <option value="">Select material</option>
-                                            {materials.map((material) => (
-                                                <option
-                                                    key={material.id}
-                                                    value={material.id}
-                                                >
-                                                    {material.materialName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                />
-                                {errors.ProductVariants?.[index]?.MaterialId && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.ProductVariants[index].MaterialId.message}</p>
-                                )}
-                            </div>
-
-                            {/* Unit */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">Unit</label>
-                                <Controller
-                                    name={`ProductVariants[${index}].UnitId`}
-                                    control={control}
-                                    // rules={{ required: "Unit is required" }}
-                                    render={({ field }) => (
-                                        <select
-                                            className={`mt-1 w-full rounded-md border ${
-                                                errors.ProductVariants?.[index]?.UnitId ? "border-red-500" : "border-gray-300"
-                                            } px-3 py-2 transition-colors duration-200 focus:border-indigo-500 focus:ring-indigo-500`}
-                                            {...field}
-                                        >
-                                            <option value="">Select unit</option>
-                                            {units.map((unit) => (
-                                                <option
-                                                    key={unit.id}
-                                                    value={unit.id}
-                                                >
-                                                    {unit.unitName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                />
-                                {errors.ProductVariants?.[index]?.UnitId && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.ProductVariants[index].UnitId.message}</p>
-                                )}
-                            </div>
-                        </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                ))}
+                ) : (
+                    <div className="py-2 text-center">
+                        <p className="mb-2 text-gray-500">No variants added yet</p>
+                        <p className="text-sm text-gray-400">Click "Add Variant" to create your first product variant</p>
+                    </div>
+                )}
+
+                {/* Add Variant Button */}
                 <button
                     type="button"
                     className="flex items-center gap-2 text-indigo-600 transition-colors duration-200 hover:text-indigo-800"
-                    onClick={() =>
-                        append({
-                            OriginalPrice: 0,
-                            StockQty: 0,
-                            ColorId: "",
-                            SizeId: "",
-                            MaterialId: "",
-                            UnitId: "",
-                        })
-                    }
+                    onClick={handleAddVariant}
                 >
                     <Plus className="h-5 w-5" />
-                    <span className="text-sm font-medium">Add Variant</span>
+                    <span className="cursor-pointer text-sm font-medium">Add Variant</span>
                 </button>
             </div>
         </div>

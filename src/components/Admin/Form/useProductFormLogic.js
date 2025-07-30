@@ -23,55 +23,56 @@ export function useProductFormLogic() {
         formState: { errors, isSubmitting },
         reset,
         watch,
+        setValue,
     } = useForm({
         defaultValues: isEditing
             ? {
                 Id: productData.id,
                 ProductName: productData.productName || "",
                 SpecificationDescription: productData.specificationDescription || "",
-                BrandId: productData.brandId || "",
-                CategoryId: productData.categoryId || "",
-                CountriesId: productData.countriesId || "",
-                SupplierId: productData.supplierId || "",
+                BrandId: productData.brandId || null,
+                CategoryId: productData.categoryId || null,
+                CountriesId: productData.countriesId || null,
+                SupplierId: productData.supplierId || null,
                 IsActive: productData.isActive || true,
                 ProductVariants: productData.productVariants?.map((pv) => ({
                     Id: pv.id || 0,
                     OriginalPrice: pv.originalPrice || 0,
                     DiscountedPrice: pv.discountedPrice || null,
                     StockQty: pv.stockQty || 0,
-                    ColorId: pv.colorId || "",
-                    SizeId: pv.sizeId || "",
-                    MaterialId: pv.materialId || "",
-                    UnitId: pv.unitId || "",
+                    ColorId: pv.colorId || null,
+                    SizeId: pv.sizeId || null,
+                    MaterialId: pv.materialId || null,
+                    UnitId: pv.unitId || null,
                 })) || [
                         {
                             Id: 0,
-                            OriginalPrice: 0,
-                            StockQty: 0,
-                            ColorId: "",
-                            SizeId: "",
-                            MaterialId: "",
-                            UnitId: "",
+                            OriginalPrice: "",
+                            StockQty: "",
+                            ColorId: null,
+                            SizeId: null,
+                            MaterialId: null,
+                            UnitId: null,
                         },
                     ],
             }
             : {
                 ProductName: "",
                 SpecificationDescription: "",
-                BrandId: "",
-                CategoryId: "",
-                CountriesId: "",
-                SupplierId: "",
+                BrandId: null,
+                CategoryId: null,
+                CountriesId: null,
+                SupplierId: null,
                 IsActive: true,
                 ProductVariants: [
                     {
                         Id: 0,
-                        OriginalPrice: 0,
-                        StockQty: 0,
-                        ColorId: "",
-                        SizeId: "",
-                        MaterialId: "",
-                        UnitId: "",
+                        OriginalPrice: "",
+                        StockQty: "",
+                        ColorId: null,
+                        SizeId: null,
+                        MaterialId: null,
+                        UnitId: null,
                     },
                 ],
             },
@@ -132,38 +133,109 @@ export function useProductFormLogic() {
 
     const onSubmit = async (data) => {
         if (isLoading || !validateImages()) return;
+
+        // Additional validation for required fields
+        const trimmedProductName = data.ProductName?.trim();
+        if (!trimmedProductName || trimmedProductName === "") {
+            toast.error("Product name is required and cannot be empty");
+            return;
+        }
+
+        // Check for very short product names which might be considered invalid
+        if (trimmedProductName.length < 3) {
+            toast.error("Product name must be at least 3 characters long");
+            return;
+        }
+
+        if (!data.CategoryId || data.CategoryId === "" || data.CategoryId === "0" || data.CategoryId === 0 || data.CategoryId === null) {
+            toast.error("Category is required - please select a valid category");
+            return;
+        }
+
+        // Validate ProductVariants
+        if (!data.ProductVariants || data.ProductVariants.length === 0) {
+            toast.error("At least one product variant is required");
+            return;
+        }
+
+        // Validate each variant has required fields
+        for (let i = 0; i < data.ProductVariants.length; i++) {
+            const variant = data.ProductVariants[i];
+            if (!variant.OriginalPrice || Number(variant.OriginalPrice) <= 0) {
+                toast.error(`Variant ${i + 1}: Original price is required and must be greater than 0`);
+                return;
+            }
+            if (variant.StockQty === null || variant.StockQty === undefined || Number(variant.StockQty) < 0) {
+                toast.error(`Variant ${i + 1}: Stock quantity is required and cannot be negative`);
+                return;
+            }
+            // Validate that discounted price is not greater than original price
+            if (variant.DiscountedPrice && Number(variant.DiscountedPrice) >= Number(variant.OriginalPrice)) {
+                toast.error(`Variant ${i + 1}: Discounted price must be less than original price`);
+                return;
+            }
+        }
+
         setIsLoading(true);
         try {
             const productPayload = {
                 ...data,
-                // Convert string IDs to numbers, but handle empty strings properly
+                // Ensure essential fields are not null/undefined
                 Id: data.Id ? Number(data.Id) : undefined,
-                BrandId: data.BrandId && data.BrandId !== "" ? Number(data.BrandId) : null,
-                CategoryId: data.CategoryId && data.CategoryId !== "" ? Number(data.CategoryId) : null,
-                CountriesId: data.CountriesId && data.CountriesId !== "" ? Number(data.CountriesId) : null,
-                SupplierId: data.SupplierId && data.SupplierId !== "" ? Number(data.SupplierId) : null,
-                // Ensure ProductName is not empty
-                ProductName: data.ProductName?.trim() || "",
+                ProductName: trimmedProductName,
                 SpecificationDescription: data.SpecificationDescription?.trim() || "",
-                // Convert IsActive to boolean if it's a string
+                CategoryId: Number(data.CategoryId),
+                BrandId: data.BrandId && data.BrandId !== "" && data.BrandId !== "0" && data.BrandId !== null ? Number(data.BrandId) : null,
+                CountriesId: data.CountriesId && data.CountriesId !== "" && data.CountriesId !== "0" && data.CountriesId !== null ? Number(data.CountriesId) : null,
+                SupplierId: data.SupplierId && data.SupplierId !== "" && data.SupplierId !== "0" && data.SupplierId !== null ? Number(data.SupplierId) : null,
                 IsActive: typeof data.IsActive === 'string' ?
                     (data.IsActive === 'true' ? true : false) :
-                    data.IsActive,
-                ProductVariants: data.ProductVariants.map((pv) => ({
-                    ...pv,
+                    (data.IsActive !== undefined ? data.IsActive : true),
+                ProductVariants: data.ProductVariants.filter(pv =>
+                    // Only include variants with valid data
+                    pv.OriginalPrice && Number(pv.OriginalPrice) > 0 &&
+                    pv.StockQty !== undefined && pv.StockQty !== null && Number(pv.StockQty) >= 0
+                ).map((pv) => ({
                     Id: pv.Id ? Number(pv.Id) : 0,
-                    OriginalPrice: Number(pv.OriginalPrice) || 0,
-                    DiscountedPrice: pv.DiscountedPrice && pv.DiscountedPrice !== "" ? Number(pv.DiscountedPrice) : null,
-                    StockQty: Number(pv.StockQty) || 0,
-                    ColorId: pv.ColorId && pv.ColorId !== "" ? Number(pv.ColorId) : null,
-                    SizeId: pv.SizeId && pv.SizeId !== "" ? Number(pv.SizeId) : null,
-                    MaterialId: pv.MaterialId && pv.MaterialId !== "" ? Number(pv.MaterialId) : null,
-                    UnitId: pv.UnitId && pv.UnitId !== "" ? Number(pv.UnitId) : null,
+                    OriginalPrice: Number(pv.OriginalPrice),
+                    DiscountedPrice: pv.DiscountedPrice && pv.DiscountedPrice !== "" && pv.DiscountedPrice !== null ? Number(pv.DiscountedPrice) : null,
+                    StockQty: Number(pv.StockQty),
+                    ColorId: pv.ColorId && pv.ColorId !== "" && pv.ColorId !== "0" && pv.ColorId !== null ? Number(pv.ColorId) : null,
+                    SizeId: pv.SizeId && pv.SizeId !== "" && pv.SizeId !== "0" && pv.SizeId !== null ? Number(pv.SizeId) : null,
+                    MaterialId: pv.MaterialId && pv.MaterialId !== "" && pv.MaterialId !== "0" && pv.MaterialId !== null ? Number(pv.MaterialId) : null,
+                    UnitId: pv.UnitId && pv.UnitId !== "" && pv.UnitId !== "0" && pv.UnitId !== null ? Number(pv.UnitId) : null,
                 })),
             };
 
             // Debug: Log payload before sending
             console.log("Product payload to be sent:", productPayload);
+            console.log("ProductVariants details:", productPayload.ProductVariants);
+
+            // Additional debug for each variant
+            productPayload.ProductVariants.forEach((variant, index) => {
+                console.log(`Variant ${index}:`, variant);
+            });
+
+            // Validate critical fields before sending
+            if (!productPayload.ProductName || productPayload.ProductName.trim() === "") {
+                throw new Error("ProductName is required and cannot be empty");
+            }
+            if (!productPayload.CategoryId || productPayload.CategoryId === 0) {
+                throw new Error("CategoryId is required and must be a valid number");
+            }
+            if (!productPayload.ProductVariants || productPayload.ProductVariants.length === 0) {
+                throw new Error("At least one valid ProductVariant is required");
+            }
+
+            // Final check - ensure all variants have required fields
+            for (const variant of productPayload.ProductVariants) {
+                if (!variant.OriginalPrice || variant.OriginalPrice <= 0) {
+                    throw new Error("All variants must have a valid OriginalPrice");
+                }
+                if (variant.StockQty < 0) {
+                    throw new Error("All variants must have valid StockQty");
+                }
+            }
             const formatSliderIndex = (index) => String(index + 1).padStart(3, "0");
             const sliders = images.map((img, index) => ({
                 imageFile: img.file,
@@ -205,6 +277,7 @@ export function useProductFormLogic() {
         isSubmitting,
         reset,
         watch,
+        setValue,
         fields,
         append,
         remove,
