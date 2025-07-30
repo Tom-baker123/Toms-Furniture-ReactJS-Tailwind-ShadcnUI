@@ -149,7 +149,7 @@ export const navbarLinks = [
                 path: "/admin/brands",
             },
             {
-                label: "Quốc gia",
+                label: "Xuất xứ",
                 icon: Globe,
                 path: "/admin/countries",
             },

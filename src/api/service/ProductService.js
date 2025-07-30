@@ -110,37 +110,31 @@ export const createProduct = async (productData, sliders) => {
         // Debug: Log dữ liệu trước khi gửi
         console.log("Creating product with data:", productData);
 
-        // Try with productModel wrapper first
-        let requestBody = { productModel: productData };
-
-        let response = await fetch(`${API_BASE_URL}/Product`, {
+        // Send data directly to the API
+        const response = await fetch(`${API_BASE_URL}/Product`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(productData),
         });
-
-        // If failed with productModel wrapper, try direct data
-        if (!response.ok) {
-            console.log("Failed with productModel wrapper, trying direct data...");
-            response = await fetch(`${API_BASE_URL}/Product`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(productData),
-            });
-        }
 
         if (!response.ok) {
             const contentType = response.headers.get("content-type");
             let errorMessage = "Failed to create product";
             if (contentType && contentType.includes("application/json")) {
                 const errorData = await response.json();
-                errorMessage = errorData.Message || errorMessage;
+                console.error("API Error Response:", errorData);
+                // Handle validation errors
+                if (errorData.errors) {
+                    const validationErrors = Object.entries(errorData.errors)
+                        .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+                        .join('; ');
+                    errorMessage = `Validation errors: ${validationErrors}`;
+                } else {
+                    errorMessage = errorData.message || errorData.Message || errorData.title || errorMessage;
+                }
             } else {
                 errorMessage = await response.text();
             }
@@ -278,30 +272,15 @@ export const updateProduct = async (productData, sliders) => {
         // Debug: Log dữ liệu trước khi gửi
         console.log("Updating product with data:", productData);
 
-        // Try with productModel wrapper first
-        let requestBody = { productModel: productData };
-
-        let response = await fetch(`${API_BASE_URL}/Product`, {
+        // Send data directly to the API
+        const response = await fetch(`${API_BASE_URL}/Product`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(productData),
         });
-
-        // If failed with productModel wrapper, try direct data
-        if (!response.ok) {
-            console.log("Failed with productModel wrapper, trying direct data...");
-            response = await fetch(`${API_BASE_URL}/Product`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(productData),
-            });
-        }
 
         if (!response.ok) {
             const contentType = response.headers.get("content-type");

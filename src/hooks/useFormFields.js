@@ -18,6 +18,14 @@ export const useFormFields = ({
             placeholder: "Enter product name",
             rules: {
                 required: "Product name is required",
+                validate: {
+                    notEmpty: (value) => {
+                        if (!value || value.trim() === "") {
+                            return "Product name cannot be empty or contain only spaces";
+                        }
+                        return true;
+                    }
+                },
                 maxLength: {
                     value: 100,
                     message: "Product name must be less than 100 characters",
@@ -40,7 +48,17 @@ export const useFormFields = ({
             placeholder: "Select category",
             options: categories,
             optionKey: "categoryName",
-            rules: { required: "Category is required" },
+            rules: {
+                required: "Category is required",
+                validate: {
+                    notEmpty: (value) => {
+                        if (!value || value === "" || value === "0" || value === 0) {
+                            return "Please select a valid category";
+                        }
+                        return true;
+                    }
+                }
+            },
             required: true
         },
         {

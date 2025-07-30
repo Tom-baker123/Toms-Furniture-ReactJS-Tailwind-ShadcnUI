@@ -43,12 +43,12 @@ const AdminModalTemplate = () => {
 
     return (
         <div
-            className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}
+            className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}
         >
             {/* Backdrop */}
             <div
                 onClick={closeModal}
-                className={`fixed inset-0 bg-black/50 transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}
+                className={`fixed inset-0 z-[9998] bg-black/50 transition-opacity ${animate === "in" ? "animate-fade-in" : "animate-fade-out"}`}
             />
             {/* Modal content */}
             <div
