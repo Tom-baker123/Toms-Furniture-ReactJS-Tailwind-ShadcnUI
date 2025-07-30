@@ -4,13 +4,30 @@ import { APIContext } from "@/context/APIContext";
 
 const FilterComponents = ({ showHead, title = "", onFilterChange, products = [], currentFilters = {} }) => {
     const [AccordionOpen, setAccordionOpen] = useState(true);
-    const [priceRange, setPriceRange] = useState([0, 3429]);
-    const maxPrice = 3429; // Giá tối đa cố định
-    const minPrice = 0; // Giá tối thiểu cố định
 
+    // Tính toán giá tối đa từ dữ liệu sản phẩm thực tế (dựa vào discountedPrice)
+    const maxPrice = useMemo(() => {
+        if (!products?.length) return 3000000; // Fallback value
+
+        const allPrices = products.flatMap(
+            (product) =>
+                product.productVariants?.map((variant) => variant.discountedPrice ?? variant.originalPrice).filter((price) => price != null) || [],
+        );
+
+        return allPrices.length > 0 ? Math.max(...allPrices, 3000000) : 3000000; // Ít nhất 3 triệu
+    }, [products]);
+
+    const minPrice = 0; // Giá tối thiểu cố định
+    const [priceRange, setPriceRange] = useState([0, 3000000]); // Khởi tạo với giá trị mặc định
     const [isDragging, setIsDragging] = useState(false);
     const [dragIndex, setDragIndex] = useState(null);
-    const [pendingPriceRange, setPendingPriceRange] = useState(priceRange); // Lưu trữ tạm thời khoảng giá khi kéo
+    const [pendingPriceRange, setPendingPriceRange] = useState([0, 3000000]); // Khởi tạo với giá trị mặc định
+
+    // Cập nhật priceRange khi maxPrice thay đổi
+    React.useEffect(() => {
+        setPriceRange([minPrice, maxPrice]);
+        setPendingPriceRange([minPrice, maxPrice]);
+    }, [maxPrice, minPrice]);
 
     // Lấy dữ liệu từ APIContext
     const { categories, colors, materials, sizes, brands, countries } = useContext(APIContext);
@@ -52,10 +69,12 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
             );
         }
 
-        // Lọc theo giá
+        // Lọc theo giá (dựa vào discountedPrice)
         if (tempFilters.minPrice !== null || tempFilters.maxPrice !== null) {
             filteredProducts = filteredProducts.filter((product) => {
-                const minPrice = Math.min(...product.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                const minPrice = Math.min(
+                    ...product.productVariants.map((v) => v.discountedPrice ?? v.originalPrice).filter((price) => price != null),
+                );
 
                 if (tempFilters.minPrice !== null && minPrice < tempFilters.minPrice) return false;
                 if (tempFilters.maxPrice !== null && minPrice > tempFilters.maxPrice) return false;
@@ -178,14 +197,23 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
     // Xử lý thay đổi giá từ slider hoặc input
     const handleRangeChange = useCallback(
         (index, value) => {
+            const numValue = Number(value);
             const newRange = [...pendingPriceRange];
-            newRange[index] = Math.max(minPrice, Math.min(maxPrice, value));
+
+            // Áp dụng giới hạn min/max
+            newRange[index] = Math.max(minPrice, Math.min(maxPrice, numValue));
 
             // Đảm bảo min không vượt max và ngược lại
-            if (index === 0 && newRange[0] > newRange[1]) {
-                newRange[0] = newRange[1];
-            } else if (index === 1 && newRange[1] < newRange[0]) {
-                newRange[1] = newRange[0];
+            if (index === 0) {
+                // Nếu đang thay đổi min và min > max, thì set min = max
+                if (newRange[0] > newRange[1]) {
+                    newRange[0] = newRange[1];
+                }
+            } else {
+                // Nếu đang thay đổi max và max < min, thì set max = min
+                if (newRange[1] < newRange[0]) {
+                    newRange[1] = newRange[0];
+                }
             }
 
             // Cập nhật pendingPriceRange
@@ -214,22 +242,24 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
         setIsDragging(true);
         setDragIndex(index);
 
-        const handleMouseMove = (e) => {
+        const handleMouseMove = (moveEvent) => {
             const sliderTrack = e.currentTarget?.parentElement || document.querySelector(".slider-track");
             if (!sliderTrack) return;
 
             const rect = sliderTrack.getBoundingClientRect();
-            const percentage = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+            const percentage = Math.max(0, Math.min(100, ((moveEvent.clientX - rect.left) / rect.width) * 100));
             const value = Math.round((percentage / 100) * (maxPrice - minPrice) + minPrice);
             handleRangeChange(index, value);
         };
 
-        document.addEventListener("mousemove", handleMouseMove);
-        document.addEventListener("mouseup", () => {
+        const handleMouseUpEvent = () => {
             handleMouseUp(); // Gọi handleMouseUp khi thả chuột
             document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleMouseUp);
-        });
+            document.removeEventListener("mouseup", handleMouseUpEvent);
+        };
+
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUpEvent);
     };
 
     const handleTrackClick = (e) => {
@@ -260,6 +290,8 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
             const numValue = parseInt(value) || 0;
             // Cập nhật và gọi API nếu giá trị thay đổi
             const newRange = handleRangeChange(index, numValue);
+
+            // Gọi API ngay lập tức khi thay đổi input
             if (newRange[0] !== priceRange[0] || newRange[1] !== priceRange[1]) {
                 setPriceRange(newRange);
                 if (onFilterChange && title.toLowerCase().includes("price")) {
@@ -272,7 +304,9 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
     );
 
     const getSliderPosition = (value) => {
-        return ((value - minPrice) / (maxPrice - minPrice)) * 100;
+        const range = maxPrice - minPrice;
+        if (range === 0) return 0; // Tránh division by zero
+        return Math.max(0, Math.min(100, ((value - minPrice) / range) * 100));
     };
 
     // Hàm kiểm tra xem option có được chọn hay không
@@ -300,7 +334,7 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
 
     const renderPriceSlider = () => (
         <div className="pt-6">
-            <div className="mb-4 text-[15px] text-gray-600">The highest price is ${maxPrice.toLocaleString()}.00</div>
+            <div className="mb-4 text-[15px] text-gray-600">Giá Cao Nhất: {maxPrice.toLocaleString()} VNĐ</div>
 
             {/* Slider Container */}
             <div className="relative mx-2.5 mb-6">
@@ -338,12 +372,12 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
             <div className="flex gap-4">
                 <div className="flex-1">
                     <div className="relative">
-                        <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500">$</span>
+                        <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500">đ</span>
                         <input
                             type="number"
                             value={pendingPriceRange[0]}
                             onChange={(e) => handleInputChange(0, e.target.value)}
-                            className="w-full rounded-full border-0 bg-gray-100 py-2 pr-4 pl-8 text-center text-sm focus:ring-2 focus:ring-black focus:outline-none"
+                            className="w-full rounded-full border-0 bg-gray-100 py-2 pl-5 text-center text-sm focus:ring-2 focus:ring-black focus:outline-none"
                             min={minPrice}
                             max={maxPrice}
                         />
@@ -351,12 +385,12 @@ const FilterComponents = ({ showHead, title = "", onFilterChange, products = [],
                 </div>
                 <div className="flex-1">
                     <div className="relative">
-                        <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500">$</span>
+                        <span className="absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500">đ</span>
                         <input
                             type="number"
                             value={pendingPriceRange[1]}
                             onChange={(e) => handleInputChange(1, e.target.value)}
-                            className="w-full rounded-full border-0 bg-gray-100 py-2 pr-4 pl-8 text-center text-sm focus:ring-2 focus:ring-black focus:outline-none"
+                            className="w-full rounded-full border-0 bg-gray-100 py-2 pl-5 text-center text-sm focus:ring-2 focus:ring-black focus:outline-none"
                             min={minPrice}
                             max={maxPrice}
                         />

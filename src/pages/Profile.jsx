@@ -42,10 +42,10 @@ const Profile = () => {
     const { handleUpdatePassword } = useAuth();
 
     const tabs = [
-        { id: "profile", label: "Profile", icon: User },
-        { id: "security", label: "Security", icon: Settings },
-        { id: "orders", label: "Orders", icon: ShoppingBag },
-        { id: "addresses", label: "Addresses", icon: MapPin },
+        { id: "profile", label: "Thông Tin Cá Nhân", icon: User },
+        { id: "security", label: "Bảo Mật", icon: Settings },
+        { id: "orders", label: "Đơn Hàng", icon: ShoppingBag },
+        { id: "addresses", label: "Sổ Địa Chỉ", icon: MapPin },
     ];
 
     // Lấy tab từ URL

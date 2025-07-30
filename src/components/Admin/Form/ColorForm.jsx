@@ -164,7 +164,6 @@ const ColorForm = () => {
                                             className={`w-full rounded-sm border px-1.5 py-2 ${errors.ColorCode ? "border-red-500" : ""}`}
                                             placeholder="Selected color code (e.g., #FFFFFF)"
                                             {...field}
-                                            readOnly
                                         />
                                     )}
                                 />
