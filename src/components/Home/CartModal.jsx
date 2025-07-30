@@ -49,6 +49,13 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
 
     // Hàm gọi khi muốn tăng/giảm số lượng: cập nhật local trước, rồi debounce API
     const debouncedUpdateCart = useCallback((item, newQuantity) => {
+        // Kiểm tra giới hạn stock
+        const maxStock = item.productVariant?.stockQty || 999;
+        if (newQuantity > maxStock) {
+            toast.error(`Chỉ còn ${maxStock} sản phẩm trong kho!`);
+            return;
+        }
+
         setLocalQuantities((prev) => ({
             ...prev,
             [item.proVarId]: newQuantity,
@@ -169,6 +176,10 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                         {item.productVariant?.materialName}, {item.productVariant?.colorName},{" "}
                                                         {item.productVariant?.sizeName}
                                                     </p>
+                                                    {/* Hiển thị stock quantity */}
+                                                    {/* {item.productVariant?.stockQty && (
+                                                        <p className="text-sm text-gray-500">Stock: {item.productVariant.stockQty} available</p>
+                                                    )} */}
                                                 </div>
                                                 {/* Nút Gỡ Item Cart */}
                                                 <button
@@ -187,7 +198,9 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                 {/* QuantityButton thay bằng nút cập nhật số lượng */}
                                                 <div className="flex items-center rounded-full border">
                                                     <button
-                                                        className="cursor-pointer px-2 py-1"
+                                                        className={`cursor-pointer px-2 py-1 transition-colors ${
+                                                            (localQuantities[item.proVarId] ?? item.quantity) <= 1 ? "text-gray-400" : ""
+                                                        }`}
                                                         disabled={(localQuantities[item.proVarId] ?? item.quantity) <= 1 || loading}
                                                         onClick={() =>
                                                             debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) - 1)
@@ -197,24 +210,43 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                     </button>
                                                     <QuantityInput
                                                         value={localQuantities[item.proVarId] ?? item.quantity}
-                                                        onChange={(val) => debouncedUpdateCart(item, val)}
+                                                        onChange={(val) => {
+                                                            // Kiểm tra không vượt quá stock quantity
+                                                            const maxStock = item.productVariant?.stockQty || 999;
+                                                            const finalVal = Math.min(val, maxStock);
+                                                            debouncedUpdateCart(item, finalVal);
+                                                        }}
                                                         disabled={loading}
                                                         min={1}
+                                                        max={item.productVariant?.stockQty || 999}
                                                     />
                                                     <button
-                                                        className="cursor-pointer px-2 py-1"
-                                                        disabled={loading}
-                                                        onClick={() =>
-                                                            debouncedUpdateCart(item, (localQuantities[item.proVarId] ?? item.quantity) + 1)
+                                                        className={`cursor-pointer px-2 py-1 transition-colors ${
+                                                            !item.productVariant ||
+                                                            (localQuantities[item.proVarId] ?? item.quantity) >= (item.productVariant?.stockQty || 0)
+                                                                ? "text-gray-400"
+                                                                : ""
+                                                        }`}
+                                                        disabled={
+                                                            loading ||
+                                                            !item.productVariant ||
+                                                            (localQuantities[item.proVarId] ?? item.quantity) >= (item.productVariant?.stockQty || 0)
                                                         }
+                                                        onClick={() => {
+                                                            const currentQty = localQuantities[item.proVarId] ?? item.quantity;
+                                                            const maxStock = item.productVariant?.stockQty || 0;
+                                                            if (currentQty < maxStock) {
+                                                                debouncedUpdateCart(item, currentQty + 1);
+                                                            }
+                                                        }}
                                                     >
                                                         +
                                                     </button>
                                                 </div>
                                                 <span className="font-bold whitespace-nowrap md:text-lg">
-                                                    $
                                                     {item.productVariant?.discountedPrice?.toLocaleString() + ".00" ||
-                                                        item.productVariant?.originalPrice?.toLocaleString() + ".00"}
+                                                        item.productVariant?.originalPrice?.toLocaleString() + ".00"}{" "}
+                                                    <span className="underline">đ</span>
                                                 </span>
                                             </div>
                                         </div>

@@ -9,7 +9,7 @@ const ProfileSidebar = ({ tabs, activeTab, setActiveTab }) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex w-full items-center space-x-3 rounded-lg px-4 py-3 transition-all duration-200 ${
+                        className={`flex w-full items-center space-x-3 rounded-lg px-4 py-3 transition-all duration-200 cursor-pointer ${
                             activeTab === tab.id
                                 ? "border border-black bg-black text-white"
                                 : "border border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"

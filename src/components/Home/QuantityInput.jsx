@@ -7,30 +7,35 @@ import React from "react";
  *  - onChange: callback (val: number) => void
  *  - disabled: disable input
  *  - min: số lượng tối thiểu (default 1)
+ *  - max: số lượng tối đa (default không giới hạn)
  */
-const QuantityInput = ({ value, onChange, disabled, min = 1 }) => {
+const QuantityInput = ({ value, onChange, disabled, min = 1, max }) => {
     return (
         <>
             <input
                 type="number"
                 min={min}
+                max={max}
                 className="w-12 appearance-none border-none bg-transparent px-1 py-1 text-center outline-none"
                 style={{ MozAppearance: "textfield" }}
                 value={value}
                 onChange={(e) => {
                     let val = parseInt(e.target.value, 10);
                     if (isNaN(val) || val < min) val = min;
+                    if (max && val > max) val = max;
                     onChange(val);
                 }}
                 onBlur={(e) => {
                     let val = parseInt(e.target.value, 10);
                     if (isNaN(val) || val < min) val = min;
+                    if (max && val > max) val = max;
                     onChange(val);
                 }}
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {
                         let val = parseInt(e.target.value, 10);
                         if (isNaN(val) || val < min) val = min;
+                        if (max && val > max) val = max;
                         onChange(val);
                     }
                 }}

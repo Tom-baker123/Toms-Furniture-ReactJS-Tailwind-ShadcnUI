@@ -59,9 +59,12 @@ const Products = () => {
 
         let filteredProducts = [...products.items];
 
+        console.log("Current filters:", filters); // Debug log
+        console.log("Total products before filter:", filteredProducts.length); // Debug log
+
         // Áp dụng các bộ lọc
         if (filters.categoryNames.length > 0) {
-            filteredProducts = filteredProducts.filter((product) => filters.categoryNames.includes(String(product.categoryId)));
+            filteredProducts = filteredProducts.filter((product) => filters.categoryNames.includes(product.categoryName));
         }
 
         if (filters.brandNames.length > 0) {
@@ -90,10 +93,12 @@ const Products = () => {
             );
         }
 
-        // Lọc theo giá
+        // Lọc theo giá (dựa vào discountedPrice)
         if (filters.minPrice !== null || filters.maxPrice !== null) {
             filteredProducts = filteredProducts.filter((product) => {
-                const minPrice = Math.min(...product.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                const minPrice = Math.min(
+                    ...product.productVariants.map((v) => v.discountedPrice ?? v.originalPrice).filter((price) => price != null),
+                );
 
                 if (filters.minPrice !== null && minPrice < filters.minPrice) return false;
                 if (filters.maxPrice !== null && minPrice > filters.maxPrice) return false;
@@ -122,13 +127,21 @@ const Products = () => {
                         comparison = b.productName.localeCompare(a.productName);
                         break;
                     case "price-ascending":
-                        const priceA = Math.min(...a.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
-                        const priceB = Math.min(...b.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                        const priceA = Math.min(
+                            ...a.productVariants.map((v) => v.discountedPrice ?? v.originalPrice).filter((price) => price != null),
+                        );
+                        const priceB = Math.min(
+                            ...b.productVariants.map((v) => v.discountedPrice ?? v.originalPrice).filter((price) => price != null),
+                        );
                         comparison = priceA - priceB;
                         break;
                     case "price-descending":
-                        const priceA2 = Math.min(...a.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
-                        const priceB2 = Math.min(...b.productVariants.map((v) => v.discountedPrice ?? v.originalPrice));
+                        const priceA2 = Math.min(
+                            ...a.productVariants.map((v) => v.discountedPrice ?? v.originalPrice).filter((price) => price != null),
+                        );
+                        const priceB2 = Math.min(
+                            ...b.productVariants.map((v) => v.discountedPrice ?? v.originalPrice).filter((price) => price != null),
+                        );
                         comparison = priceB2 - priceA2;
                         break;
                     case "created-ascending":
@@ -145,6 +158,7 @@ const Products = () => {
             });
         }
 
+        console.log("Filtered products count:", filteredProducts.length); // Debug log
         return filteredProducts;
     };
 
@@ -160,17 +174,18 @@ const Products = () => {
 
     // Xử lý thay đổi bộ lọc
     const handleFilterChange = useCallback((filterType, value) => {
+        console.log("Filter change:", filterType, value); // Debug log
         setFilters((prevFilters) => {
             const newFilters = { ...prevFilters };
 
-            // Xử lý filter category theo id
+            // Xử lý filter category theo name
             if (filterType === "category") {
                 const key = "categoryNames";
-                // value phải là id (string hoặc number)
-                if (newFilters[key].includes(String(value))) {
-                    newFilters[key] = newFilters[key].filter((item) => item !== String(value));
+                // value là categoryName
+                if (newFilters[key].includes(value)) {
+                    newFilters[key] = newFilters[key].filter((item) => item !== value);
                 } else {
-                    newFilters[key] = [...newFilters[key], String(value)];
+                    newFilters[key] = [...newFilters[key], value];
                 }
             }
             // Các filter khác giữ nguyên
@@ -498,16 +513,18 @@ const Products = () => {
                                                 {/* Product Name */}
                                                 <Link
                                                     to={`/products/${product.id}`}
-                                                    className="line-clamp-2 text-lg font-bold text-gray-900"
+                                                    className="line-clamp-2 text-lg font-bold text-ellipsis whitespace-nowrap text-gray-900"
                                                 >
                                                     {product.productName}
                                                 </Link>
                                                 {/* Price */}
-                                                <p className="text-lg font-bold text-gray-500">
-                                                    $
+                                                <p className="font-bold text-slate-500">
                                                     {Math.min(
-                                                        ...product.productVariants.map((pv) => pv.discountedPrice ?? pv.originalPrice),
-                                                    ).toLocaleString()}
+                                                        ...product.productVariants
+                                                            .map((pv) => pv.discountedPrice ?? pv.originalPrice)
+                                                            .filter((price) => price != null),
+                                                    ).toLocaleString()}{" "}
+                                                    đ
                                                 </p>
                                                 {/* Color Options */}
                                                 <div className="mt-2 flex items-center gap-2">

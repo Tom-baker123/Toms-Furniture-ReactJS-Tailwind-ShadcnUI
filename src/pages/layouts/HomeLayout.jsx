@@ -4,6 +4,7 @@ import ScrollToTop from "@/components/Header-Components/ScrollToTop";
 import CartModal from "@/components/Home/CartModal";
 import ModalTemplate from "@/components/ModalTemplate";
 import Breadcrumbs from "@/components/tailwind-custom/Breadcrumbs";
+import ChatBotAi from "@/components/AI/Chatbot/ChatBotAi";
 import { APIProvider } from "@/context/APIContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { ModalProvider } from "@/context/ModalContext";
@@ -38,6 +39,8 @@ const HomeLayout = () => {
                                     <Breadcrumbs />
                                     <Outlet /> {/* 2. Thiết lập OUTLET */}
                                     <Footer /> {/* 3. Thiết lập footer */}
+                                    {/* 4. Thiết lập ChatBot AI */}
+                                    <ChatBotAi />
                                     <Toaster toastOptions={{ duration: 10000 }} /> {/* 5. Thiết lập thông báo Hot Toast Mặc định */}
                                     <ModalTemplate />
                                 </PaymentMethodProvider>
