@@ -114,6 +114,7 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: <HomeLayout />,
+        errorElement: <PageNotFound />,
         children: [
             // Home, About, PageNotFound, Contact,
             // FindAStore, Product, ProductDetails
@@ -162,6 +163,7 @@ const router = createBrowserRouter([
                 <AdminLayouts />
             </AdminRoute>
         ),
+        errorElement: <PageNotFound />,
         children: [
             // [1.] Trang chủ admin
             {
@@ -436,7 +438,7 @@ const router = createBrowserRouter([
                     {
                         path: "New_RoomType",
                         element: <RoomTypeForm />,
-                        loader: async () => ({}) 
+                        loader: async () => ({}),
                     },
                     {
                         path: "Edit_RoomType/:id",

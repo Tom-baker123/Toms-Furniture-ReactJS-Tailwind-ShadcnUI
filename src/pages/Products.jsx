@@ -493,7 +493,7 @@ const Products = () => {
                                             <div className="relative mb-3 overflow-hidden rounded-md">
                                                 <Link to={`/products/${product.id}`}>
                                                     <img
-                                                        className="aspect-square w-full rounded-md object-cover transition-transform duration-300 group-hover:scale-105"
+                                                        className="aspect-square w-full rounded-md bg-gray-100 object-cover transition-transform duration-300 group-hover:scale-105"
                                                         src={product.sliders[0]?.imageUrl || "/img/placeholder.jpg"}
                                                         alt={product.productName}
                                                     />
