@@ -89,7 +89,7 @@ const CountryManagement = () => {
                                                         alt={country.countryName}
                                                         width={50}
                                                         height={50}
-                                                        className="rounded"
+                                                        className="rounded shadow-sm"
                                                     />
                                                 ) : (
                                                     <span className="text-gray-800 dark:text-gray-200">_</span>
