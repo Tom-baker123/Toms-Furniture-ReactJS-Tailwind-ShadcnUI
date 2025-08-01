@@ -17,6 +17,7 @@ export { default as Blog } from "./Blog";
 // [ADMIN Page 🪪]----------------------------------------------
 export { default as AnalyticsReport } from "./admin/AnalyticsReport";
 export { default as BrandManagement } from "./admin/BrandManagement";
+export { default as BlogManagement } from "./admin/BlogManagement";
 export { default as CategoryManagement } from "./admin/CategoryManagement";
 export { default as ColorManagement } from "./admin/ColorManagement";
 export { default as CountryManagement } from "./admin/CountryManagement";

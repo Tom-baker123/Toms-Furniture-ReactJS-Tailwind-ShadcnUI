@@ -23,6 +23,7 @@ import {
     Store,
     StoreIcon,
     BedDouble,
+    Newspaper,
 } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
@@ -110,6 +111,18 @@ export const navbarLinks = [
                 label: "Loại giảm giá",
                 icon: DiamondPercent,
                 path: "/admin/promotiontypes",
+            },
+        ],
+    },
+
+    // Trang quản lý tin tức
+    {
+        title: "Tin tức",
+        links: [
+            {
+                label: "Tin tức",
+                icon: Newspaper,
+                path: "/admin/blog_management",
             },
         ],
     },
