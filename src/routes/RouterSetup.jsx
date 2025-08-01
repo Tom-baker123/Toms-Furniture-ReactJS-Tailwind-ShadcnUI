@@ -15,6 +15,7 @@ import {
     // Admin Page
     AnalyticsReport,
     BrandManagement,
+    BlogManagement,
     CategoryManagement,
     CustomerManagement,
     Dashboard,
@@ -88,6 +89,8 @@ import { getAllTests } from "@/api/service/TestService";
 import OrderDetailsForm from "@/components/Admin/Form/OrderDetailsForm";
 import { getAllRoomTypes, getRoomTypeById } from "@/api/service/RoomTypeService";
 import RoomTypeForm from "@/components/Admin/Form/RoomTypeForm";
+import BlogForm from "@/components/Admin/Form/BlogForm";
+import { getNews, getNewsById } from "@/api/service/BlogService";
 
 const AdminRoute = ({ children }) => {
     const [authStatus, setAuthStatus] = useState(null);
@@ -444,6 +447,26 @@ const router = createBrowserRouter([
                         path: "Edit_RoomType/:id",
                         element: <RoomTypeForm />,
                         loader: async ({ params }) => await getRoomTypeById(params.id),
+                    },
+                ],
+            },
+            // [20.] Trang quản lý tin tức
+            {
+                path: "blog_management",
+                children: [
+                    {
+                        index: true,
+                        element: <BlogManagement />,
+                        loader: async () => await getNews(),
+                    },
+                    {
+                        path: "new_blog",
+                        element: <BlogForm />,
+                    },
+                    {
+                        path: "edit_blog/:id",
+                        element: <BlogForm />,
+                        loader: async ({ params }) => await getNewsById(params.id),
                     },
                 ],
             },
