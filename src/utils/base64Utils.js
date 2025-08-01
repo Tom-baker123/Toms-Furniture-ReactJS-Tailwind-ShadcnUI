@@ -9,12 +9,12 @@
  * @returns {string} - Decoded text
  */
 export const decodeBase64 = (base64String) => {
-  try {
-    return atob(base64String);
-  } catch (error) {
-    console.error('Error decoding base64:', error);
-    return null;
-  }
+    try {
+        return atob(base64String);
+    } catch (error) {
+        console.error('Error decoding base64:', error);
+        return null;
+    }
 };
 
 /**
@@ -23,12 +23,12 @@ export const decodeBase64 = (base64String) => {
  * @returns {string} - Base64 encoded string
  */
 export const encodeBase64 = (text) => {
-  try {
-    return btoa(text);
-  } catch (error) {
-    console.error('Error encoding to base64:', error);
-    return null;
-  }
+    try {
+        return btoa(text);
+    } catch (error) {
+        console.error('Error encoding to base64:', error);
+        return null;
+    }
 };
 
 /**
@@ -37,17 +37,17 @@ export const encodeBase64 = (text) => {
  * @returns {Uint8Array} - Binary data array
  */
 export const base64ToArrayBuffer = (base64String) => {
-  try {
-    const binaryString = atob(base64String);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+    try {
+        const binaryString = atob(base64String);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
+    } catch (error) {
+        console.error('Error converting base64 to array buffer:', error);
+        return null;
     }
-    return bytes;
-  } catch (error) {
-    console.error('Error converting base64 to array buffer:', error);
-    return null;
-  }
 };
 
 /**
@@ -56,17 +56,17 @@ export const base64ToArrayBuffer = (base64String) => {
  * @returns {string} - Base64 string
  */
 export const arrayBufferToBase64 = (buffer) => {
-  try {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
+    try {
+        const bytes = new Uint8Array(buffer);
+        let binary = '';
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    } catch (error) {
+        console.error('Error converting array buffer to base64:', error);
+        return null;
     }
-    return btoa(binary);
-  } catch (error) {
-    console.error('Error converting array buffer to base64:', error);
-    return null;
-  }
 };
 
 /**
@@ -75,21 +75,21 @@ export const arrayBufferToBase64 = (buffer) => {
  * @returns {boolean} - True nếu là base64 hợp lệ
  */
 export const isValidBase64 = (str) => {
-  try {
-    // Regex pattern cho base64
-    const base64Pattern = /^[A-Za-z0-9+/]*={0,2}$/;
-    
-    // Kiểm tra pattern và độ dài
-    if (!base64Pattern.test(str) || str.length % 4 !== 0) {
-      return false;
+    try {
+        // Regex pattern cho base64
+        const base64Pattern = /^[A-Za-z0-9+/]*={0,2}$/;
+
+        // Kiểm tra pattern và độ dài
+        if (!base64Pattern.test(str) || str.length % 4 !== 0) {
+            return false;
+        }
+
+        // Thử decode để kiểm tra
+        atob(str);
+        return true;
+    } catch (error) {
+        return false;
     }
-    
-    // Thử decode để kiểm tra
-    atob(str);
-    return true;
-  } catch (error) {
-    return false;
-  }
 };
 
 /**
@@ -99,13 +99,13 @@ export const isValidBase64 = (str) => {
  * @returns {string} - Data URL
  */
 export const createImageDataUrl = (base64String, mimeType = 'image/jpeg') => {
-  // Nếu đã có prefix data URL thì return luôn
-  if (base64String.startsWith('data:')) {
-    return base64String;
-  }
-  
-  // Tạo data URL
-  return `data:${mimeType};base64,${base64String}`;
+    // Nếu đã có prefix data URL thì return luôn
+    if (base64String.startsWith('data:')) {
+        return base64String;
+    }
+
+    // Tạo data URL
+    return `data:${mimeType};base64,${base64String}`;
 };
 
 /**
@@ -114,12 +114,12 @@ export const createImageDataUrl = (base64String, mimeType = 'image/jpeg') => {
  * @returns {string} - Base64 string thuần
  */
 export const extractBase64FromDataUrl = (dataUrl) => {
-  if (!dataUrl.startsWith('data:')) {
-    return dataUrl; // Đã là base64 thuần
-  }
-  
-  const base64Index = dataUrl.indexOf(',');
-  return base64Index !== -1 ? dataUrl.substring(base64Index + 1) : dataUrl;
+    if (!dataUrl.startsWith('data:')) {
+        return dataUrl; // Đã là base64 thuần
+    }
+
+    const base64Index = dataUrl.indexOf(',');
+    return base64Index !== -1 ? dataUrl.substring(base64Index + 1) : dataUrl;
 };
 
 /**
@@ -128,12 +128,12 @@ export const extractBase64FromDataUrl = (dataUrl) => {
  * @returns {string} - MIME type
  */
 export const getMimeTypeFromDataUrl = (dataUrl) => {
-  if (!dataUrl.startsWith('data:')) {
-    return 'unknown';
-  }
-  
-  const mimeMatch = dataUrl.match(/data:([^;]+)/);
-  return mimeMatch ? mimeMatch[1] : 'unknown';
+    if (!dataUrl.startsWith('data:')) {
+        return 'unknown';
+    }
+
+    const mimeMatch = dataUrl.match(/data:([^;]+)/);
+    return mimeMatch ? mimeMatch[1] : 'unknown';
 };
 
 /**
@@ -142,17 +142,17 @@ export const getMimeTypeFromDataUrl = (dataUrl) => {
  * @returns {Promise<string>} - Promise resolve base64 string
  */
 export const fileToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      // Lấy base64 thuần (bỏ data URL prefix)
-      const base64 = extractBase64FromDataUrl(result);
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const result = reader.result;
+            // Lấy base64 thuần (bỏ data URL prefix)
+            const base64 = extractBase64FromDataUrl(result);
+            resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
 };
 
 /**
@@ -162,28 +162,28 @@ export const fileToBase64 = (file) => {
  * @param {string} mimeType - MIME type
  */
 export const downloadBase64AsFile = (base64String, filename, mimeType = 'application/octet-stream') => {
-  try {
-    const byteCharacters = atob(extractBase64FromDataUrl(base64String));
-    const byteNumbers = new Array(byteCharacters.length);
-    
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    try {
+        const byteCharacters = atob(extractBase64FromDataUrl(base64String));
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType });
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error downloading base64 as file:', error);
     }
-    
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: mimeType });
-    
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Error downloading base64 as file:', error);
-  }
 };
 
 /**
@@ -195,38 +195,38 @@ export const downloadBase64AsFile = (base64String, filename, mimeType = 'applica
  * @returns {Promise<string>} - Promise resolve base64 đã resize
  */
 export const resizeBase64Image = (base64String, maxWidth = 800, maxHeight = 600, quality = 0.8) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      // Tính toán kích thước mới
-      let { width, height } = img;
-      
-      if (width > height) {
-        if (width > maxWidth) {
-          height = (height * maxWidth) / width;
-          width = maxWidth;
-        }
-      } else {
-        if (height > maxHeight) {
-          width = (width * maxHeight) / height;
-          height = maxHeight;
-        }
-      }
-      
-      canvas.width = width;
-      canvas.height = height;
-      
-      // Vẽ ảnh đã resize
-      ctx.drawImage(img, 0, 0, width, height);
-      
-      // Lấy base64 mới
-      const resizedBase64 = canvas.toDataURL('image/jpeg', quality);
-      resolve(extractBase64FromDataUrl(resizedBase64));
-    };
-    img.onerror = reject;
-    img.src = createImageDataUrl(base64String);
-  });
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Tính toán kích thước mới
+            let { width, height } = img;
+
+            if (width > height) {
+                if (width > maxWidth) {
+                    height = (height * maxWidth) / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width = (width * maxHeight) / height;
+                    height = maxHeight;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Vẽ ảnh đã resize
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Lấy base64 mới
+            const resizedBase64 = canvas.toDataURL('image/jpeg', quality);
+            resolve(extractBase64FromDataUrl(resizedBase64));
+        };
+        img.onerror = reject;
+        img.src = createImageDataUrl(base64String);
+    });
 };

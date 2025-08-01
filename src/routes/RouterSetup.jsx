@@ -12,6 +12,7 @@ import {
     Profile,
     Cart,
     Blog,
+    BlogDetail,
     // Admin Page
     AnalyticsReport,
     BrandManagement,
@@ -128,6 +129,7 @@ const router = createBrowserRouter([
             { path: "findastore", element: <FindAStore /> },
             { path: "cart", element: <Cart /> },
             { path: "blog", element: <Blog /> },
+            { path: "blog/:id", element: <BlogDetail /> },
             { path: "checkout", element: <Payment /> },
             { path: "checkout/paymentcallbackvnpay", element: <PaymentCallbackVnpay /> },
             {
