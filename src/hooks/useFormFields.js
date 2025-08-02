@@ -12,48 +12,48 @@ export const useFormFields = ({
     const formFields = useMemo(() => [
         {
             name: "ProductName",
-            label: "Product Name *",
+            label: "Tên Sản Phẩm *",
             type: "input",
             inputType: "text",
-            placeholder: "Enter product name",
+            placeholder: "-- Nhập tên sản phẩm --",
             rules: {
-                required: "Product name is required",
+                required: "Tên sản phẩm là bắt buộc",
                 validate: {
                     notEmpty: (value) => {
                         if (!value || value.trim() === "") {
-                            return "Product name cannot be empty or contain only spaces";
+                            return "Tên sản phẩm không được để trống hoặc chỉ chứa khoảng trắng";
                         }
                         return true;
                     }
                 },
                 maxLength: {
                     value: 100,
-                    message: "Product name must be less than 100 characters",
+                    message: "Tên sản phẩm phải ít hơn 100 ký tự",
                 },
             },
             required: true
         },
         {
             name: "SpecificationDescription",
-            label: "Specification Description",
+            label: "Mô Tả Thông Số Kỹ Thuật",
             type: "textarea",
-            placeholder: "Enter specification description",
+            placeholder: "-- Nhập mô tả thông số kỹ thuật --",
             rows: 4,
             required: false
         },
         {
             name: "CategoryId",
-            label: "Category *",
+            label: "Danh Mục *",
             type: "select",
-            placeholder: "Select category",
+            placeholder: "-- Chọn danh mục --",
             options: categories,
             optionKey: "categoryName",
             rules: {
-                required: "Category is required",
+                required: "Danh mục là bắt buộc",
                 validate: {
                     notEmpty: (value) => {
                         if (!value || value === "" || value === "0" || value === 0) {
-                            return "Please select a valid category";
+                            return "Vui lòng chọn một danh mục hợp lệ";
                         }
                         return true;
                     }
@@ -63,38 +63,38 @@ export const useFormFields = ({
         },
         {
             name: "BrandId",
-            label: "Brand",
+            label: "Thương Hiệu",
             type: "select",
-            placeholder: "Select brand",
+            placeholder: "-- Chọn thương hiệu --",
             options: brands,
             optionKey: "brandName",
             required: false
         },
         {
             name: "CountriesId",
-            label: "Country",
+            label: "Quốc Gia",
             type: "select",
-            placeholder: "Select country",
+            placeholder: "-- Chọn quốc gia --",
             options: countries,
             optionKey: "countryName",
             required: false
         },
         {
             name: "SupplierId",
-            label: "Supplier",
+            label: "Nhà Cung Cấp",
             type: "select",
-            placeholder: "Select supplier",
+            placeholder: "-- Chọn nhà cung cấp --",
             options: suppliers,
             optionKey: "supplierName",
             required: false
         },
         ...(isEditing ? [{
             name: "IsActive",
-            label: "Status",
+            label: "Trạng Thái",
             type: "select",
             options: [
-                { id: true, value: true, label: "Active" },
-                { id: false, value: false, label: "Inactive" }
+                { id: true, value: true, label: "Hoạt Động" },
+                { id: false, value: false, label: "Không Hoạt Động" }
             ],
             optionKey: "label",
             required: false

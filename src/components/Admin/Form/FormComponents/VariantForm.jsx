@@ -1,5 +1,6 @@
 import React from "react";
-import { Plus, Trash, Edit, Image } from "lucide-react";
+import { Plus, Trash, Edit, Image, Copy } from "lucide-react";
+import { formatVNDForDisplay } from "@/utils/currencyUtils";
 
 const VariantForm = ({
     fields,
@@ -24,6 +25,8 @@ const VariantForm = ({
     // Variant Images Props
     variantImages = {},
     variantImageErrors = {},
+    // Thêm prop handleDuplicateVariant
+    handleDuplicateVariant,
 }) => {
     // Get variant display names helper functions
     const getColorName = (colorId) => {
@@ -48,7 +51,7 @@ const VariantForm = ({
 
     return (
         <div className="rounded-xl bg-white p-6 shadow-lg lg:col-span-3">
-            <h2 className="mb-4 text-xl font-semibold text-gray-900">Product Variants</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-900">Biến Thể Sản Phẩm</h2>
             <div className="space-y-4">
                 {/* Variants List */}
                 {fields.length > 0 ? (
@@ -66,7 +69,7 @@ const VariantForm = ({
                                         <div className="flex-shrink-0">
                                             <div className="flex flex-col items-center">
                                                 <span className="mb-2 text-xs font-medium text-gray-500">
-                                                    Images ({variantImages[index]?.length || 0})
+                                                    Hình Ảnh ({variantImages[index]?.length || 0})
                                                 </span>
                                                 <div className="flex flex-wrap gap-1">
                                                     {variantImages[index] && variantImages[index].length > 0 ? (
@@ -111,7 +114,7 @@ const VariantForm = ({
                                                 </div>
                                                 {/* Image error indicator */}
                                                 {variantImageErrors[index] && (
-                                                    <div className="mt-1 rounded bg-red-50 px-2 py-1 text-xs text-red-600">⚠️ Missing images</div>
+                                                    <div className="mt-1 rounded bg-red-50 px-2 py-1 text-xs text-red-600">⚠️ Thiếu hình ảnh</div>
                                                 )}
                                             </div>
                                         </div>
@@ -120,29 +123,31 @@ const VariantForm = ({
                                         <div className="flex-1">
                                             <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
                                                 <div>
-                                                    <span className="text-xs font-medium text-gray-500">Original Price</span>
-                                                    <p className="text-sm font-semibold text-gray-900">${variant.OriginalPrice || 0}</p>
-                                                </div>
-                                                <div>
-                                                    <span className="text-xs font-medium text-gray-500">Discounted Price</span>
-                                                    <p className="text-sm text-gray-700">
-                                                        {variant.DiscountedPrice ? `$${variant.DiscountedPrice}` : "No discount"}
+                                                    <span className="text-xs font-medium text-gray-500">Giá Gốc</span>
+                                                    <p className="text-sm font-semibold text-gray-900">
+                                                        {formatVNDForDisplay(variant.OriginalPrice || 0)}
                                                     </p>
                                                 </div>
                                                 <div>
-                                                    <span className="text-xs font-medium text-gray-500">Stock Quantity</span>
+                                                    <span className="text-xs font-medium text-gray-500">Giá Khuyến Mãi</span>
+                                                    <p className="text-sm text-gray-700">
+                                                        {variant.DiscountedPrice ? formatVNDForDisplay(variant.DiscountedPrice) : "Không giảm giá"}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <span className="text-xs font-medium text-gray-500">Số Lượng Tồn Kho</span>
                                                     <p className="text-sm text-gray-700">{variant.StockQty || 0}</p>
                                                 </div>
                                                 <div>
-                                                    <span className="text-xs font-medium text-gray-500">Attributes</span>
+                                                    <span className="text-xs font-medium text-gray-500">Thuộc Tính</span>
                                                     <div className="mt-1 flex flex-wrap gap-1">
                                                         {[
-                                                            variant.ColorId ? { type: "Color", value: getColorName(variant.ColorId) } : null,
-                                                            variant.SizeId ? { type: "Size", value: getSizeName(variant.SizeId) } : null,
+                                                            variant.ColorId ? { type: "Màu sắc", value: getColorName(variant.ColorId) } : null,
+                                                            variant.SizeId ? { type: "Kích cỡ", value: getSizeName(variant.SizeId) } : null,
                                                             variant.MaterialId
-                                                                ? { type: "Material", value: getMaterialName(variant.MaterialId) }
+                                                                ? { type: "Chất liệu", value: getMaterialName(variant.MaterialId) }
                                                                 : null,
-                                                            variant.UnitId ? { type: "Unit", value: getUnitName(variant.UnitId) } : null,
+                                                            variant.UnitId ? { type: "Đơn vị", value: getUnitName(variant.UnitId) } : null,
                                                         ]
                                                             .filter(Boolean)
                                                             .map((attr, attrIndex) => (
@@ -173,10 +178,23 @@ const VariantForm = ({
                                                     handleEditVariant(index);
                                                 }}
                                                 className="text-blue-500 transition-colors duration-200 hover:text-blue-600"
-                                                title="Edit variant"
+                                                title="Chỉnh sửa biến thể"
                                             >
                                                 <Edit size={16} />
                                             </button>
+                                            {handleDuplicateVariant && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDuplicateVariant(index);
+                                                    }}
+                                                    className="text-green-500 transition-colors duration-200 hover:text-green-600"
+                                                    title="Nhân đôi biến thể"
+                                                >
+                                                    <Copy size={16} />
+                                                </button>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={(e) => {
@@ -185,7 +203,7 @@ const VariantForm = ({
                                                 }}
                                                 disabled={deletingVariant === index}
                                                 className="text-red-500 transition-colors duration-200 hover:text-red-600"
-                                                title="Delete variant"
+                                                title="Xóa biến thể"
                                             >
                                                 {deletingVariant === index ? <span className="animate-spin">⌛</span> : <Trash size={16} />}
                                             </button>
@@ -204,8 +222,8 @@ const VariantForm = ({
                     </div>
                 ) : (
                     <div className="py-2 text-center">
-                        <p className="mb-2 text-gray-500">No variants added yet</p>
-                        <p className="text-sm text-gray-400">Click "Add Variant" to create your first product variant</p>
+                        <p className="mb-2 text-gray-500">Chưa có biến thể nào được thêm</p>
+                        <p className="text-sm text-gray-400">Nhấp "Thêm Biến Thể" để tạo biến thể sản phẩm đầu tiên</p>
                     </div>
                 )}
 
@@ -216,7 +234,7 @@ const VariantForm = ({
                     onClick={handleAddVariant}
                 >
                     <Plus className="h-5 w-5" />
-                    <span className="cursor-pointer text-sm font-medium">Add Variant</span>
+                    <span className="cursor-pointer text-sm font-medium">Thêm Biến Thể</span>
                 </button>
             </div>
         </div>

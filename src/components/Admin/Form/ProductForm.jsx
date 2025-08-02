@@ -66,9 +66,14 @@ const ProductForm = () => {
     // Handle opening modal for new variant
     const handleAddVariant = () => {
         // Khi thêm variant mới, tạo index tạm thời để quản lý ảnh
-        const newIndex = fields.length;
+        // Sử dụng index âm để tránh conflict với index thực
+        const tempIndex = -1;
+        console.log("🔵 [DEBUG] handleAddVariant - Creating temp index:", tempIndex);
+        console.log("📊 [DEBUG] Current fields length:", fields.length);
+        console.log("📁 [DEBUG] Current variant images:", variantImages);
+        
         setEditingVariant({
-            index: newIndex,
+            index: tempIndex,
             isNew: true,
         });
         setIsModalOpen(true);
@@ -95,13 +100,24 @@ const ProductForm = () => {
 
     // Handle saving variant (add or update)
     const handleSaveVariant = (variantData) => {
+        console.log("🔵 [DEBUG] handleSaveVariant called:", {
+            editingVariant,
+            variantData,
+            currentVariantImages: variantImages,
+            fieldsLength: fields.length
+        });
+
         if (editingVariant && editingVariant.index !== undefined && !editingVariant.isNew) {
             // Update existing variant - handled by the modal
-            console.log("Updating variant at index:", editingVariant.index, variantData);
+            console.log("✏️ [DEBUG] Updating existing variant at index:", editingVariant.index, variantData);
         } else {
             // Add new variant
             const newVariantIndex = fields.length;
+            console.log("➕ [DEBUG] Adding new variant. New index will be:", newVariantIndex);
+            console.log("📊 [DEBUG] Current fields length:", fields.length);
+            console.log("📁 [DEBUG] Current variant images before append:", variantImages);
 
+            // Thêm variant mới trước
             append({
                 Id: 0,
                 OriginalPrice: variantData.OriginalPrice || "",
@@ -113,16 +129,74 @@ const ProductForm = () => {
                 UnitId: variantData.UnitId || null,
             });
 
-            // Nếu có ảnh cho variant mới, di chuyển từ index tạm thời sang index thực
-            if (editingVariant && editingVariant.index !== undefined && variantImages[editingVariant.index]) {
-                const tempImages = variantImages[editingVariant.index];
-                const newVariantImages = { ...variantImages };
-                delete newVariantImages[editingVariant.index]; // Xóa ảnh ở index tạm thời
-                newVariantImages[newVariantIndex] = tempImages; // Thêm ảnh vào index thực
-                setVariantImages(newVariantImages);
-                console.log("🔄 Moved images from temp index", editingVariant.index, "to actual index", newVariantIndex);
-            }
+            // Sử dụng setTimeout để đảm bảo append đã hoàn thành
+            setTimeout(() => {
+                console.log("⏰ [DEBUG] Timeout - checking images after append");
+                console.log("📊 [DEBUG] Fields length after append:", fields.length);
+                
+                // Nếu có ảnh cho variant mới, di chuyển từ index tạm thời sang index thực
+                if (editingVariant && editingVariant.index !== undefined && variantImages[editingVariant.index]) {
+                    const tempImages = variantImages[editingVariant.index];
+                    const tempIndex = editingVariant.index;
+                    console.log("🔄 [DEBUG] Moving images from temp index", tempIndex, "to actual index", newVariantIndex);
+                    console.log("📁 [DEBUG] Images to move:", tempImages);
+
+                    setVariantImages(prevImages => {
+                        const newVariantImages = { ...prevImages };
+                        delete newVariantImages[tempIndex]; // Xóa ảnh ở index tạm thời
+                        newVariantImages[newVariantIndex] = tempImages; // Thêm ảnh vào index thực
+                        console.log("✅ [DEBUG] Images moved successfully. New state:", newVariantImages);
+                        return newVariantImages;
+                    });
+                } else {
+                    console.log("ℹ️ [DEBUG] No images to move or editingVariant not found:", {
+                        hasEditingVariant: !!editingVariant,
+                        editingVariantIndex: editingVariant?.index,
+                        hasImages: !!(editingVariant && variantImages[editingVariant.index]),
+                        currentVariantImages: variantImages
+                    });
+                }
+            }, 100); // Đợi 100ms để đảm bảo append hoàn thành
         }
+    };
+
+    // Handle duplicating variant
+    const handleDuplicateVariant = (index) => {
+        const variantToDuplicate = fields[index];
+        const watchedData = watch(`ProductVariants[${index}]`) || {};
+        
+        // Tạo variant mới với dữ liệu giống hệt variant gốc
+        const duplicatedVariant = {
+            Id: 0, // ID mới sẽ được tạo khi save
+            OriginalPrice: watchedData.OriginalPrice || variantToDuplicate.OriginalPrice || 0,
+            DiscountedPrice: watchedData.DiscountedPrice || variantToDuplicate.DiscountedPrice || null,
+            StockQty: watchedData.StockQty || variantToDuplicate.StockQty || 0,
+            ColorId: watchedData.ColorId || variantToDuplicate.ColorId || null,
+            SizeId: watchedData.SizeId || variantToDuplicate.SizeId || null,
+            MaterialId: watchedData.MaterialId || variantToDuplicate.MaterialId || null,
+            UnitId: watchedData.UnitId || variantToDuplicate.UnitId || null,
+        };
+
+        // Thêm variant mới vào form
+        append(duplicatedVariant);
+
+        // Sao chép ảnh của variant gốc (nếu có)
+        if (variantImages[index] && variantImages[index].length > 0) {
+            const newVariantIndex = fields.length; // Index của variant mới
+            const duplicatedImages = variantImages[index].map(image => ({
+                ...image,
+                id: null, // Ảnh mới sẽ không có ID từ server
+                // Giữ nguyên file và preview để có thể upload lại
+            }));
+
+            const newVariantImages = { ...variantImages };
+            newVariantImages[newVariantIndex] = duplicatedImages;
+            setVariantImages(newVariantImages);
+            
+            console.log("🔄 Duplicated variant with", duplicatedImages.length, "images");
+        }
+
+        console.log("✅ Variant duplicated successfully");
     };
 
     return (
@@ -135,7 +209,7 @@ const ProductForm = () => {
                         className="flex items-center gap-2 text-blue-600 transition-colors duration-200 hover:text-indigo-800"
                     >
                         <MoveLeft className="h-5 w-5" />
-                        <span className="text-sm font-medium">Back to Products</span>
+                        <span className="text-sm font-medium">Quay Lại Danh Sách Sản Phẩm</span>
                     </button>
                 </div>
 
@@ -156,7 +230,7 @@ const ProductForm = () => {
                             >
                                 <Save className="h-5 w-5 sm:mr-2" />
                                 <span className="max-sm:hidden">
-                                    {isSubmitting || isLoading ? "Processing..." : isEditing ? "Update Product" : "Create Product"}
+                                    {isSubmitting || isLoading ? "Đang Xử Lý..." : isEditing ? "Cập Nhật Sản Phẩm" : "Tạo Sản Phẩm"}
                                 </span>
                             </button>
                         </div>
@@ -165,7 +239,7 @@ const ProductForm = () => {
                     <div className="grid grid-cols-1 gap-y-6">
                         {/* Product Information */}
                         <div className="rounded-xl bg-white p-6 shadow-lg lg:col-span-3">
-                            <h2 className="mb-4 text-xl font-semibold text-gray-900">Product Information</h2>
+                            <h2 className="mb-4 text-xl font-semibold text-gray-900">Thông Tin Sản Phẩm</h2>
                             <div className="space-y-6">
                                 {formFields.map((field) => (
                                     <FormField
@@ -201,6 +275,7 @@ const ProductForm = () => {
                             units={units}
                             deletingVariant={deletingVariant}
                             handleDeleteVariant={handleDeleteVariant}
+                            handleDuplicateVariant={handleDuplicateVariant}
                             append={append}
                             remove={remove}
                             watch={watch}

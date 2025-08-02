@@ -509,7 +509,7 @@ const Products = () => {
                                             {/* Product Info */}
                                             <div className="space-y-1">
                                                 {/* Category */}
-                                                <p className="text-sm font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
+                                                <p className="text-xs font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
                                                 {/* Product Name */}
                                                 <Link
                                                     to={`/products/${product.id}`}

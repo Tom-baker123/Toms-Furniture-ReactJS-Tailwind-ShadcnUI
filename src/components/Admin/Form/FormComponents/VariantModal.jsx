@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import ButtonHovCT from "../../../tailwind-custom/ButtonHovCT";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
+import { formatVNDForInput, parseVND, isValidVNDFormat } from "@/utils/currencyUtils";
 
 const VariantModal = ({
     open,
@@ -99,6 +100,12 @@ const VariantModal = ({
     const onSubmit = useCallback(
         (data) => {
             try {
+                console.log("🔵 [VariantModal] onSubmit called:", {
+                    data,
+                    editingVariant,
+                    isNew: editingVariant?.isNew
+                });
+
                 const variantData = {
                     ...data,
                     OriginalPrice: Number(data.OriginalPrice),
@@ -108,6 +115,7 @@ const VariantModal = ({
 
                 // If editing existing variant (not new), update the main form's values
                 if (editingVariant && editingVariant.index !== undefined && !editingVariant.isNew) {
+                    console.log("✏️ [VariantModal] Updating existing variant");
                     const index = editingVariant.index;
                     setValue(`ProductVariants[${index}].OriginalPrice`, variantData.OriginalPrice);
                     setValue(`ProductVariants[${index}].DiscountedPrice`, variantData.DiscountedPrice || "");
@@ -119,6 +127,7 @@ const VariantModal = ({
                     toast.success("Variant updated successfully");
                 } else {
                     // For new variants, call the onSave callback
+                    console.log("➕ [VariantModal] Adding new variant, calling onSave");
                     onSave(variantData);
                     toast.success("Variant added successfully");
                 }
@@ -127,7 +136,7 @@ const VariantModal = ({
                 onClose();
             } catch (error) {
                 console.error("Error saving variant:", error);
-                toast.error("Failed to save variant");
+                toast.error("Không thể lưu biến thể");
             }
         },
         [editingVariant, onSave, reset, onClose, setValue],
@@ -159,7 +168,7 @@ const VariantModal = ({
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
                     <h2 className="flex items-center gap-2">
                         <Package className="h-6 w-6" />
-                        <span>{editingVariant && !editingVariant.isNew ? "Edit Variant" : "New Variant"}</span>
+                        <span>{editingVariant && !editingVariant.isNew ? "Chỉnh Sửa Biến Thể" : "Biến Thể Mới"}</span>
                     </h2>
                     {/* Nút đóng */}
                     <button
@@ -178,48 +187,48 @@ const VariantModal = ({
                     >
                         {/* Original Price */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Original Price *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Giá Gốc *</label>
                             <input
                                 {...register("OriginalPrice", {
-                                    required: "Original price is required",
-                                    min: { value: 0, message: "Price must be non-negative" },
+                                    required: "Giá gốc là bắt buộc",
+                                    min: { value: 0, message: "Giá phải là số không âm" },
                                 })}
                                 type="number"
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter original price"
+                                placeholder="Nhập giá gốc (VND)"
                             />
                             {errors.OriginalPrice && <p className="mt-1 text-sm text-red-500">{errors.OriginalPrice.message}</p>}
                         </div>
 
                         {/* Discounted Price */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Discounted Price</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Giá Khuyến Mãi</label>
                             <input
                                 {...register("DiscountedPrice")}
                                 type="number"
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter discounted price"
+                                placeholder="Nhập giá khuyến mãi (VND)"
                             />
                         </div>
 
                         {/* Stock Quantity */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Stock Quantity *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Số Lượng Tồn Kho *</label>
                             <input
                                 {...register("StockQty", {
-                                    required: "Stock quantity is required",
-                                    min: { value: 0, message: "Stock quantity must be non-negative" },
+                                    required: "Số lượng tồn kho là bắt buộc",
+                                    min: { value: 0, message: "Số lượng tồn kho phải là số không âm" },
                                 })}
                                 type="number"
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter stock quantity"
+                                placeholder="Nhập số lượng tồn kho"
                             />
                             {errors.StockQty && <p className="mt-1 text-sm text-red-500">{errors.StockQty.message}</p>}
                         </div>
 
                         {/* Color */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Color</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Màu Sắc</label>
                             <Controller
                                 name="ColorId"
                                 control={modalControl}
@@ -228,7 +237,7 @@ const VariantModal = ({
                                         {...field}
                                         className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     >
-                                        <option value="">Select color</option>
+                                        <option value="">Chọn màu sắc</option>
                                         {colors.map((color) => (
                                             <option
                                                 key={color.id}
@@ -244,7 +253,7 @@ const VariantModal = ({
 
                         {/* Size */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Size</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Kích Cỡ</label>
                             <Controller
                                 name="SizeId"
                                 control={modalControl}
@@ -253,7 +262,7 @@ const VariantModal = ({
                                         {...field}
                                         className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     >
-                                        <option value="">Select size</option>
+                                        <option value="">Chọn kích cỡ</option>
                                         {sizes.map((size) => (
                                             <option
                                                 key={size.id}
@@ -269,7 +278,7 @@ const VariantModal = ({
 
                         {/* Material */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Material</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Chất Liệu</label>
                             <Controller
                                 name="MaterialId"
                                 control={modalControl}
@@ -278,7 +287,7 @@ const VariantModal = ({
                                         {...field}
                                         className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     >
-                                        <option value="">Select material</option>
+                                        <option value="">Chọn chất liệu</option>
                                         {materials.map((material) => (
                                             <option
                                                 key={material.id}
@@ -294,7 +303,7 @@ const VariantModal = ({
 
                         {/* Unit */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Unit</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Đơn Vị</label>
                             <Controller
                                 name="UnitId"
                                 control={modalControl}
@@ -303,7 +312,7 @@ const VariantModal = ({
                                         {...field}
                                         className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                     >
-                                        <option value="">Select unit</option>
+                                        <option value="">Chọn đơn vị</option>
                                         {units.map((unit) => (
                                             <option
                                                 key={unit.id}
@@ -387,6 +396,16 @@ const VariantModal = ({
                                                 : "12rem",
                                     }}
                                 >
+                                    {/* Debug logging for image display conditions */}
+                                    {console.log("🔍 [VariantModal] Image display check:", {
+                                        editingVariant,
+                                        editingVariantIndex: editingVariant?.index,
+                                        indexNotUndefined: editingVariant?.index !== undefined,
+                                        hasImagesForIndex: !!(editingVariant?.index !== undefined && variantImages[editingVariant.index]),
+                                        imageCount: editingVariant?.index !== undefined ? variantImages[editingVariant.index]?.length || 0 : 0,
+                                        variantImages
+                                    })}
+                                    
                                     {/* If image exists, show it */}
                                     {editingVariant?.index !== undefined &&
                                     variantImages[editingVariant.index] &&
@@ -403,7 +422,7 @@ const VariantModal = ({
                                                             className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg ${
                                                                 image.id && image.id > 0 ? "bg-green-500" : "bg-yellow-500"
                                                             }`}
-                                                            title={image.id && image.id > 0 ? "Saved to server" : "Not saved yet"}
+                                                            title={image.id && image.id > 0 ? "Đã lưu trên server" : "Chưa được lưu"}
                                                         >
                                                             {image.id && image.id > 0 ? "✓" : "•"}
                                                         </span>
@@ -420,7 +439,7 @@ const VariantModal = ({
                                                             }
                                                         }}
                                                         className="absolute top-3 right-3 z-20 rounded-full bg-red-500 p-2 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600"
-                                                        title="Remove image"
+                                                        title="Xóa hình ảnh"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
@@ -440,8 +459,8 @@ const VariantModal = ({
                                             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 transition-all duration-200 group-hover:bg-gray-300">
                                                 <ImagePlus className="h-8 w-8 text-gray-500 transition-transform duration-200 group-hover:scale-110" />
                                             </div>
-                                            <h3 className="mb-2 text-lg font-semibold text-gray-700">Add Variant Image</h3>
-                                            <p className="text-sm text-gray-500">Click here to upload an image for this variant</p>
+                                            <h3 className="mb-2 text-lg font-semibold text-gray-700">Thêm Hình Ảnh Biến Thể</h3>
+                                            <p className="text-sm text-gray-500">Nhấp vào đây để tải lên hình ảnh cho biến thể này</p>
                                             <p className="mt-1 text-xs text-gray-400">Supports JPG, PNG files</p>
                                         </div>
                                     )}
@@ -468,7 +487,7 @@ const VariantModal = ({
                                                 <input
                                                     key={imageIndex}
                                                     type="text"
-                                                    placeholder="Image description"
+                                                    placeholder="Mô tả hình ảnh"
                                                     value={image.attribute || ""}
                                                     onChange={(e) => {
                                                         if (handleUpdateVariantImageInfo && editingVariant?.index !== undefined) {
@@ -504,7 +523,8 @@ const VariantModal = ({
                                 <div className="w-full rounded-lg bg-gray-100 p-3 text-sm text-gray-700">
                                     <div className="flex items-center gap-2">
                                         <span className="text-gray-500">💡</span>
-                                        Click the "Add Image" box to upload a variant image. Images help customers see product variations clearly.
+                                        Nhấp vào hộp "Thêm Hình Ảnh" để tải lên hình ảnh biến thể. Hình ảnh giúp khách hàng nhìn thấy rõ các biến thể
+                                        sản phẩm.
                                     </div>
                                 </div>
                             )}
@@ -524,7 +544,7 @@ const VariantModal = ({
                             hoverTextColor="text-white"
                             border={false}
                         >
-                            Cancel
+                            Hủy
                         </ButtonHovCT>
                         <ButtonHovCT
                             type="submit"
@@ -535,7 +555,7 @@ const VariantModal = ({
                             textColor="text-white"
                             hoverTextColor="text-black"
                         >
-                            {editingVariant && !editingVariant.isNew ? "Update Variant" : "Save Variant"}
+                            {editingVariant && !editingVariant.isNew ? "Cập Nhật Biến Thể" : "Lưu Biến Thể"}
                         </ButtonHovCT>
                     </div>
                 </div>
