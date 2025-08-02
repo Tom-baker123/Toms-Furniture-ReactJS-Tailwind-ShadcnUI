@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import showHeader from "../hooks/showHeader";
 import Topbar from "./Header-Components/Topbar";
-import SearchHeader from "./Header-Components/SearchHeader";
+import SearchHeaderNew from "./Header-Components/SearchHeaderNew";
 import Navbar from "./Header-Components/Navbar";
 import { useModal } from "@/context/ModalContext";
 import AuthSwitcher from "./Home/AuthComponents/AuthSwitcher";
@@ -77,7 +77,7 @@ const Header = ({ onOpenCartModal }) => {
 
                     {/* Thanh tìm kiếm */}
                     <div className="hidden md:px-5 lg:block lg:w-[44rem] xl:px-10">
-                        <SearchHeader />
+                        <SearchHeaderNew />
                     </div>
 
                     {/* Thanh Nav gồm: giỏ hàng, Login/ Register, Find a store*/}
@@ -136,7 +136,9 @@ const Header = ({ onOpenCartModal }) => {
                                     className="flex cursor-pointer gap-x-1 whitespace-nowrap"
                                 >
                                     <UserIconSvgCT />
-                                    <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">Đăng nhập/Đăng ký{/* Sign in/ Register */}</p>
+                                    <p className="hidden max-xl:hidden min-sm:block min-lg:hidden xl:block">
+                                        Đăng nhập/Đăng ký{/* Sign in/ Register */}
+                                    </p>
                                 </button>
                             )}
 
@@ -158,15 +160,13 @@ const Header = ({ onOpenCartModal }) => {
 
                 {/* Trên Mobile: Thanh tìm kiếm */}
                 <div className="mx-auto w-full px-4 pt-2 pb-4 lg:hidden">
-                    <SearchHeader id="categories-mobile" />
+                    <SearchHeaderNew id="categories-mobile" />
                 </div>
 
                 {/* Thanh Nav Menu */}
                 <Navbar />
             </header>
             {/* -[HEADER - END]-------------------------------------------------------------------- */}
-
-            {/* -[Product  END]-------------------------------------------------------------------- */}
         </>
     );
 };

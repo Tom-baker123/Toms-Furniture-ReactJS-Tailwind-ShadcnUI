@@ -38,6 +38,14 @@ const ProductForm = () => {
         materials,
         units,
         deleteSlider,
+        // Variant Images
+        variantImages,
+        variantImageErrors,
+        handleAddVariantImage,
+        handleRemoveVariantImage,
+        handleUpdateVariantImageInfo,
+        handleSaveVariantImages,
+        validateVariantImages,
     } = useProductFormLogic();
 
     const { formFields, getFieldError, getFieldClassName } = useFormFields({
@@ -185,6 +193,9 @@ const ProductForm = () => {
                             handleEditVariant={handleEditVariant}
                             handleModalClose={handleModalClose}
                             handleSaveVariant={handleSaveVariant}
+                            // Variant Images Props for display
+                            variantImages={variantImages}
+                            variantImageErrors={variantImageErrors}
                         />
                     </div>
                 </form>
@@ -202,6 +213,12 @@ const ProductForm = () => {
                 units={units}
                 control={control}
                 setValue={setValue}
+                // Variant Images Props
+                variantImages={variantImages}
+                variantImageErrors={variantImageErrors}
+                handleAddVariantImage={handleAddVariantImage}
+                handleRemoveVariantImage={handleRemoveVariantImage}
+                handleUpdateVariantImageInfo={handleUpdateVariantImageInfo}
             />
         </>
     );

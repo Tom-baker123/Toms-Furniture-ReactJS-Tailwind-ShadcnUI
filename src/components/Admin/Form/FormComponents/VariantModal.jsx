@@ -1,11 +1,28 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { X, Package } from "lucide-react";
+import { X, Package, ImagePlus, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ButtonHovCT from "../../../tailwind-custom/ButtonHovCT";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 
-const VariantModal = ({ open, onClose, onSave, editingVariant = null, colors, sizes, materials, units, control, setValue }) => {
+const VariantModal = ({
+    open,
+    onClose,
+    onSave,
+    editingVariant = null,
+    colors,
+    sizes,
+    materials,
+    units,
+    control,
+    setValue,
+    // Variant Images Props
+    variantImages = {},
+    variantImageErrors = {},
+    handleAddVariantImage,
+    handleRemoveVariantImage,
+    handleUpdateVariantImageInfo,
+}) => {
     const [show, setShow] = useState(false);
     const timeoutRef = useRef();
 
@@ -298,6 +315,182 @@ const VariantModal = ({ open, onClose, onSave, editingVariant = null, colors, si
                                     </select>
                                 )}
                             />
+                        </div>
+
+                        {/* Variant Images Section */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    Variant Images
+                                    {editingVariant?.index !== undefined && variantImages[editingVariant.index] && (
+                                        <span className="ml-2 text-xs text-gray-500">({variantImages[editingVariant.index].length})</span>
+                                    )}
+                                </label>
+                            </div>
+
+                            {/* Images Grid */}
+                            <div className="space-y-4">
+                                {/* Hidden file input */}
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    id={`variant-image-upload-${editingVariant?.index || "new"}`}
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        const variantIndex = editingVariant?.index;
+                                        if (file && variantIndex !== undefined && handleAddVariantImage) {
+                                            // Nếu đã có ảnh thì xóa ảnh cũ trước
+                                            if (variantImages[variantIndex] && variantImages[variantIndex].length > 0) {
+                                                // Xóa tất cả ảnh cũ của variant này bằng cách xóa từ cuối lên đầu
+                                                const totalImages = variantImages[variantIndex].length;
+                                                for (let i = totalImages - 1; i >= 0; i--) {
+                                                    if (handleRemoveVariantImage) {
+                                                        handleRemoveVariantImage(variantIndex, i);
+                                                    }
+                                                }
+                                            }
+                                            // Thêm ảnh mới
+                                            handleAddVariantImage(variantIndex, file);
+                                        }
+                                        e.target.value = ""; // Reset input
+                                    }}
+                                />
+
+                                {/* Combined Add/Display Image Area */}
+                                <label
+                                    htmlFor={`variant-image-upload-${editingVariant?.index || "new"}`}
+                                    className="group relative flex w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 transition-all duration-200 hover:border-gray-400 hover:bg-gray-100"
+                                    style={{
+                                        minHeight:
+                                            editingVariant?.index !== undefined &&
+                                            variantImages[editingVariant.index] &&
+                                            variantImages[editingVariant.index].length > 0
+                                                ? "auto"
+                                                : "12rem",
+                                    }}
+                                >
+                                    {/* If image exists, show it */}
+                                    {editingVariant?.index !== undefined &&
+                                    variantImages[editingVariant.index] &&
+                                    variantImages[editingVariant.index].length > 0 ? (
+                                        <div className="relative w-full">
+                                            {variantImages[editingVariant.index].map((image, imageIndex) => (
+                                                <div
+                                                    key={imageIndex}
+                                                    className="relative"
+                                                >
+                                                    {/* Image Status Badge */}
+                                                    <div className="absolute top-3 left-3 z-20">
+                                                        <span
+                                                            className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg ${
+                                                                image.id && image.id > 0 ? "bg-green-500" : "bg-yellow-500"
+                                                            }`}
+                                                            title={image.id && image.id > 0 ? "Saved to server" : "Not saved yet"}
+                                                        >
+                                                            {image.id && image.id > 0 ? "✓" : "•"}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Delete Button - Top Right Corner */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            if (handleRemoveVariantImage && editingVariant?.index !== undefined) {
+                                                                handleRemoveVariantImage(editingVariant.index, imageIndex);
+                                                            }
+                                                        }}
+                                                        className="absolute top-3 right-3 z-20 rounded-full bg-red-500 p-2 text-white shadow-lg transition-all duration-200 hover:scale-110 hover:bg-red-600"
+                                                        title="Remove image"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+
+                                                    <div className="aspect-video overflow-hidden rounded-xl border-2 border-gray-200 bg-white shadow-md">
+                                                        <img
+                                                            src={image.preview}
+                                                            className="h-full w-full object-cover"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        /* If no image, show add button */
+                                        <div className="py-12 text-center">
+                                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-200 transition-all duration-200 group-hover:bg-gray-300">
+                                                <ImagePlus className="h-8 w-8 text-gray-500 transition-transform duration-200 group-hover:scale-110" />
+                                            </div>
+                                            <h3 className="mb-2 text-lg font-semibold text-gray-700">Add Variant Image</h3>
+                                            <p className="text-sm text-gray-500">Click here to upload an image for this variant</p>
+                                            <p className="mt-1 text-xs text-gray-400">Supports JPG, PNG files</p>
+                                        </div>
+                                    )}
+
+                                    {/* Overlay for replacing image when image exists */}
+                                    {editingVariant?.index !== undefined &&
+                                        variantImages[editingVariant.index] &&
+                                        variantImages[editingVariant.index].length > 0 && (
+                                            <div className="bg-opacity-0 group-hover:bg-opacity-60 absolute inset-0 flex items-center justify-center rounded-xl bg-black opacity-0 transition-all duration-200 group-hover:opacity-100">
+                                                <div className="text-center text-white">
+                                                    <ImagePlus className="mx-auto mb-2 h-8 w-8" />
+                                                    <p className="text-sm font-medium">Click to replace image</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                </label>
+
+                                {/* Image Description Input - Below the image area */}
+                                {editingVariant?.index !== undefined &&
+                                    variantImages[editingVariant.index] &&
+                                    variantImages[editingVariant.index].length > 0 && (
+                                        <div>
+                                            {variantImages[editingVariant.index].map((image, imageIndex) => (
+                                                <input
+                                                    key={imageIndex}
+                                                    type="text"
+                                                    placeholder="Image description"
+                                                    value={image.attribute || ""}
+                                                    onChange={(e) => {
+                                                        if (handleUpdateVariantImageInfo && editingVariant?.index !== undefined) {
+                                                            handleUpdateVariantImageInfo(
+                                                                editingVariant.index,
+                                                                imageIndex,
+                                                                "attribute",
+                                                                e.target.value,
+                                                            );
+                                                        }
+                                                    }}
+                                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                            </div>
+
+                            {/* Error Message */}
+                            {editingVariant?.index !== undefined && variantImageErrors[editingVariant.index] && (
+                                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-red-500">⚠️</span>
+                                        {variantImageErrors[editingVariant.index]}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Info message */}
+                            {(editingVariant?.index === undefined ||
+                                !variantImages[editingVariant?.index] ||
+                                variantImages[editingVariant?.index]?.length === 0) && (
+                                <div className="w-full rounded-lg bg-gray-100 p-3 text-sm text-gray-700">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-gray-500">💡</span>
+                                        Click the "Add Image" box to upload a variant image. Images help customers see product variations clearly.
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </form>
                 </div>
