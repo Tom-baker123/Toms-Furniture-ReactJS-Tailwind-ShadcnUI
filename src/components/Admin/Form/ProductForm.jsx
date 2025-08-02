@@ -71,7 +71,7 @@ const ProductForm = () => {
         console.log("🔵 [DEBUG] handleAddVariant - Creating temp index:", tempIndex);
         console.log("📊 [DEBUG] Current fields length:", fields.length);
         console.log("📁 [DEBUG] Current variant images:", variantImages);
-        
+
         setEditingVariant({
             index: tempIndex,
             isNew: true,
@@ -104,7 +104,7 @@ const ProductForm = () => {
             editingVariant,
             variantData,
             currentVariantImages: variantImages,
-            fieldsLength: fields.length
+            fieldsLength: fields.length,
         });
 
         if (editingVariant && editingVariant.index !== undefined && !editingVariant.isNew) {
@@ -133,7 +133,7 @@ const ProductForm = () => {
             setTimeout(() => {
                 console.log("⏰ [DEBUG] Timeout - checking images after append");
                 console.log("📊 [DEBUG] Fields length after append:", fields.length);
-                
+
                 // Nếu có ảnh cho variant mới, di chuyển từ index tạm thời sang index thực
                 if (editingVariant && editingVariant.index !== undefined && variantImages[editingVariant.index]) {
                     const tempImages = variantImages[editingVariant.index];
@@ -141,7 +141,7 @@ const ProductForm = () => {
                     console.log("🔄 [DEBUG] Moving images from temp index", tempIndex, "to actual index", newVariantIndex);
                     console.log("📁 [DEBUG] Images to move:", tempImages);
 
-                    setVariantImages(prevImages => {
+                    setVariantImages((prevImages) => {
                         const newVariantImages = { ...prevImages };
                         delete newVariantImages[tempIndex]; // Xóa ảnh ở index tạm thời
                         newVariantImages[newVariantIndex] = tempImages; // Thêm ảnh vào index thực
@@ -153,7 +153,7 @@ const ProductForm = () => {
                         hasEditingVariant: !!editingVariant,
                         editingVariantIndex: editingVariant?.index,
                         hasImages: !!(editingVariant && variantImages[editingVariant.index]),
-                        currentVariantImages: variantImages
+                        currentVariantImages: variantImages,
                     });
                 }
             }, 100); // Đợi 100ms để đảm bảo append hoàn thành
@@ -164,7 +164,7 @@ const ProductForm = () => {
     const handleDuplicateVariant = (index) => {
         const variantToDuplicate = fields[index];
         const watchedData = watch(`ProductVariants[${index}]`) || {};
-        
+
         // Tạo variant mới với dữ liệu giống hệt variant gốc
         const duplicatedVariant = {
             Id: 0, // ID mới sẽ được tạo khi save
@@ -183,7 +183,7 @@ const ProductForm = () => {
         // Sao chép ảnh của variant gốc (nếu có)
         if (variantImages[index] && variantImages[index].length > 0) {
             const newVariantIndex = fields.length; // Index của variant mới
-            const duplicatedImages = variantImages[index].map(image => ({
+            const duplicatedImages = variantImages[index].map((image) => ({
                 ...image,
                 id: null, // Ảnh mới sẽ không có ID từ server
                 // Giữ nguyên file và preview để có thể upload lại
@@ -192,7 +192,7 @@ const ProductForm = () => {
             const newVariantImages = { ...variantImages };
             newVariantImages[newVariantIndex] = duplicatedImages;
             setVariantImages(newVariantImages);
-            
+
             console.log("🔄 Duplicated variant with", duplicatedImages.length, "images");
         }
 
