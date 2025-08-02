@@ -106,8 +106,8 @@ const VariantModal = ({
                     StockQty: Number(data.StockQty),
                 };
 
-                // If editing, update the main form's values
-                if (editingVariant && editingVariant.index !== undefined) {
+                // If editing existing variant (not new), update the main form's values
+                if (editingVariant && editingVariant.index !== undefined && !editingVariant.isNew) {
                     const index = editingVariant.index;
                     setValue(`ProductVariants[${index}].OriginalPrice`, variantData.OriginalPrice);
                     setValue(`ProductVariants[${index}].DiscountedPrice`, variantData.DiscountedPrice || "");
@@ -159,7 +159,7 @@ const VariantModal = ({
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
                     <h2 className="flex items-center gap-2">
                         <Package className="h-6 w-6" />
-                        <span>{editingVariant ? "Edit Variant" : "New Variant"}</span>
+                        <span>{editingVariant && !editingVariant.isNew ? "Edit Variant" : "New Variant"}</span>
                     </h2>
                     {/* Nút đóng */}
                     <button
@@ -339,9 +339,19 @@ const VariantModal = ({
                                     onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         const variantIndex = editingVariant?.index;
+
+                                        console.log("🔍 [DEBUG] File input change:", {
+                                            file: file ? { name: file.name, size: file.size } : null,
+                                            variantIndex,
+                                            editingVariant,
+                                            handleAddVariantImage: !!handleAddVariantImage,
+                                        });
+
                                         if (file && variantIndex !== undefined && handleAddVariantImage) {
+                                            console.log("✅ [DEBUG] Conditions met, proceeding with image addition");
                                             // Nếu đã có ảnh thì xóa ảnh cũ trước
                                             if (variantImages[variantIndex] && variantImages[variantIndex].length > 0) {
+                                                console.log("🗑️ [DEBUG] Removing existing images");
                                                 // Xóa tất cả ảnh cũ của variant này bằng cách xóa từ cuối lên đầu
                                                 const totalImages = variantImages[variantIndex].length;
                                                 for (let i = totalImages - 1; i >= 0; i--) {
@@ -351,7 +361,14 @@ const VariantModal = ({
                                                 }
                                             }
                                             // Thêm ảnh mới
+                                            console.log("➕ [DEBUG] Adding new image");
                                             handleAddVariantImage(variantIndex, file);
+                                        } else {
+                                            console.warn("❌ [DEBUG] Conditions not met:", {
+                                                hasFile: !!file,
+                                                hasVariantIndex: variantIndex !== undefined,
+                                                hasHandler: !!handleAddVariantImage,
+                                            });
                                         }
                                         e.target.value = ""; // Reset input
                                     }}
@@ -518,7 +535,7 @@ const VariantModal = ({
                             textColor="text-white"
                             hoverTextColor="text-black"
                         >
-                            {editingVariant ? "Update Variant" : "Save Variant"}
+                            {editingVariant && !editingVariant.isNew ? "Update Variant" : "Save Variant"}
                         </ButtonHovCT>
                     </div>
                 </div>
