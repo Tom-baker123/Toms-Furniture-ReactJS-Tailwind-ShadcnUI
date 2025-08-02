@@ -93,10 +93,10 @@ const ProductManagement = () => {
                                                     alt={product.productName}
                                                     width={50}
                                                     height={50}
-                                                    className="rounded object-cover"
+                                                    className="rounded bg-gray-100 object-cover"
                                                 />
                                             ) : (
-                                                "No image"
+                                                "--"
                                             )}
                                         </td>
                                         <td className="table-cell px-4 py-2">{product.productName}</td>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { createProduct, updateProduct, deleteSlider, deleteProductVariant, createProductVariantImage, updateProductVariantImage, deleteProductVariantImage } from "@/api/service/ProductService";
+import { createProduct, updateProduct, deleteSlider, deleteProductVariant, createProductVariantImage, updateProductVariantImage, deleteProductVariantImage, getAllProductVariantImages } from "@/api/service/ProductService";
 import toast from "react-hot-toast";
 import { AdminAPIContext } from "@/context/AdminAPIContext";
 
@@ -182,6 +182,7 @@ export function useProductFormLogic() {
             size: file.size,
             type: file.type
         });
+        console.log("📊 [VariantImage] Current variant images state:", variantImages);
 
         const newVariantImages = { ...variantImages };
         if (!newVariantImages[variantIndex]) {
@@ -209,7 +210,7 @@ export function useProductFormLogic() {
         setVariantImages(newVariantImages);
 
         console.log("✅ Image added. Total images for variant", variantIndex, ":", newVariantImages[variantIndex].length);
-        console.log("📊 Current variant images state:", newVariantImages);
+        console.log("📊 Current variant images state after addition:", newVariantImages);
 
         // Clear any errors for this variant
         const newErrors = { ...variantImageErrors };
@@ -606,21 +607,21 @@ export function useProductFormLogic() {
                 // Xử lý ảnh biến thể cho create
                 console.log("🖼️ [VARIANT IMAGES] Processing variant images for creation...");
                 const createdProductId = result.product?.data?.productId;
-                const createdVariants = result.product?.data?.productVariants;
+                const createdVariantIds = result.product?.data?.variantIds;
 
                 console.log("📝 Created product ID:", createdProductId);
-                console.log("📝 Created variants:", createdVariants);
+                console.log("📝 Created variant IDs:", createdVariantIds);
                 console.log("📊 Current variantImages state:", variantImages);
 
-                if (createdProductId && createdVariants) {
+                if (createdProductId && createdVariantIds && Array.isArray(createdVariantIds)) {
                     const variantImageResults = [];
 
-                    for (let i = 0; i < createdVariants.length; i++) {
-                        const createdVariant = createdVariants[i];
+                    for (let i = 0; i < createdVariantIds.length; i++) {
+                        const variantId = createdVariantIds[i];
                         const images = variantImages[i] || [];
 
                         console.log(`\n🔄 Processing created variant ${i}:`);
-                        console.log("📝 Created variant data:", createdVariant);
+                        console.log("📝 Created variant ID:", variantId);
                         console.log("📁 Images count:", images.length);
                         console.log("📊 Images details:", images.map(img => ({
                             id: img.id,
@@ -630,7 +631,7 @@ export function useProductFormLogic() {
 
                         if (images.length > 0) {
                             console.log("🚀 Calling handleSaveVariantImages for created variant...");
-                            const imageResults = await handleSaveVariantImages(createdProductId, createdVariant.id, i);
+                            const imageResults = await handleSaveVariantImages(createdProductId, variantId, i);
                             console.log("📋 Image results:", imageResults);
                             variantImageResults.push(...imageResults);
                         } else {
@@ -650,7 +651,12 @@ export function useProductFormLogic() {
                         toast.success("Product and all variant images created successfully!");
                     }
                 } else {
-                    console.warn("⚠️ No created product ID or variants found");
+                    console.warn("⚠️ No created product ID or variant IDs found");
+                    console.warn("📊 Available data:", {
+                        productId: createdProductId,
+                        variantIds: createdVariantIds,
+                        resultStructure: result.product?.data
+                    });
                     toast.success("Product created successfully!");
                 }
             }

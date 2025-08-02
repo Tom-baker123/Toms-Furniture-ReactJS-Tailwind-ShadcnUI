@@ -258,10 +258,10 @@ const SearchHeaderNew = ({ id = "categories" }) => {
                     <select
                         id={id}
                         value={selectedCategory}
-                        className="text-md block w-17 appearance-none rounded-full border-2 border-transparent bg-gray-200 px-5 py-3 font-bold text-gray-900 focus:border-black focus:bg-white md:w-40"
+                        className="text-md block w-18 appearance-none rounded-full border-2 border-transparent bg-gray-200 px-5 py-3 font-bold text-gray-900 focus:border-black focus:bg-white md:w-40"
                         onChange={handleCategoryChange}
                     >
-                        <option value="">Tất cả danh mục</option>
+                        <option value="">All</option>
                         {categories?.map((category) => (
                             <option
                                 key={category.id}

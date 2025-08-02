@@ -89,7 +89,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
         if (sliderId && isEditing) {
             try {
                 await deleteSlider(sliderId);
-                toast.success("Image removed successfully!");
+                toast.success("Đã xóa hình ảnh thành công!");
             } catch (error) {
                 toast.error(`Error removing image: ${error.message}`);
                 return;
@@ -102,7 +102,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
     const validateImages = () => {
         const newErrors = {};
         if (images.length === 0 || images.every((img) => !img.file && !img.preview)) {
-            newErrors.images = "Please upload at least one image";
+            newErrors.images = "Vui lòng tải lên ít nhất một hình ảnh";
         }
         // **Sửa đổi**: Thêm kiểm tra trùng lặp alt trong validateImages
         const altValues = images.map((img) => img.alt);
@@ -117,7 +117,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
     // Phần JSX giữ nguyên, chỉ hiển thị để đảm bảo ngữ cảnh
     return (
         <div className="rounded-xl bg-white p-6 shadow-lg">
-            <h2 className="mb-4 text-xl font-semibold text-gray-900">Product Images ({images.length})</h2>
+            <h2 className="mb-4 text-xl font-semibold text-gray-900">Hình Ảnh Sản Phẩm ({images.length})</h2>
             <div className="space-y-6">
                 <div className="flex flex-wrap items-start gap-4">
                     {images.map((image, index) => (
@@ -137,7 +137,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                                             <div className="flex gap-2">
                                                 <label className="bg-opacity-90 hover:bg-opacity-100 cursor-pointer rounded bg-white px-2 py-1 text-xs font-medium text-gray-700">
                                                     <Upload className="mr-1 inline h-3 w-3" />
-                                                    Replace
+                                                    Thay Thế
                                                     <input
                                                         type="file"
                                                         accept="image/*"
@@ -151,7 +151,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                                 ) : (
                                     <label className="flex h-full w-full cursor-pointer flex-col items-center justify-center text-gray-500 transition-colors hover:text-indigo-600">
                                         <Image className="mb-1 h-6 w-6" />
-                                        <span className="text-center text-xs font-medium">Select Image</span>
+                                        <span className="text-center text-xs font-medium">Chọn Hình Ảnh</span>
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -168,7 +168,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                                     type="text"
                                     value={image.alt || ""}
                                     onChange={(e) => handleAltChange(index, e.target.value)}
-                                    placeholder="Description..."
+                                    placeholder="Mô tả hình ảnh..."
                                     className="w-full rounded border border-gray-200 px-2 py-1 text-xs focus:ring-1 focus:ring-indigo-500 focus:outline-none"
                                 />
                             </div>
@@ -191,7 +191,7 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                     <div className="w-32 flex-shrink-0">
                         <label className="flex h-32 w-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 text-gray-500 transition-colors hover:border-indigo-400 hover:text-indigo-600">
                             <Plus className="mb-1 h-6 w-6" />
-                            <span className="text-xs font-medium">Add Image</span>
+                            <span className="text-xs font-medium">Thêm Hình Ảnh</span>
                             <input
                                 type="file"
                                 accept="image/*"
@@ -213,8 +213,8 @@ const ProductImages = ({ images, setImages, imageErrors, setImageErrors, watch, 
                         </div>
                         <div className="ml-3">
                             <p className="text-sm text-blue-800">
-                                <strong>Tip:</strong> The first image will be the main product image. Click the "+" button to add images (you can
-                                select multiple images at once). Scroll horizontally to view all images.
+                                <strong>Lưu ý:</strong> Hình ảnh đầu tiên sẽ là hình ảnh chính của sản phẩm. Nhấp vào nút "+" để thêm hình ảnh (bạn có
+                                thể chọn nhiều hình ảnh cùng một lúc). Cuộn ngang để xem tất cả hình ảnh.
                             </p>
                         </div>
                     </div>
