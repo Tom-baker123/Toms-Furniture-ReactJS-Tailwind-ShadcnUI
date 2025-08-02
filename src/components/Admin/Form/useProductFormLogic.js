@@ -706,6 +706,7 @@ export function useProductFormLogic() {
         deleteSlider,
         // Variant Images
         variantImages,
+        setVariantImages,
         variantImageErrors,
         handleAddVariantImage,
         handleRemoveVariantImage,

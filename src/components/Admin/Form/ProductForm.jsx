@@ -40,6 +40,7 @@ const ProductForm = () => {
         deleteSlider,
         // Variant Images
         variantImages,
+        setVariantImages,
         variantImageErrors,
         handleAddVariantImage,
         handleRemoveVariantImage,
@@ -64,7 +65,12 @@ const ProductForm = () => {
 
     // Handle opening modal for new variant
     const handleAddVariant = () => {
-        setEditingVariant(null);
+        // Khi thêm variant mới, tạo index tạm thời để quản lý ảnh
+        const newIndex = fields.length;
+        setEditingVariant({
+            index: newIndex,
+            isNew: true,
+        });
         setIsModalOpen(true);
     };
 
@@ -89,11 +95,13 @@ const ProductForm = () => {
 
     // Handle saving variant (add or update)
     const handleSaveVariant = (variantData) => {
-        if (editingVariant && editingVariant.index !== undefined) {
+        if (editingVariant && editingVariant.index !== undefined && !editingVariant.isNew) {
             // Update existing variant - handled by the modal
             console.log("Updating variant at index:", editingVariant.index, variantData);
         } else {
             // Add new variant
+            const newVariantIndex = fields.length;
+
             append({
                 Id: 0,
                 OriginalPrice: variantData.OriginalPrice || "",
@@ -104,6 +112,16 @@ const ProductForm = () => {
                 MaterialId: variantData.MaterialId || null,
                 UnitId: variantData.UnitId || null,
             });
+
+            // Nếu có ảnh cho variant mới, di chuyển từ index tạm thời sang index thực
+            if (editingVariant && editingVariant.index !== undefined && variantImages[editingVariant.index]) {
+                const tempImages = variantImages[editingVariant.index];
+                const newVariantImages = { ...variantImages };
+                delete newVariantImages[editingVariant.index]; // Xóa ảnh ở index tạm thời
+                newVariantImages[newVariantIndex] = tempImages; // Thêm ảnh vào index thực
+                setVariantImages(newVariantImages);
+                console.log("🔄 Moved images from temp index", editingVariant.index, "to actual index", newVariantIndex);
+            }
         }
     };
 
