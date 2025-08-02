@@ -103,7 +103,7 @@ const VariantModal = ({
                 console.log("🔵 [VariantModal] onSubmit called:", {
                     data,
                     editingVariant,
-                    isNew: editingVariant?.isNew
+                    isNew: editingVariant?.isNew,
                 });
 
                 const variantData = {
@@ -403,9 +403,9 @@ const VariantModal = ({
                                         indexNotUndefined: editingVariant?.index !== undefined,
                                         hasImagesForIndex: !!(editingVariant?.index !== undefined && variantImages[editingVariant.index]),
                                         imageCount: editingVariant?.index !== undefined ? variantImages[editingVariant.index]?.length || 0 : 0,
-                                        variantImages
+                                        variantImages,
                                     })}
-                                    
+
                                     {/* If image exists, show it */}
                                     {editingVariant?.index !== undefined &&
                                     variantImages[editingVariant.index] &&

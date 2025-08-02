@@ -26,10 +26,14 @@ const Products = () => {
         const categoryParam = params.get("category");
         console.log("categoryParam from query:", categoryParam);
         if (categoryParam) {
-            setFilters((prev) => ({
-                ...prev,
-                categoryNames: [categoryParam],
-            }));
+            // Chuyển đổi categoryParam thành số để so sánh với categoryId
+            const categoryId = parseInt(categoryParam);
+            if (!isNaN(categoryId)) {
+                setFilters((prev) => ({
+                    ...prev,
+                    categoryIds: [categoryId],
+                }));
+            }
         }
     }, [location.search]);
 
@@ -41,6 +45,7 @@ const Products = () => {
 
     const [filters, setFilters] = useState({
         categoryNames: [],
+        categoryIds: [], // Thêm categoryIds để lọc theo ID
         brandNames: [],
         countryNames: [],
         colorNames: [],
@@ -65,6 +70,11 @@ const Products = () => {
         // Áp dụng các bộ lọc
         if (filters.categoryNames.length > 0) {
             filteredProducts = filteredProducts.filter((product) => filters.categoryNames.includes(product.categoryName));
+        }
+
+        // Lọc theo categoryId từ URL params
+        if (filters.categoryIds.length > 0) {
+            filteredProducts = filteredProducts.filter((product) => filters.categoryIds.includes(product.categoryId));
         }
 
         if (filters.brandNames.length > 0) {
@@ -182,6 +192,15 @@ const Products = () => {
             if (filterType === "category") {
                 const key = "categoryNames";
                 // value là categoryName
+                if (newFilters[key].includes(value)) {
+                    newFilters[key] = newFilters[key].filter((item) => item !== value);
+                } else {
+                    newFilters[key] = [...newFilters[key], value];
+                }
+            }
+            // Xử lý filter category theo ID (từ URL params)
+            else if (filterType === "categoryId") {
+                const key = "categoryIds";
                 if (newFilters[key].includes(value)) {
                     newFilters[key] = newFilters[key].filter((item) => item !== value);
                 } else {
