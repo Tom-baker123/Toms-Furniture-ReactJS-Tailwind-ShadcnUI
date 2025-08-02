@@ -157,7 +157,6 @@ const ProfileOrdersTab = () => {
                                                         {detail.productVariant && (
                                                             <div className="text-xs text-gray-500">
                                                                 <p>Giá gốc: {formatPrice(detail.productVariant.originalPrice)}</p>
-                                                                <p>Còn lại: {detail.productVariant.stockQty} sản phẩm</p>
                                                             </div>
                                                         )}
                                                     </div>
