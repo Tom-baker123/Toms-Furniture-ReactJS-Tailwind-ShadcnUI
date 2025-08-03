@@ -4,6 +4,7 @@ import ButtonHovCT from "../../tailwind-custom/ButtonHovCT";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { normalizePhoneNumber, validatePhoneNumber } from "@/utils/phoneUtils";
 
 const RegisterForm = () => {
     // Trạng thái để kiểm soát khi đang gửi form
@@ -23,6 +24,12 @@ const RegisterForm = () => {
     // Xử lý submit form
     const onSubmit = async (data) => {
         setIsSubmitting(true);
+
+        // Chuẩn hóa số điện thoại trước khi gửi
+        if (data.phoneNumber) {
+            data.phoneNumber = normalizePhoneNumber(data.phoneNumber);
+        }
+
         await handleRegister(data);
         setIsSubmitting(false);
     };
@@ -50,10 +57,10 @@ const RegisterForm = () => {
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="text"
-                        placeholder="Your name"
+                        placeholder="Tên của bạn"
                         {...register("userName", {
-                            required: "User name is required",
-                            minLength: { value: 3, message: "User name must be at least 3 characters" },
+                            required: "Tên người dùng là bắt buộc",
+                            minLength: { value: 3, message: "Tên người dùng phải có ít nhất 3 ký tự" },
                         })}
                     />
                     {errors.userName && <p className="mt-1 text-sm text-red-500">{errors.userName.message}</p>}
@@ -67,10 +74,10 @@ const RegisterForm = () => {
                         type="email"
                         placeholder="Email"
                         {...register("email", {
-                            required: "Email is required",
+                            required: "Email là bắt buộc",
                             pattern: {
                                 value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                message: "Invalid email format",
+                                message: "Định dạng email không hợp lệ",
                             },
                         })}
                     />
@@ -79,14 +86,14 @@ const RegisterForm = () => {
 
                 {/* [3.] Password */}
                 <div className="Form-Field">
-                    <label className="Form-Label">Password</label>
+                    <label className="Form-Label">Mật khẩu</label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="password"
-                        placeholder="Password"
+                        placeholder="Mật khẩu"
                         {...register("password", {
-                            required: "Password is required",
-                            minLength: { value: 6, message: "Password must be at least 6 characters" },
+                            required: "Mật khẩu là bắt buộc",
+                            minLength: { value: 6, message: "Mật khẩu phải có ít nhất 6 ký tự" },
                         })}
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
@@ -94,14 +101,14 @@ const RegisterForm = () => {
 
                 {/* [4.] Confirm Password */}
                 <div className="Form-Field">
-                    <label className="Form-Label">Confirm Password</label>
+                    <label className="Form-Label">Xác nhận mật khẩu</label>
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="password"
-                        placeholder="Confirm Password"
+                        placeholder="Xác nhận mật khẩu"
                         {...register("confirmPassword", {
-                            required: "Please confirm your password",
-                            validate: (value) => value === password || "Passwords do not match",
+                            required: "Vui lòng xác nhận mật khẩu",
+                            validate: (value) => value === password || "Mật khẩu không khớp",
                         })}
                     />
                     {errors.confirmPassword && <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>}
@@ -115,7 +122,7 @@ const RegisterForm = () => {
                     </label>
                     <select
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg transition-all"
-                        {...register("gender", { required: "Please select a gender" })}
+                        {...register("gender", { required: "Vui lòng chọn giới tính" })}
                     >
                         <option value=""> Chọn giới tính {/* Select Gender */}</option>
                         <option value="true">Nam {/* Male */}</option>
@@ -133,13 +140,19 @@ const RegisterForm = () => {
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="tel"
-                        placeholder="Phone Number"
+                        placeholder="Số điện thoại (VD: 0901234567, +84901234567)"
                         {...register("phoneNumber", {
-                            pattern: {
-                                value: /^[0-9]{10,15}$/,
-                                message: "Invalid phone number",
+                            validate: (value) => {
+                                if (!value) return true; // Cho phép để trống
+                                const error = validatePhoneNumber(value);
+                                return error ? error : true;
                             },
                         })}
+                        onChange={(e) => {
+                            // Chuẩn hóa số điện thoại khi người dùng nhập
+                            const normalized = normalizePhoneNumber(e.target.value);
+                            e.target.value = normalized;
+                        }}
                     />
                     {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>}
                 </div>
@@ -153,7 +166,7 @@ const RegisterForm = () => {
                     <input
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="text"
-                        placeholder="Address"
+                        placeholder="Địa chỉ"
                         {...register("userAddress")}
                     />
                 </div>

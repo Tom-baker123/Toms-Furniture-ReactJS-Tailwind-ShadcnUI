@@ -4,6 +4,7 @@ import { useNavigate, useLoaderData } from "react-router-dom";
 import { createUser, updateUser } from "@/api/api";
 import { MoveLeft } from "lucide-react";
 import toast from "react-hot-toast";
+import { normalizePhoneNumber, validatePhoneNumber } from "@/utils/phoneUtils";
 
 const UserForm = () => {
     const navigate = useNavigate();
@@ -65,7 +66,7 @@ const UserForm = () => {
                 UserName: data.UserName,
                 Email: data.Email,
                 Gender: data.Gender === "male", // Chuyển thành boolean (true = male, false = female)
-                PhoneNumber: data.PhoneNumber || null,
+                PhoneNumber: data.PhoneNumber ? normalizePhoneNumber(data.PhoneNumber) : null,
                 UserAddress: data.UserAddress || null,
                 IsActive: data.IsActive === "true" || data.IsActive === true, // Đảm bảo boolean
                 RoleId: parseInt(data.RoleId), // Chuyển thành số
@@ -206,17 +207,23 @@ const UserForm = () => {
                                     name="PhoneNumber"
                                     control={control}
                                     rules={{
-                                        pattern: {
-                                            value: /^\d{10,15}$/,
-                                            message: "Số điện thoại phải có 10 đến 15 chữ số",
+                                        validate: (value) => {
+                                            if (!value) return true; // Cho phép để trống
+                                            const error = validatePhoneNumber(value);
+                                            return error ? error : true;
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.PhoneNumber ? "border-red-500" : ""}`}
-                                            placeholder="Nhập số điện thoại (tùy chọn)"
+                                            placeholder="Nhập số điện thoại (VD: 0901234567, +84901234567)"
                                             {...field}
+                                            onChange={(e) => {
+                                                // Chuẩn hóa số điện thoại khi người dùng nhập
+                                                const normalized = normalizePhoneNumber(e.target.value);
+                                                field.onChange(normalized);
+                                            }}
                                         />
                                     )}
                                 />

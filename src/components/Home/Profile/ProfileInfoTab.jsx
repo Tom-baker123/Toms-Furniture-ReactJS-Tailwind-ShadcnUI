@@ -4,6 +4,7 @@ import { Edit3, Save, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import useApiFetch from "@/hooks/useApiFetch";
 import { getUserById } from "@/api/api";
+import { normalizePhoneNumber, validatePhoneNumber } from "@/utils/phoneUtils";
 
 const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors, reset, setIsEditing }) => {
     const { authStatus, handleUpdateProfile } = useAuth();
@@ -37,10 +38,14 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
     // Hàm xử lý submit cập nhật thông tin
     const handleProfileSubmit = async (data) => {
         let roleId = userDetail?.roleName === "Admin" ? 1 : 2;
+
+        // Chuẩn hóa số điện thoại trước khi gửi
+        const phoneNumber = data.phone ? normalizePhoneNumber(data.phone) : null;
+
         const success = await handleUpdateProfile({
             UserName: data.name,
             Email: data.email,
-            PhoneNumber: data.phone,
+            PhoneNumber: phoneNumber,
             UserAddress: data.address,
             RoleId: roleId,
         });
@@ -53,7 +58,7 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
     return (
         <div>
             <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-black">Profile Information</h2>
+                <h2 className="text-2xl font-bold text-black">Thông tin cá nhân</h2>
                 <ButtonHovCT
                     onClick={handleEdit}
                     bgColor={isEditing ? "bg-red-500" : "bg-black"}
@@ -65,19 +70,19 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
                         {isEditing ? (
                             <>
                                 <X className="h-4 w-4" />
-                                <span>Cancel</span>
+                                <span>Hủy</span>
                             </>
                         ) : (
                             <>
                                 <Edit3 className="h-4 w-4" />
-                                <span>Edit</span>
+                                <span>Chỉnh sửa</span>
                             </>
                         )}
                     </div>
                 </ButtonHovCT>
             </div>
 
-            {loading && <div className="text-blue-500">Loading user info...</div>}
+            {loading && <div className="text-blue-500">Đang tải thông tin người dùng...</div>}
             {error && <div className="text-red-500">{error}</div>}
 
             <form
@@ -86,9 +91,9 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
             >
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Full Name</label>
+                        <label className="mb-2 block text-sm font-medium text-gray-700">Họ và tên</label>
                         <input
-                            {...register("name", { required: "Name is required" })}
+                            {...register("name", { required: "Tên là bắt buộc" })}
                             disabled={!isEditing}
                             className={`w-full rounded-full border px-4 py-3 transition-all duration-200 ${
                                 isEditing ? "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" : "border-gray-200 bg-gray-50"
@@ -97,10 +102,10 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
                         {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
                     </div>
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Email Address</label>
+                        <label className="mb-2 block text-sm font-medium text-gray-700">Địa chỉ Email</label>
                         <input
                             type="email"
-                            {...register("email", { required: "Email is required" })}
+                            {...register("email", { required: "Email là bắt buộc" })}
                             disabled={!isEditing}
                             className={`w-full rounded-full border px-4 py-3 transition-all duration-200 ${
                                 isEditing ? "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" : "border-gray-200 bg-gray-50"
@@ -109,10 +114,24 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
                         {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
                     </div>
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Phone Number</label>
+                        <label className="mb-2 block text-sm font-medium text-gray-700">Số điện thoại</label>
                         <input
-                            {...register("phone", { required: "Phone is required" })}
+                            {...register("phone", {
+                                validate: (value) => {
+                                    if (!value) return true; // Cho phép để trống
+                                    const error = validatePhoneNumber(value);
+                                    return error ? error : true;
+                                },
+                            })}
                             disabled={!isEditing}
+                            placeholder="VD: 0901234567"
+                            onChange={(e) => {
+                                if (isEditing) {
+                                    // Chuẩn hóa số điện thoại khi người dùng nhập
+                                    const normalized = normalizePhoneNumber(e.target.value);
+                                    e.target.value = normalized;
+                                }
+                            }}
                             className={`w-full rounded-full border px-4 py-3 transition-all duration-200 ${
                                 isEditing ? "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" : "border-gray-200 bg-gray-50"
                             }`}
@@ -120,9 +139,9 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
                         {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
                     </div>
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Address</label>
+                        <label className="mb-2 block text-sm font-medium text-gray-700">Địa chỉ</label>
                         <input
-                            {...register("address", { required: "Address is required" })}
+                            {...register("address", { required: "Địa chỉ là bắt buộc" })}
                             disabled={!isEditing}
                             className={`w-full rounded-full border px-4 py-3 transition-all duration-200 ${
                                 isEditing ? "border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200" : "border-gray-200 bg-gray-50"
@@ -142,7 +161,7 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
                             hoverTextColor="text-gray-900"
                             border={false}
                         >
-                            Cancel
+                            Hủy
                         </ButtonHovCT>
                         <ButtonHovCT
                             type="submit"
@@ -154,7 +173,7 @@ const ProfileInfoTab = ({ isEditing, handleEdit, handleSubmit, register, errors,
                         >
                             <div className="flex items-center space-x-2">
                                 <Save className="h-4 w-4" />
-                                <span>Save Changes</span>
+                                <span>Lưu thay đổi</span>
                             </div>
                         </ButtonHovCT>
                     </div>

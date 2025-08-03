@@ -1,15 +1,18 @@
 import React, { useState, useMemo } from "react";
-import { PencilLine, Trash, ChevronUp, ChevronDown } from "lucide-react";
+import { PencilLine, Trash, ChevronUp, ChevronDown, Plus } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { deleteUser, updateUser } from "@/api/api";
 import buildUserUpdatePayload from "@/lib/buildUserUpdatePayload";
 import toast from "react-hot-toast";
 import FormatDatetime from "@/hooks/FormatDatetime";
+import { useMediaQuery } from "@uidotdev/usehooks";
 
 const UserManagement = () => {
     const data = useLoaderData();
     const users = data?.users || []; // Lấy danh sách người dùng từ loader
     const navigate = useNavigate();
+    // Xác định breakpoint bằng uidotdev cho responsive
+    const isTablet = useMediaQuery("(min-width: 768px)"); // Kiểm tra thiết bị là tablet
 
     // State để quản lý sắp xếp
     const [sortConfig, setSortConfig] = useState({
@@ -125,12 +128,12 @@ const UserManagement = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <div className="flex justify-between">
-                <div className="title">Quản lý người dùng</div>
+                <div className="title whitespace-nowrap">Quản lý User</div>
                 <button
                     className="rounded-lg bg-blue-600 px-4 py-2 text-white"
                     onClick={() => navigate("/admin/users/New_User")}
                 >
-                    Thêm người dùng
+                    {isTablet ? "Thêm người dùng" : <Plus />}
                 </button>
             </div>
             <div className="card">
