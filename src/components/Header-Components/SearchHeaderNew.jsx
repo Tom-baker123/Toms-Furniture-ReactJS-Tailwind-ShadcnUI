@@ -4,6 +4,7 @@ import { APIContext } from "@/context/APIContext";
 import SearchLoadingSkeleton from "../ui/SearchLoadingSkeleton";
 import Fuse from "fuse.js";
 import "./SearchHeader.css";
+import { ChevronDown, SearchIcon } from "lucide-react";
 
 const SearchHeaderNew = ({ id = "categories" }) => {
     const { categories, products, loading } = useContext(APIContext);
@@ -258,7 +259,7 @@ const SearchHeaderNew = ({ id = "categories" }) => {
                     <select
                         id={id}
                         value={selectedCategory}
-                        className="text-md block w-18 appearance-none rounded-full border-2 border-transparent bg-gray-200 px-5 py-3 font-bold text-gray-900 focus:border-black focus:bg-white md:w-40"
+                        className="cursor-pointer text-md block w-18 appearance-none rounded-full border-2 border-transparent bg-gray-200 px-5 py-3 font-bold text-gray-900 focus:border-black focus:bg-white md:w-40"
                         onChange={handleCategoryChange}
                     >
                         <option value="">All Danh mục</option>
@@ -272,20 +273,10 @@ const SearchHeaderNew = ({ id = "categories" }) => {
                         ))}
                     </select>
 
-                    <svg
-                        className="pointer-events-none absolute right-2 w-5"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M16.25 7.5L10 13.75L3.75 7.5"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
+                    <ChevronDown
+                        className="pointer-events-none cursor-pointer absolute right-2 w-5"
+                        strokeWidth={3}
+                    />
                 </div>
 
                 <div className="flex w-full items-center border-l border-gray-400 pl-2">
@@ -301,21 +292,9 @@ const SearchHeaderNew = ({ id = "categories" }) => {
                     />
                     <button
                         type="submit"
-                        className="ml-2 rounded-full p-2 transition-colors hover:bg-gray-300"
+                        className="mr-2 rounded-full p-2 transition-colors hover:bg-gray-300"
                     >
-                        <svg
-                            className="h-5 w-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
+                        <SearchIcon />
                     </button>
                 </div>
             </form>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { createPromotion, updatePromotion, getAllPromotionTypes } from "@/api/api";
 import { MoveLeft } from "lucide-react";
@@ -17,6 +17,7 @@ const PromotionForm = () => {
         handleSubmit,
         formState: { errors, isSubmitting },
         reset,
+        setValue,
     } = useForm({
         defaultValues: isEditing
             ? {
@@ -24,8 +25,8 @@ const PromotionForm = () => {
                   DiscountValue: promotionData.discountValue || 0,
                   OrderMinimum: promotionData.orderMinimum || 0,
                   MaximumDiscountAmount: promotionData.maximumDiscountAmount || 0,
-                  StartDate: promotionData.startDate ? new Date(promotionData.startDate).toISOString().split("T")[0] : "",
-                  EndDate: promotionData.endDate ? new Date(promotionData.endDate).toISOString().split("T")[0] : "",
+                  StartDate: promotionData.startDate ? new Date(promotionData.startDate).toISOString().slice(0, 16) : "",
+                  EndDate: promotionData.endDate ? new Date(promotionData.endDate).toISOString().slice(0, 16) : "",
                   CouponUsage: promotionData.couponUsage || 0,
                   PromotionTypeId: promotionData.promotionTypeId || "",
                   IsActive: promotionData.isActive || true,
@@ -42,6 +43,38 @@ const PromotionForm = () => {
                   IsActive: true,
               },
     });
+
+    // Watch for changes in PromotionTypeId to determine discount type
+    const watchedPromotionTypeId = useWatch({
+        control,
+        name: "PromotionTypeId",
+    });
+
+    // Watch for OrderMinimum and MaximumDiscountAmount for cross-validation
+    const watchedOrderMinimum = useWatch({
+        control,
+        name: "OrderMinimum",
+    });
+
+    const watchedMaximumDiscountAmount = useWatch({
+        control,
+        name: "MaximumDiscountAmount",
+    });
+
+    const watchedStartDate = useWatch({
+        control,
+        name: "StartDate",
+    });
+
+    // Determine if discount should be shown as percentage
+    const isPercentageDiscount = Number(watchedPromotionTypeId) === 1;
+
+    // Reset DiscountValue when promotion type changes
+    useEffect(() => {
+        if (watchedPromotionTypeId && !isEditing) {
+            setValue("DiscountValue", 0);
+        }
+    }, [watchedPromotionTypeId, setValue, isEditing]);
 
     useEffect(() => {
         // Lấy danh sách loại khuyến mãi
@@ -61,8 +94,8 @@ const PromotionForm = () => {
                 DiscountValue: promotionData.discountValue,
                 OrderMinimum: promotionData.orderMinimum,
                 MaximumDiscountAmount: promotionData.maximumDiscountAmount,
-                StartDate: new Date(promotionData.startDate).toISOString().split("T")[0],
-                EndDate: new Date(promotionData.endDate).toISOString().split("T")[0],
+                StartDate: new Date(promotionData.startDate).toISOString().slice(0, 16),
+                EndDate: new Date(promotionData.endDate).toISOString().slice(0, 16),
                 CouponUsage: promotionData.couponUsage,
                 PromotionTypeId: promotionData.promotionTypeId || "",
                 IsActive: promotionData.isActive,
@@ -113,194 +146,406 @@ const PromotionForm = () => {
                         <div className="p-4 text-lg font-bold text-slate-800">Thông tin khuyến mãi</div>
                         <hr />
                         <div className="flex flex-col gap-5 px-4 py-4">
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Mã khuyến mãi</span>
-                                <Controller
-                                    name="PromotionCode"
-                                    control={control}
-                                    rules={{
-                                        required: "Mã khuyến mãi là bắt buộc",
-                                        maxLength: {
-                                            value: 50,
-                                            message: "Mã khuyến mãi không được dài quá 50 ký tự",
-                                        },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="text"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.PromotionCode ? "border-red-500" : ""}`}
-                                            placeholder="Nhập mã khuyến mãi"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.PromotionCode && <p className="mt-1 text-sm text-red-500">{errors.PromotionCode.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Giá trị giảm giá</span>
-                                <Controller
-                                    name="DiscountValue"
-                                    control={control}
-                                    rules={{
-                                        required: "Giá trị giảm giá là bắt buộc",
-                                        min: { value: 0, message: "Giá trị giảm giá phải lớn hơn 0" },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.DiscountValue ? "border-red-500" : ""}`}
-                                            placeholder="Nhập giá trị giảm giá"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.DiscountValue && <p className="mt-1 text-sm text-red-500">{errors.DiscountValue.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Đơn hàng tối thiểu</span>
-                                <Controller
-                                    name="OrderMinimum"
-                                    control={control}
-                                    rules={{
-                                        required: "Đơn hàng tối thiểu là bắt buộc",
-                                        min: { value: 0, message: "Đơn hàng tối thiểu không được âm" },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.OrderMinimum ? "border-red-500" : ""}`}
-                                            placeholder="Nhập giá trị đơn hàng tối thiểu"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.OrderMinimum && <p className="mt-1 text-sm text-red-500">{errors.OrderMinimum.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Số tiền giảm tối đa</span>
-                                <Controller
-                                    name="MaximumDiscountAmount"
-                                    control={control}
-                                    rules={{
-                                        required: "Số tiền giảm tối đa là bắt buộc",
-                                        min: { value: 0, message: "Số tiền giảm tối đa không được âm" },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.MaximumDiscountAmount ? "border-red-500" : ""}`}
-                                            placeholder="Nhập số tiền giảm tối đa"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.MaximumDiscountAmount && <p className="mt-1 text-sm text-red-500">{errors.MaximumDiscountAmount.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Ngày bắt đầu</span>
-                                <Controller
-                                    name="StartDate"
-                                    control={control}
-                                    rules={{ required: "Ngày bắt đầu là bắt buộc" }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="date"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.StartDate ? "border-red-500" : ""}`}
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.StartDate && <p className="mt-1 text-sm text-red-500">{errors.StartDate.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Ngày kết thúc</span>
-                                <Controller
-                                    name="EndDate"
-                                    control={control}
-                                    rules={{
-                                        required: "Ngày kết thúc là bắt buộc",
-                                        validate: (value, formValues) =>
-                                            new Date(value) >= new Date(formValues.StartDate) || "Ngày kết thúc phải sau ngày bắt đầu",
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="date"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.EndDate ? "border-red-500" : ""}`}
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.EndDate && <p className="mt-1 text-sm text-red-500">{errors.EndDate.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Số lần sử dụng tối đa</span>
-                                <Controller
-                                    name="CouponUsage"
-                                    control={control}
-                                    rules={{
-                                        required: "Số lần sử dụng là bắt buộc",
-                                        min: { value: 0, message: "Số lần sử dụng không được âm" },
-                                    }}
-                                    render={({ field }) => (
-                                        <input
-                                            type="number"
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.CouponUsage ? "border-red-500" : ""}`}
-                                            placeholder="Nhập số lần sử dụng tối đa"
-                                            {...field}
-                                        />
-                                    )}
-                                />
-                                {errors.CouponUsage && <p className="mt-1 text-sm text-red-500">{errors.CouponUsage.message}</p>}
-                            </label>
-                            <label className="font-bold text-slate-500">
-                                <span className="text-md">Loại khuyến mãi</span>
-                                <Controller
-                                    name="PromotionTypeId"
-                                    control={control}
-                                    render={({ field }) => (
-                                        <select
-                                            className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.PromotionTypeId ? "border-red-500" : ""}`}
-                                            {...field}
-                                        >
-                                            <option value="">Chọn loại khuyến mãi</option>
-                                            {promotionTypes.map((type) => (
-                                                <option key={type.id} value={type.id}>
-                                                    {type.promotionTypeName}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
-                                />
-                                {errors.PromotionTypeId && <p className="mt-1 text-sm text-red-500">{errors.PromotionTypeId.message}</p>}
-                            </label>
-                            {isEditing && (
+                            {/* Row 1: Mã khuyến mãi và Loại khuyến mãi */}
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <label className="font-bold text-slate-500">
-                                    <span className="text-md">Trạng thái</span>
+                                    <span className="text-md">Mã khuyến mãi</span>
                                     <Controller
-                                        name="IsActive"
+                                        name="PromotionCode"
+                                        control={control}
+                                        rules={{
+                                            required: "Mã khuyến mãi là bắt buộc",
+                                            maxLength: {
+                                                value: 50,
+                                                message: "Mã khuyến mãi không được dài quá 50 ký tự",
+                                            },
+                                            pattern: {
+                                                value: /^[A-Z0-9]+$/,
+                                                message: "Mã khuyến mãi chỉ được chứa chữ cái tiếng Anh và số",
+                                            },
+                                        }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="text"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.PromotionCode ? "border-red-500" : ""}`}
+                                                placeholder="Nhập mã khuyến mãi (VD: SUMMER2025)"
+                                                onKeyPress={(e) => {
+                                                    // Chỉ cho phép chữ cái tiếng Anh và số
+                                                    if (
+                                                        !/[A-Za-z0-9]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                                onInput={(e) => {
+                                                    // Tự động chuyển thành chữ hoa và loại bỏ ký tự không hợp lệ
+                                                    let value = e.target.value.toUpperCase();
+                                                    value = value.replace(/[^A-Z0-9]/g, "");
+                                                    e.target.value = value;
+                                                    field.onChange(value);
+                                                }}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.PromotionCode && <p className="mt-1 text-sm text-red-500">{errors.PromotionCode.message}</p>}
+                                </label>
+
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Loại khuyến mãi</span>
+                                    <Controller
+                                        name="PromotionTypeId"
                                         control={control}
                                         render={({ field }) => (
                                             <select
-                                                className="mt-2 w-full rounded-sm border px-1.5 py-2"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.PromotionTypeId ? "border-red-500" : ""}`}
                                                 {...field}
                                             >
-                                                <option value={true}>Hoạt động</option>
-                                                <option value={false}>Không hoạt động</option>
+                                                <option value="">-- Chọn loại khuyến mãi --</option>
+                                                {promotionTypes.map((type) => (
+                                                    <option
+                                                        key={type.id}
+                                                        value={type.id}
+                                                    >
+                                                        {type.promotionTypeName}
+                                                    </option>
+                                                ))}
                                             </select>
                                         )}
                                     />
+                                    {errors.PromotionTypeId && <p className="mt-1 text-sm text-red-500">{errors.PromotionTypeId.message}</p>}
                                 </label>
+                            </div>
+
+                            {/* Row 2: Giá trị giảm giá và Đơn hàng tối thiểu */}
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Giá trị giảm giá {isPercentageDiscount ? "(%)" : "(VNĐ)"}</span>
+                                    <Controller
+                                        name="DiscountValue"
+                                        control={control}
+                                        rules={{
+                                            required: "Giá trị giảm giá là bắt buộc",
+                                            min: { value: 0, message: "Giá trị giảm giá không được âm" },
+                                            ...(isPercentageDiscount && {
+                                                max: { value: 100, message: "Giá trị phần trăm không được vượt quá 100%" },
+                                            }),
+                                            validate: (value) => {
+                                                const numValue = Number(value);
+                                                const orderMinValue = Number(watchedOrderMinimum);
+
+                                                if (isPercentageDiscount) {
+                                                    // Validation cho phần trăm (type.id = 1)
+                                                    if (numValue < 0) return "Phần trăm giảm giá không được âm";
+                                                    if (numValue > 100) return "Phần trăm giảm giá không được vượt quá 100%";
+                                                } else {
+                                                    // Validation cho tiền cố định (type.id > 1)
+                                                    if (numValue < 0) return "Số tiền giảm giá không được âm";
+                                                    if (orderMinValue && numValue > orderMinValue) {
+                                                        return "Giá trị giảm giá không được lớn hơn đơn hàng tối thiểu";
+                                                    }
+                                                }
+                                                return true;
+                                            },
+                                        }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="number"
+                                                step={isPercentageDiscount ? "0.1" : "0.01"}
+                                                min="0"
+                                                max={isPercentageDiscount ? "100" : watchedOrderMinimum || undefined}
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.DiscountValue ? "border-red-500" : ""}`}
+                                                placeholder={isPercentageDiscount ? "Nhập phần trăm giảm giá (0-100)" : "Nhập số tiền giảm giá"}
+                                                onKeyPress={(e) => {
+                                                    // Chỉ cho phép nhập số và dấu chấm
+                                                    if (
+                                                        !/[\d.]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                                onInput={(e) => {
+                                                    // Ngăn nhập số âm
+                                                    if (e.target.value < 0) {
+                                                        e.target.value = 0;
+                                                    }
+                                                    // Giới hạn 100 cho phần trăm
+                                                    if (isPercentageDiscount && e.target.value > 100) {
+                                                        e.target.value = 100;
+                                                    }
+                                                    // Giới hạn theo đơn hàng tối thiểu cho tiền cố định
+                                                    if (!isPercentageDiscount && watchedOrderMinimum && e.target.value > watchedOrderMinimum) {
+                                                        e.target.value = watchedOrderMinimum;
+                                                    }
+                                                }}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.DiscountValue && <p className="mt-1 text-sm text-red-500">{errors.DiscountValue.message}</p>}
+                                </label>
+
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Đơn hàng tối thiểu (VNĐ)</span>
+                                    <Controller
+                                        name="OrderMinimum"
+                                        control={control}
+                                        rules={{
+                                            required: "Đơn hàng tối thiểu là bắt buộc",
+                                            min: { value: 0, message: "Đơn hàng tối thiểu không được âm" },
+                                            validate: (value) => {
+                                                const numValue = Number(value);
+                                                const maxDiscountValue = Number(watchedMaximumDiscountAmount);
+
+                                                if (numValue < 0) return "Đơn hàng tối thiểu không được âm";
+                                                if (maxDiscountValue && numValue < maxDiscountValue) {
+                                                    return "Đơn hàng tối thiểu không được nhỏ hơn số tiền giảm tối đa";
+                                                }
+                                                return true;
+                                            },
+                                        }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                max="99999999.99"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.OrderMinimum ? "border-red-500" : ""}`}
+                                                placeholder="Nhập giá trị đơn hàng tối thiểu"
+                                                onKeyPress={(e) => {
+                                                    // Chỉ cho phép nhập số và dấu chấm
+                                                    if (
+                                                        !/[\d.]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                                onInput={(e) => {
+                                                    // Ngăn nhập số âm
+                                                    if (e.target.value < 0) {
+                                                        e.target.value = 0;
+                                                    }
+                                                    // Giới hạn theo decimal(10,2): tối đa 8 chữ số nguyên + 2 chữ số thập phân
+                                                    let value = e.target.value;
+                                                    if (value > 99999999.99) {
+                                                        e.target.value = 99999999.99;
+                                                    }
+                                                    // Giới hạn 2 chữ số thập phân
+                                                    if (value.includes(".")) {
+                                                        const parts = value.split(".");
+                                                        if (parts[1] && parts[1].length > 2) {
+                                                            e.target.value = parseFloat(value).toFixed(2);
+                                                        }
+                                                    }
+                                                }}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.OrderMinimum && <p className="mt-1 text-sm text-red-500">{errors.OrderMinimum.message}</p>}
+                                </label>
+                            </div>
+
+                            {/* Row 3: Số tiền giảm tối đa và Số lần sử dụng */}
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Số tiền giảm tối đa (VNĐ)</span>
+                                    <Controller
+                                        name="MaximumDiscountAmount"
+                                        control={control}
+                                        rules={{
+                                            required: "Số tiền giảm tối đa là bắt buộc",
+                                            min: { value: 0, message: "Số tiền giảm tối đa không được âm" },
+                                            validate: (value) => {
+                                                const numValue = Number(value);
+                                                const orderMinValue = Number(watchedOrderMinimum);
+
+                                                if (numValue < 0) return "Số tiền giảm tối đa không được âm";
+                                                if (orderMinValue && numValue > orderMinValue) {
+                                                    return "Số tiền giảm tối đa không được lớn hơn đơn hàng tối thiểu";
+                                                }
+                                                return true;
+                                            },
+                                        }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                max="99999999.99"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.MaximumDiscountAmount ? "border-red-500" : ""}`}
+                                                placeholder="Nhập số tiền giảm tối đa"
+                                                onKeyPress={(e) => {
+                                                    // Chỉ cho phép nhập số và dấu chấm
+                                                    if (
+                                                        !/[\d.]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                                onInput={(e) => {
+                                                    // Ngăn nhập số âm
+                                                    if (e.target.value < 0) {
+                                                        e.target.value = 0;
+                                                    }
+                                                    // Giới hạn theo decimal(10,2): tối đa 8 chữ số nguyên + 2 chữ số thập phân
+                                                    let value = e.target.value;
+                                                    if (value > 99999999.99) {
+                                                        e.target.value = 99999999.99;
+                                                    }
+                                                    // Giới hạn 2 chữ số thập phân
+                                                    if (value.includes(".")) {
+                                                        const parts = value.split(".");
+                                                        if (parts[1] && parts[1].length > 2) {
+                                                            e.target.value = parseFloat(value).toFixed(2);
+                                                        }
+                                                    }
+                                                }}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.MaximumDiscountAmount && (
+                                        <p className="mt-1 text-sm text-red-500">{errors.MaximumDiscountAmount.message}</p>
+                                    )}
+                                </label>
+
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Số lần sử dụng tối đa</span>
+                                    <Controller
+                                        name="CouponUsage"
+                                        control={control}
+                                        rules={{
+                                            required: "Số lần sử dụng là bắt buộc",
+                                            min: { value: 0, message: "Số lần sử dụng không được âm" },
+                                            validate: (value) => {
+                                                const numValue = Number(value);
+                                                if (numValue < 0) return "Số lần sử dụng tối đa không được âm";
+                                                if (!Number.isInteger(numValue)) return "Số lần sử dụng phải là số nguyên";
+                                                return true;
+                                            },
+                                        }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="99999999.99"
+                                                step="1"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.CouponUsage ? "border-red-500" : ""}`}
+                                                placeholder="Nhập số lần sử dụng tối đa"
+                                                onKeyPress={(e) => {
+                                                    // Chỉ cho phép nhập số (không có dấu chấm cho số nguyên)
+                                                    if (
+                                                        !/[\d]/.test(e.key) &&
+                                                        !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
+                                                    ) {
+                                                        e.preventDefault();
+                                                    }
+                                                }}
+                                                onInput={(e) => {
+                                                    // Ngăn nhập số âm
+                                                    if (e.target.value < 0) {
+                                                        e.target.value = 0;
+                                                    }
+                                                    // Giới hạn theo decimal(10,2): tối đa 8 chữ số nguyên
+                                                    let value = Math.abs(e.target.value);
+                                                    if (value > 99999999) {
+                                                        e.target.value = 99999999;
+                                                    } else {
+                                                        // Đảm bảo là số nguyên
+                                                        e.target.value = Math.floor(value);
+                                                    }
+                                                }}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.CouponUsage && <p className="mt-1 text-sm text-red-500">{errors.CouponUsage.message}</p>}
+                                </label>
+                            </div>
+
+                            {/* Row 4: Ngày bắt đầu và Ngày kết thúc */}
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Ngày và giờ bắt đầu</span>
+                                    <Controller
+                                        name="StartDate"
+                                        control={control}
+                                        rules={{ required: "Ngày và giờ bắt đầu là bắt buộc" }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="datetime-local"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.StartDate ? "border-red-500" : ""}`}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.StartDate && <p className="mt-1 text-sm text-red-500">{errors.StartDate.message}</p>}
+                                </label>
+
+                                <label className="font-bold text-slate-500">
+                                    <span className="text-md">Ngày và giờ kết thúc</span>
+                                    <Controller
+                                        name="EndDate"
+                                        control={control}
+                                        rules={{
+                                            required: "Ngày và giờ kết thúc là bắt buộc",
+                                            validate: (value) => {
+                                                if (!watchedStartDate) return "Vui lòng chọn ngày bắt đầu trước";
+
+                                                const startDateTime = new Date(watchedStartDate);
+                                                const endDateTime = new Date(value);
+
+                                                if (endDateTime <= startDateTime) {
+                                                    return "Ngày và giờ kết thúc phải sau ngày và giờ bắt đầu";
+                                                }
+                                                return true;
+                                            },
+                                        }}
+                                        render={({ field }) => (
+                                            <input
+                                                type="datetime-local"
+                                                className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.EndDate ? "border-red-500" : ""}`}
+                                                min={watchedStartDate || undefined}
+                                                {...field}
+                                            />
+                                        )}
+                                    />
+                                    {errors.EndDate && <p className="mt-1 text-sm text-red-500">{errors.EndDate.message}</p>}
+                                </label>
+                            </div>
+
+                            {/* Row 5: Trạng thái (chỉ hiện khi editing) */}
+                            {isEditing && (
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <label className="font-bold text-slate-500">
+                                        <span className="text-md">Trạng thái</span>
+                                        <Controller
+                                            name="IsActive"
+                                            control={control}
+                                            render={({ field }) => (
+                                                <select
+                                                    className="mt-2 w-full rounded-sm border px-1.5 py-2"
+                                                    {...field}
+                                                >
+                                                    <option value={true}>Hoạt động</option>
+                                                    <option value={false}>Không hoạt động</option>
+                                                </select>
+                                            )}
+                                        />
+                                    </label>
+                                    <div></div> {/* Empty div for grid alignment */}
+                                </div>
                             )}
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-between">
-                    <div className="title text-2xl font-bold text-slate-800">
-                        {isEditing ? "Cập nhật khuyến mãi" : "Thêm khuyến mãi mới"}
-                    </div>
+                    <div className="title text-2xl font-bold text-slate-800">{isEditing ? "Cập nhật khuyến mãi" : "Thêm khuyến mãi mới"}</div>
                     <button
                         type="submit"
                         disabled={isSubmitting || isLoading}
