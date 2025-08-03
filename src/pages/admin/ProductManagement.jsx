@@ -85,7 +85,7 @@ const ProductManagement = () => {
                                         key={index}
                                         className="table-row hover:bg-gray-50"
                                     >
-                                        <td className="table-cell px-4 py-2">{product.id}</td>
+                                        <td className="table-cell px-4 py-2">{index + 1}</td>
                                         <td className="table-cell px-4 py-2">
                                             {product.sliders?.[0]?.imageUrl ? (
                                                 <img
