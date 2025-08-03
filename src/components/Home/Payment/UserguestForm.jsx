@@ -1,4 +1,5 @@
 import React from "react";
+import { normalizePhoneNumber } from "@/utils/phoneUtils";
 
 const UserguestForm = ({ customerInfo, validationErrors, handleCustomerInfoChange }) => {
     return (
@@ -23,9 +24,19 @@ const UserguestForm = ({ customerInfo, validationErrors, handleCustomerInfoChang
                         type="tel"
                         name="phone"
                         value={customerInfo.phone}
-                        onChange={handleCustomerInfoChange}
+                        onChange={(e) => {
+                            // Chuẩn hóa số điện thoại khi người dùng nhập
+                            const normalized = normalizePhoneNumber(e.target.value);
+                            const syntheticEvent = {
+                                target: {
+                                    name: e.target.name,
+                                    value: normalized,
+                                },
+                            };
+                            handleCustomerInfoChange(syntheticEvent);
+                        }}
                         className={`w-full rounded border px-3 py-2 ${validationErrors.phone ? "border-red-500" : "border-gray-300"}`}
-                        placeholder="Nhập số điện thoại"
+                        placeholder="Nhập số điện thoại (VD: 0901234567, +84901234567)"
                     />
                     {validationErrors.phone && <span className="text-sm text-red-500">{validationErrors.phone}</span>}
                 </div>
