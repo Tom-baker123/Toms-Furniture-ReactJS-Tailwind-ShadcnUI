@@ -156,12 +156,12 @@ const PromotionForm = () => {
                                         rules={{
                                             required: "Mã khuyến mãi là bắt buộc",
                                             maxLength: {
-                                                value: 50,
-                                                message: "Mã khuyến mãi không được dài quá 50 ký tự",
+                                                value: 10,
+                                                message: "Mã khuyến mãi không được dài quá 10 ký tự",
                                             },
                                             pattern: {
                                                 value: /^[A-Z0-9]+$/,
-                                                message: "Mã khuyến mãi chỉ được chứa chữ cái tiếng Anh và số",
+                                                message: "Mã khuyến mãi chỉ được chứa chữ cái không dấu và số",
                                             },
                                         }}
                                         render={({ field }) => (
@@ -228,22 +228,22 @@ const PromotionForm = () => {
                                         rules={{
                                             required: "Giá trị giảm giá là bắt buộc",
                                             min: { value: 0, message: "Giá trị giảm giá không được âm" },
-                                            ...(isPercentageDiscount && {
-                                                max: { value: 100, message: "Giá trị phần trăm không được vượt quá 100%" },
-                                            }),
                                             validate: (value) => {
                                                 const numValue = Number(value);
                                                 const orderMinValue = Number(watchedOrderMinimum);
+                                                const typeId = Number(watchedPromotionTypeId);
 
                                                 if (isPercentageDiscount) {
                                                     // Validation cho phần trăm (type.id = 1)
                                                     if (numValue < 0) return "Phần trăm giảm giá không được âm";
                                                     if (numValue > 100) return "Phần trăm giảm giá không được vượt quá 100%";
                                                 } else {
-                                                    // Validation cho tiền cố định (type.id > 1)
+                                                    // Validation cho tiền cố định (type.id = 2 và lớn hơn 1)
                                                     if (numValue < 0) return "Số tiền giảm giá không được âm";
-                                                    if (orderMinValue && numValue > orderMinValue) {
-                                                        return "Giá trị giảm giá không được lớn hơn đơn hàng tối thiểu";
+                                                    if (typeId === 2 || typeId > 1) {
+                                                        if (orderMinValue && numValue >= orderMinValue) {
+                                                            return "Giá trị giảm giá (VNĐ) phải < Đơn hàng tối thiểu (VNĐ)";
+                                                        }
                                                     }
                                                 }
                                                 return true;
@@ -254,7 +254,7 @@ const PromotionForm = () => {
                                                 type="number"
                                                 step={isPercentageDiscount ? "0.1" : "0.01"}
                                                 min="0"
-                                                max={isPercentageDiscount ? "100" : watchedOrderMinimum || undefined}
+                                                max={isPercentageDiscount ? "100" : "99999999.99"}
                                                 className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.DiscountValue ? "border-red-500" : ""}`}
                                                 placeholder={isPercentageDiscount ? "Nhập phần trăm giảm giá (0-100)" : "Nhập số tiền giảm giá"}
                                                 onKeyPress={(e) => {
@@ -275,9 +275,29 @@ const PromotionForm = () => {
                                                     if (isPercentageDiscount && e.target.value > 100) {
                                                         e.target.value = 100;
                                                     }
-                                                    // Giới hạn theo đơn hàng tối thiểu cho tiền cố định
-                                                    if (!isPercentageDiscount && watchedOrderMinimum && e.target.value > watchedOrderMinimum) {
-                                                        e.target.value = watchedOrderMinimum;
+                                                    // Giới hạn theo decimal(10,2) cho tiền cố định
+                                                    if (!isPercentageDiscount) {
+                                                        let value = e.target.value;
+                                                        // Giới hạn theo decimal(10,2): tối đa 8 chữ số nguyên + 2 chữ số thập phân
+                                                        if (value > 99999999.99) {
+                                                            e.target.value = 99999999.99;
+                                                        }
+                                                        // Giới hạn 2 chữ số thập phân
+                                                        if (value.includes(".")) {
+                                                            const parts = value.split(".");
+                                                            if (parts[1] && parts[1].length > 2) {
+                                                                e.target.value = parseFloat(value).toFixed(2);
+                                                            }
+                                                        }
+                                                        // Giới hạn theo đơn hàng tối thiểu cho tiền cố định (type.id = 2 hoặc > 1)
+                                                        const typeId = Number(watchedPromotionTypeId);
+                                                        if (
+                                                            (typeId === 2 || typeId > 1) &&
+                                                            watchedOrderMinimum &&
+                                                            parseFloat(value) >= watchedOrderMinimum
+                                                        ) {
+                                                            e.target.value = Math.max(0, watchedOrderMinimum - 0.01).toFixed(2);
+                                                        }
                                                     }
                                                 }}
                                                 {...field}
