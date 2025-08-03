@@ -5,6 +5,7 @@ import ButtonHovCT from "../tailwind-custom/ButtonHovCT";
 import { useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useGHN } from "../../context/GHNContext";
+import { normalizePhoneNumber, validatePhoneNumber } from "@/utils/phoneUtils";
 
 const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     const [show, setShow] = useState(false);
@@ -193,9 +194,13 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
     // Submit form với ID thay vì parse từ dropdown value
     const onSubmit = useCallback(
         (data) => {
+            // Chuẩn hóa số điện thoại trước khi gửi
+            const normalizedPhoneNumber = data.phoneNumber ? normalizePhoneNumber(data.phoneNumber) : "";
+
             // Build object đúng chuẩn backend sử dụng ID đã lưu
             const addressPayload = {
                 ...data,
+                phoneNumber: normalizedPhoneNumber,
                 city: data.city, // Tên tỉnh
                 cityCode: selectedProvinceId ? Number(selectedProvinceId) : undefined,
                 district: data.district, // Tên quận
@@ -207,7 +212,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
             if (onSave) {
                 onSave(addressPayload);
             }
-            toast.success(editingAddress ? "Address updated successfully!" : "Address saved successfully!");
+            toast.success(editingAddress ? "Cập nhật địa chỉ thành công!" : "Lưu địa chỉ thành công!");
             reset();
             onClose();
         },
@@ -238,13 +243,13 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
             >
                 {/* Topbar của modal */}
                 <div className="bg-[#1D349A] px-[15px] py-3 text-center text-[15px] font-semibold text-white">
-                    📍 {editingAddress ? "Edit Address" : "Add New Address"}
+                    📍 {editingAddress ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
                 </div>
                 {/* Header */}
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
                     <h2 className="flex items-center gap-2">
                         <MapPin className="h-6 w-6" />
-                        <span>{editingAddress ? "Edit Address" : "New Address"}</span>
+                        <span>{editingAddress ? "Chỉnh sửa địa chỉ" : "Địa chỉ mới"}</span>
                     </h2>
                     {/* Nút đóng */}
                     <button
@@ -263,38 +268,56 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                     >
                         {/* Họ và tên người nhận */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Recipient *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Người nhận *</label>
                             <input
-                                {...register("recipient", { required: "Recipient is required" })}
+                                {...register("recipient", { required: "Tên người nhận là bắt buộc" })}
                                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter recipient's name"
+                                placeholder="Nhập tên người nhận"
                             />
                             {errors.recipient && <p className="mt-1 text-sm text-red-500">{errors.recipient.message}</p>}
                         </div>
                         {/* Số điện thoại */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Phone Number *</label>
-                            <input
-                                {...register("phoneNumber", { required: "Phone number is required" })}
-                                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter phone number"
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Số điện thoại *</label>
+                            <Controller
+                                name="phoneNumber"
+                                control={control}
+                                rules={{
+                                    required: "Số điện thoại là bắt buộc",
+                                    validate: (value) => {
+                                        const error = validatePhoneNumber(value);
+                                        return error ? error : true;
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <input
+                                        {...field}
+                                        onChange={(e) => {
+                                            // Chuẩn hóa số điện thoại khi người dùng nhập
+                                            const normalized = normalizePhoneNumber(e.target.value);
+                                            field.onChange(normalized);
+                                        }}
+                                        className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                        placeholder="Nhập số điện thoại (VD: 0901234567, +84901234567)"
+                                    />
+                                )}
                             />
                             {errors.phoneNumber && <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>}
                         </div>
                         {/* Địa chỉ chi tiết */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Address Detail *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Địa chỉ chi tiết *</label>
                             <textarea
-                                {...register("addressDetailRecipient", { required: "Address detail is required" })}
+                                {...register("addressDetailRecipient", { required: "Địa chỉ chi tiết là bắt buộc" })}
                                 rows={3}
                                 className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                                placeholder="Enter full address"
+                                placeholder="Nhập địa chỉ đầy đủ"
                             />
                             {errors.addressDetailRecipient && <p className="mt-1 text-sm text-red-500">{errors.addressDetailRecipient.message}</p>}
                         </div>
                         {/* Thành phố */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">City *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Tỉnh/Thành phố *</label>
                             <Controller
                                 name="city"
                                 control={control}
@@ -334,7 +357,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                         </div>
                         {/* Quận/Huyện */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">District *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Quận/Huyện *</label>
                             <Controller
                                 name="district"
                                 control={control}
@@ -367,7 +390,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                         </div>
                         {/* Phường/Xã */}
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Ward *</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">Phường/Xã *</label>
                             <Controller
                                 name="ward"
                                 control={control}
@@ -410,7 +433,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                                 htmlFor="isDeafaultAddress"
                                 className="text-sm font-medium text-gray-700"
                             >
-                                Set as default address
+                                Đặt làm địa chỉ mặc định
                             </label>
                         </div>
                     </form>
@@ -428,7 +451,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                             hoverTextColor="text-white"
                             border={false}
                         >
-                            Cancel
+                            Hủy
                         </ButtonHovCT>
                         <ButtonHovCT
                             type="submit"
@@ -439,7 +462,7 @@ const AddressModal = ({ open, onClose, onSave, editingAddress = null }) => {
                             textColor="text-white"
                             hoverTextColor="text-black"
                         >
-                            {editingAddress ? "Update Address" : "Save Address"}
+                            {editingAddress ? "Cập nhật địa chỉ" : "Lưu địa chỉ"}
                         </ButtonHovCT>
                     </div>
                 </div>
