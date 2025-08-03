@@ -2,11 +2,13 @@ import ProductImageGallery from "@/components/Home/ProductDetails/ProductImageGa
 import showHeader from "@/hooks/showHeader";
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { Minus, Plus, Check, Truck, RotateCcw, MapPin, ChevronRight, Zap, X } from "lucide-react";
+import { Minus, Plus, Check, Truck, RotateCcw, MapPin, ChevronRight, Zap, X, Star } from "lucide-react";
 import { APIContext } from "@/context/APIContext";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import { useCart } from "@/context/CartContext";
 import toast from "react-hot-toast";
+import { formatVNDForDisplay } from "@/utils/currencyUtils";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const ProductDetails = () => {
     const showHead = showHeader();
@@ -74,7 +76,7 @@ const ProductDetails = () => {
             proVarId: selectedVariant.id,
             quantity: quantity,
         });
-        toast.success("You have added cart successfully!");
+        toast.success("Đã thêm vào giỏ hàng thành công!");
     };
 
     if (loading || !product) {
@@ -118,20 +120,20 @@ const ProductDetails = () => {
                         <h1 className="mb-2 text-3xl font-bold text-gray-900">{product.productName}</h1>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                             <span>
-                                Vendor: <span className="cursor-pointer underline">{product.supplierName}</span>
+                                Nhà cung cấp: <span className="cursor-pointer underline">{product.supplierName}</span>
                             </span>
                             <span>
-                                Type: <span className="cursor-pointer underline">{product.categoryName}</span>
+                                Loại: <span className="cursor-pointer underline">{product.categoryName}</span>
                             </span>
                         </div>
                     </div>
 
                     {/* Price */}
                     <div className="flex items-center gap-3">
-                        <span className="text-3xl font-bold text-orange-700">${selectedVariant?.discountedPrice?.toLocaleString() || "-"}.00</span>
+                        <span className="text-3xl font-bold text-orange-700">{formatVNDForDisplay(selectedVariant?.discountedPrice) || "-"}</span>
                         {selectedVariant && selectedVariant.discountedPrice < selectedVariant.originalPrice && (
                             <span className="text-xl font-semibold text-gray-400 line-through">
-                                ${selectedVariant.originalPrice?.toLocaleString()}.00
+                                {formatVNDForDisplay(selectedVariant.originalPrice)}
                             </span>
                         )}
                     </div>
@@ -140,15 +142,15 @@ const ProductDetails = () => {
                     <div className="flex flex-wrap gap-4 text-sm">
                         <div className="flex items-center gap-1">
                             <Check className="h-5 w-5 stroke-3" />
-                            <span className="font-bold">Modern</span>
+                            <span className="font-bold">Hiện đại</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <Check className="h-5 w-5 stroke-3" />
-                            <span className="font-bold">Eco-certified</span>
+                            <span className="font-bold">Thân thiện môi trường</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <Check className="h-5 w-5 stroke-3" />
-                            <span className="font-bold">Warranty</span>
+                            <span className="font-bold">Bảo hành</span>
                         </div>
                     </div>
 
@@ -158,7 +160,7 @@ const ProductDetails = () => {
                             <div className="h-5 w-5 rounded-full bg-green-500"></div>
                             <div className="absolute top-0 left-0 h-5 w-5 animate-ping rounded-full bg-green-500 opacity-75"></div>
                         </div>
-                        <span className="text-sm font-medium text-green-700">Available in stock ({selectedVariant?.stockQty ?? 0})</span>
+                        <span className="text-sm font-medium text-green-700">Còn hàng ({selectedVariant?.stockQty ?? 0})</span>
                     </div>
 
                     {/* Description */}
@@ -167,7 +169,7 @@ const ProductDetails = () => {
                     {/* Color Selection */}
                     <div>
                         <div className="mb-3 flex items-center gap-2">
-                            <span className="font-medium">Color:</span>
+                            <span className="font-medium">Màu sắc:</span>
                             <span className="text-gray-600">{selectedColor}</span>
                         </div>
                         <div className="flex gap-2">
@@ -192,7 +194,7 @@ const ProductDetails = () => {
                     {/* Material Selection */}
                     <div>
                         <div className="mb-3 flex items-center gap-2">
-                            <span className="font-medium">Material:</span>
+                            <span className="font-medium">Chất liệu:</span>
                             <span className="text-gray-600">{selectedMaterial}</span>
                         </div>
                         <div className="flex gap-2">
@@ -216,7 +218,7 @@ const ProductDetails = () => {
                     {/* Size Selection */}
                     <div>
                         <div className="mb-3 flex items-center gap-2">
-                            <span className="font-medium">Size:</span>
+                            <span className="font-medium">Kích thước:</span>
                             <span className="text-gray-600">{selectedSize}</span>
                         </div>
                         <div className="flex gap-2">
@@ -265,7 +267,7 @@ const ProductDetails = () => {
                             onClick={handleAddToCart}
                             disabled={cartLoading || !selectedVariant}
                         >
-                            {cartLoading ? "Đang thêm..." : "Add To Cart"}
+                            {cartLoading ? "Đang thêm..." : "Thêm vào giỏ"}
                         </ButtonHovCT>
                     </div>
 
@@ -278,18 +280,18 @@ const ProductDetails = () => {
                         textColor="!text-white"
                         hoverTextColor="text-white"
                     >
-                        Buy It Now
+                        Mua ngay
                     </ButtonHovCT>
 
                     {/* Shipping Info */}
                     <div className="space-y-3 border-t border-gray-200 pt-4">
                         <div className="flex items-center gap-3">
                             <Truck className="h-5 w-5 text-gray-600" />
-                            <span className="text-sm text-gray-700">Free International Shipping over $500</span>
+                            <span className="text-sm text-gray-700">Miễn phí vận chuyển quốc tế cho đơn hàng trên 500$</span>
                         </div>
                         <div className="flex items-center gap-3">
                             <RotateCcw className="h-5 w-5 text-gray-600" />
-                            <span className="text-sm text-gray-700">Free Returns Within 30 days</span>
+                            <span className="text-sm text-gray-700">Miễn phí đổi trả trong vòng 30 ngày</span>
                         </div>
                     </div>
 
@@ -299,8 +301,8 @@ const ProductDetails = () => {
                             <div className="flex items-center gap-3">
                                 <MapPin className="h-5 w-5 text-gray-600" />
                                 <div>
-                                    <p className="font-medium text-gray-900">Pickup available at California Store</p>
-                                    <p className="text-sm text-gray-500">Usually ready in 24 hours</p>
+                                    <p className="font-medium text-gray-900">Có thể nhận hàng tại cửa hàng California</p>
+                                    <p className="text-sm text-gray-500">Thường sẵn sàng trong 24 giờ</p>
                                 </div>
                             </div>
                             <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -319,15 +321,206 @@ const ProductDetails = () => {
                             <div className="flex items-center gap-3">
                                 <Zap className="h-5 w-5 text-green-600" />
                                 <div>
-                                    <p className="font-medium text-green-800">Limited time offer</p>
+                                    <p className="font-medium text-green-800">Ưu đãi có thời hạn</p>
                                     <p className="text-sm text-green-700">
-                                        Get $20 off when you spend $1000 or more! <span className="cursor-pointer underline">Learn more</span>
+                                        Giảm $20 khi mua từ $1000 trở lên! <span className="cursor-pointer underline">Tìm hiểu thêm</span>
                                     </p>
                                 </div>
                             </div>
                         </div>
                     )}
                 </div>
+            </div>
+
+            {/* Product Details Tabs */}
+            <div className="mt-16">
+                <Tabs
+                    defaultValue="description"
+                    className="w-full"
+                >
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="description">Thông tin sản phẩm</TabsTrigger>
+                        <TabsTrigger value="reviews">Đánh giá sản phẩm</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent
+                        value="description"
+                        className="space-y-6"
+                    >
+                        <div className="prose max-w-none">
+                            <h3 className="mb-4 text-xl font-semibold">Mô tả sản phẩm</h3>
+                            <p className="leading-relaxed text-gray-600">
+                                {product.specificationDescription ||
+                                    "Đây là một sản phẩm nội thất chất lượng cao được thiết kế với phong cách hiện đại và tính năng vượt trội. Sản phẩm được làm từ chất liệu cao cấp, đảm bảo độ bền và tính thẩm mỹ cho không gian sống của bạn."}
+                            </p>
+
+                            <h4 className="mt-6 mb-3 text-lg font-semibold">Thông số kỹ thuật</h4>
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Danh mục:</span>
+                                        <span>{product.categoryName}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Nhà cung cấp:</span>
+                                        <span>{product.supplierName}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Màu sắc:</span>
+                                        <span>{selectedColor}</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Chất liệu:</span>
+                                        <span>{selectedMaterial}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Kích thước:</span>
+                                        <span>{selectedSize}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium">Tình trạng:</span>
+                                        <span className="text-green-600">Còn hàng</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent
+                        value="reviews"
+                        className="space-y-6"
+                    >
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-semibold">Đánh giá sản phẩm</h3>
+                                <button className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700">
+                                    Viết đánh giá
+                                </button>
+                            </div>
+
+                            {/* Rating Summary */}
+                            <div className="rounded-lg bg-gray-50 p-6">
+                                <div className="flex items-center gap-6">
+                                    <div className="text-center">
+                                        <div className="text-4xl font-bold text-gray-900">4.5</div>
+                                        <div className="mt-1 flex items-center justify-center gap-1">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star
+                                                    key={i}
+                                                    className={`h-4 w-4 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className="mt-1 text-sm text-gray-600">Dựa trên 156 đánh giá</div>
+                                    </div>
+                                    <div className="flex-1 space-y-2">
+                                        {[5, 4, 3, 2, 1].map((star) => (
+                                            <div
+                                                key={star}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <span className="w-6 text-sm">{star}</span>
+                                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                                <div className="h-2 flex-1 rounded-full bg-gray-200">
+                                                    <div
+                                                        className="h-2 rounded-full bg-yellow-400"
+                                                        style={{
+                                                            width: `${star === 5 ? 70 : star === 4 ? 20 : star === 3 ? 5 : star === 2 ? 3 : 2}%`,
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                                <span className="w-8 text-sm text-gray-600">
+                                                    {star === 5 ? 109 : star === 4 ? 31 : star === 3 ? 8 : star === 2 ? 5 : 3}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Sample Reviews */}
+                            <div className="space-y-4">
+                                <div className="rounded-lg border border-gray-200 p-4">
+                                    <div className="mb-2 flex items-center gap-3">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-sm font-semibold text-white">
+                                            N
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">Nguyễn Văn A</div>
+                                            <div className="flex items-center gap-1">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <Star
+                                                        key={i}
+                                                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-600">
+                                        Sản phẩm rất đẹp và chất lượng. Giao hàng nhanh, đóng gói cẩn thận. Tôi rất hài lòng với mua hàng này.
+                                    </p>
+                                    <div className="mt-2 text-sm text-gray-500">2 tuần trước</div>
+                                </div>
+
+                                <div className="rounded-lg border border-gray-200 p-4">
+                                    <div className="mb-2 flex items-center gap-3">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-sm font-semibold text-white">
+                                            T
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">Trần Thị B</div>
+                                            <div className="flex items-center gap-1">
+                                                {[...Array(4)].map((_, i) => (
+                                                    <Star
+                                                        key={i}
+                                                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                                                    />
+                                                ))}
+                                                <Star className="h-4 w-4 text-gray-300" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-600">
+                                        Thiết kế đẹp, phù hợp với không gian nhà tôi. Chỉ có điều giao hàng hơi chậm một chút.
+                                    </p>
+                                    <div className="mt-2 text-sm text-gray-500">1 tháng trước</div>
+                                </div>
+
+                                <div className="rounded-lg border border-gray-200 p-4">
+                                    <div className="mb-2 flex items-center gap-3">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold text-white">
+                                            L
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">Lê Minh C</div>
+                                            <div className="flex items-center gap-1">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <Star
+                                                        key={i}
+                                                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-600">
+                                        Chất lượng vượt mong đợi! Sản phẩm chắc chắn, màu sắc đúng như hình. Sẽ tiếp tục ủng hộ shop.
+                                    </p>
+                                    <div className="mt-2 text-sm text-gray-500">3 tuần trước</div>
+                                </div>
+                            </div>
+
+                            <div className="text-center">
+                                <button className="rounded-lg bg-gray-100 px-6 py-2 text-gray-700 transition-colors hover:bg-gray-200">
+                                    Xem thêm đánh giá
+                                </button>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </div>
         </div>
     );
