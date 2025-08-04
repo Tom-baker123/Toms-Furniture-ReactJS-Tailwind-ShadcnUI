@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import toast from "react-hot-toast";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
 import { Plus, MapPin } from "lucide-react";
 import AddressModal from "@/components/Home/AddressModal";
@@ -60,7 +61,7 @@ const ProfileAddressesTab = ({
             </div>
             <div className="space-y-4">
                 {loading ? (
-                    <div className="text-center text-gray-500">Loading addresses...</div>
+                    <div className="text-center text-gray-500">Loading địa chỉ...</div>
                 ) : (
                     savedAddresses.map((address, index) => (
                         <div
@@ -71,9 +72,9 @@ const ProfileAddressesTab = ({
                                 <div className="flex-1">
                                     <h3 className="flex items-center font-semibold text-gray-900">
                                         <MapPin className="mr-2 h-4 w-4 text-gray-600" />
-                                        {/* {address.label || address.recipient} */} <span> Address {index + 1}</span>
+                                        {/* {address.label || address.recipient} */} <span> Địa chỉ {index + 1}</span>
                                         {(address.isDefault || address.isDeafaultAddress) && (
-                                            <span className="ml-2 rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800">Default</span>
+                                            <span className="ml-2 rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800">Mặc định</span>
                                         )}
                                     </h3>
                                     <div className="mt-2 space-y-1">
@@ -81,7 +82,7 @@ const ProfileAddressesTab = ({
                                         <p className="text-gray-600">{address.phone || address.phoneNumber}</p>
                                         <p className="text-gray-600">{address.address || address.addressDetailRecipient}</p>
                                         <p className="text-gray-600">
-                                            <b>City:</b> {address.city} - <b>District:</b> {address.district} - <b>Ward:</b> {address.ward}
+                                            <b>Thành phố:</b> {address.city} - <b>Quận:</b> {address.district} - <b>Phường:</b> {address.ward}
                                         </p>
                                     </div>
                                 </div>
@@ -95,7 +96,7 @@ const ProfileAddressesTab = ({
                                         border={false}
                                         className="!px-3 !py-2"
                                     >
-                                        Edit
+                                        Sửa
                                     </ButtonHovCT>
                                     <ButtonHovCT
                                         onClick={() => handleDeleteAddress(address.id)}
@@ -106,7 +107,7 @@ const ProfileAddressesTab = ({
                                         border={false}
                                         className="!px-3 !py-2"
                                     >
-                                        Delete
+                                        Xóa
                                     </ButtonHovCT>
                                 </div>
                             </div>

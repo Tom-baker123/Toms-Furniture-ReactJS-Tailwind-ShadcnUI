@@ -68,7 +68,7 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
         e.preventDefault();
         const otp = otpDigits.join("");
         if (otp.length < OTP_LENGTH) {
-            toast.error("Please enter the full OTP.");
+            toast.error("Vui lòng nhập đầy đủ mã OTP.");
             return;
         }
 
@@ -93,9 +93,9 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
     return (
         <div className="my-6 flex flex-col items-center">
             {/* Tiêu đề */}
-            <h2 className="text-center text-2xl font-bold lg:text-3xl">Verify OTP</h2>
+            <h2 className="text-center text-2xl font-bold lg:text-3xl">Xác minh OTP</h2>
             <p className="text-md mt-2 text-center font-semibold text-gray-500">
-                Enter the 6-digit OTP sent to <span className="text-black">{email}</span>
+                Nhập mã OTP 6 chữ số đã được gửi tới <span className="text-black">{email}</span>
             </p>
 
             {/* Form nhập OTP */}
@@ -129,7 +129,7 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
                     type="submit"
                     disabled={isVerifying}
                 >
-                    {isVerifying ? "Verifying..." : "Verify OTP"}
+                    {isVerifying ? "Đang xác minh..." : "Xác minh OTP"}
                 </ButtonHovCT>
             </form>
 
@@ -137,7 +137,7 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
             <div className="mt-4 text-center">
                 {timer > 0 ? (
                     <p className="text-gray-500">
-                        Resend available in <strong>{timer}s</strong>
+                        Có thể gửi lại sau <strong>{timer}s</strong>
                     </p>
                 ) : (
                     <button
@@ -145,7 +145,7 @@ export const VerifyOtpForm = ({ email, context = "register" }) => {
                         disabled={isResending}
                         className="font-semibold text-gray-500 underline"
                     >
-                        {isResending ? "Sending..." : "Resend OTP"}
+                        {isResending ? "Đang gửi..." : "Gửi lại OTP"}
                     </button>
                 )}
             </div>

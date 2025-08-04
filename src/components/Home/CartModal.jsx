@@ -130,13 +130,13 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                 {/* Danh sách cart */}
                 <div className="flex justify-between border-b px-4 py-3 text-[20px] font-bold md:px-7 md:py-4 md:text-[16px] lg:text-2xl">
                     <h2 className="">
-                        <span>Your cart ({cart?.length || 0}) </span>
+                        <span>Giỏ hàng của bạn ({cart?.length || 0}) </span>
                     </h2>
                     {/* Nút đóng */}
                     <button
                         className="hover-rotate cursor-pointer"
                         onClick={onClose}
-                        aria-label="Close"
+                        aria-label="Đóng"
                     >
                         <X className="h-7 w-7 stroke-3" />
                     </button>
@@ -146,7 +146,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                 {/* [1.] Item Cart Sẽ hiện ở đây */}
                 <div className="Cart-Modal-Content flex-1 overflow-auto">
                     <div className="mb-3 flex flex-col gap-2 pb-5">
-                        <p className="font-semibold text-[#0d8756]"> You are eligible for free shipping. </p>
+                        <p className="font-semibold text-[#0d8756]"> Hãy lựa chọn chọn những sản phẩm bạn thích. </p>
                         <ProgressBar />
                     </div>
 
@@ -188,7 +188,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                                         await removeFromCart(item.id !== 0 ? item.id : item.proVarId);
                                                         toast.success("Đã xóa sản phẩm khỏi giỏ hàng!");
                                                     }}
-                                                    aria-label="Remove"
+                                                    aria-label="Xóa"
                                                 >
                                                     <X className="h-5 w-5 stroke-3" />
                                                 </button>
@@ -255,8 +255,8 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                             ))
                         ) : (
                             <div className="grid gap-3">
-                                <h3 className="text-center text-2xl font-bold">Your cart is currently empty.</h3>
-                                <p className="text-center text-gray-500">Not sure where to start? Try these collections:</p>
+                                <h3 className="text-center text-2xl font-bold">Giỏ hàng của bạn hiện đang trống.</h3>
+                                <p className="text-center text-gray-500">Không biết bắt đầu từ đâu? Hãy thử những bộ sưu tập này:</p>
                                 <ShoppingCart
                                     size={48}
                                     className="mx-auto text-gray-500"
@@ -267,7 +267,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                     hoverBgColor=" bg-white" // lớp trượt màu đen
                                     textColor="text-white"
                                 >
-                                    Continue Shopping
+                                    Tiếp tục mua sắm
                                 </ButtonHovCT>
                             </div>
                         )}
@@ -277,7 +277,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                 {/* [2.] Option Panel  */}
                 <div className="Cart-Modal-Footer w-full border-t border-gray-200 bg-white drop-shadow-2xl">
                     <div className="grid grid-cols-1 gap-2">
-                        <div className="flex gap-2">
+                        {/* <div className="flex gap-2">
                             <ButtonHovCT
                                 className="!border-gray-200 !py-1 !text-sm"
                                 bgColor="bg-gray-200"
@@ -286,7 +286,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                 hoverTextColor="group-hover:text-white"
                             >
                                 <span className="flex items-center justify-center">
-                                    Order Note <ChevronRight />
+                                    Ghi chú đơn hàng <ChevronRight />
                                 </span>
                             </ButtonHovCT>
                             <ButtonHovCT
@@ -297,18 +297,18 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                 hoverTextColor="group-hover:text-white"
                             >
                                 <span className="flex items-center justify-center">
-                                    Estimate Shipping <ChevronRight />
+                                    Ước tính phí vận chuyển <ChevronRight />
                                 </span>
                             </ButtonHovCT>
-                        </div>
+                        </div> */}
                         <div className="h-auto">
                             <div className="grid gap-5">
                                 <div className="grid gap-1">
                                     <div className="flex items-center justify-between text-xl font-bold">
-                                        <div className="">Estimated total</div>
+                                        <div className="">Tổng tiền ước tính</div>
                                         <div className="text-2xl">{cartTotal.toLocaleString()} VND</div>
                                     </div>
-                                    <div className="text-left text-sm">Taxes and shipping calculated at checkout</div>
+                                    <div className="text-left text-sm">Thuế và phí vận chuyển sẽ được tính khi thanh toán</div>
                                 </div>
                                 <div className="flex gap-2">
                                     <ButtonHovCT
@@ -322,7 +322,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                             onClose();
                                         }}
                                     >
-                                        View Cart
+                                        Xem giỏ hàng
                                     </ButtonHovCT>
                                     <ButtonHovCT
                                         bgColor="bg-black !font-bold"
@@ -334,7 +334,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
                                             onClose();
                                         }}
                                     >
-                                        Checkout
+                                        Thanh toán
                                     </ButtonHovCT>
                                 </div>
                             </div>

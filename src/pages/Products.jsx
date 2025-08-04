@@ -250,9 +250,9 @@ const Products = () => {
             }
             // Xử lý trạng thái tồn kho
             else if (filterType === "availability") {
-                if (value === "In stock") {
+                if (value === "Còn hàng") {
                     newFilters.inStock = true;
-                } else if (value === "Out of stock") {
+                } else if (value === "Hết hàng") {
                     newFilters.inStock = false;
                 } else {
                     newFilters.inStock = null;

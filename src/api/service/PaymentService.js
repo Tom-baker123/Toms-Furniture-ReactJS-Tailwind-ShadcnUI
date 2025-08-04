@@ -21,7 +21,12 @@ const apiRequest = async (url, { method = 'GET', body, headers = {} } = {}) => {
         data = await response.text();
     }
     if (!response.ok) {
-        throw data;
+        // Nếu data là string, throw trực tiếp string đó
+        if (typeof data === 'string') {
+            throw new Error(data);
+        } else {
+            throw data;
+        }
     }
     return data;
 };

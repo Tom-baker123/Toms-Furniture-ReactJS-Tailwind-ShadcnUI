@@ -58,10 +58,10 @@ const LoginForm = () => {
                         type="email"
                         placeholder="Email"
                         {...register("email", {
-                            required: "Email is required",
+                            required: "Email là bắt buộc",
                             pattern: {
                                 value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                message: "Invalid email format",
+                                message: "Định dạng email không hợp lệ",
                             },
                         })}
                     />
@@ -74,15 +74,15 @@ const LoginForm = () => {
                         htmlFor="password"
                         className="Form-Label"
                     >
-                        Password
+                        Mật khẩu
                     </label>
                     <input
                         id="password"
                         className="block h-12 w-full rounded-full bg-gray-200 px-5 text-lg"
                         type="password"
-                        placeholder="Password"
+                        placeholder="Mật khẩu"
                         {...register("password", {
-                            required: "Password is required",
+                            required: "Mật khẩu là bắt buộc",
                         })}
                     />
                     {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}

@@ -7,9 +7,25 @@ const apiRequest = async (endpoint, options = {}) => {
             credentials: "include",
             ...options,
         });
-        const data = await response.json();
+
+        // Kiểm tra content-type để xử lý response phù hợp
+        const contentType = response.headers.get("content-type");
+        let data;
+
+        if (contentType && contentType.includes("application/json")) {
+            data = await response.json();
+        } else {
+            // Nếu không phải JSON, lấy text
+            data = await response.text();
+        }
+
         if (!response.ok) {
-            throw new Error(data.message || `Request failed: ${response.status}`);
+            // Nếu data là string, tạo object error
+            if (typeof data === "string") {
+                throw new Error(data);
+            } else {
+                throw new Error(data.message || `Request failed: ${response.status}`);
+            }
         }
         return data;
     } catch (error) {

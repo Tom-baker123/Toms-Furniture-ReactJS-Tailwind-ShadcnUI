@@ -1,15 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, Send, Bot, User, Loader2, Sparkles } from "lucide-react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { MessageCircle, X, Send, Bot, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { APIContext } from "@/context/APIContext";
 import useChatbot from "@/hooks/useChatbot";
 
 const ChatBotAi = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [inputMessage, setInputMessage] = useState("");
     const messagesEndRef = useRef(null);
-
     const { messages, isLoading, sendMessage, initializeChat } = useChatbot();
+    const { products, loading, refetch } = useContext(APIContext);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,12 +26,83 @@ const ChatBotAi = () => {
         }
     }, [isOpen, initializeChat]);
 
+    // Từ khóa liên quan đến nội thất
+    const furnitureKeywords = [
+        "bàn", "ghế", "sofa", "giường", "tủ", "nội thất", "phòng khách", 
+        "phòng ngủ", "phòng ăn", "giá", "màu", "kích thước", "chất liệu"
+    ];
+
+    // Hàm kiểm tra câu hỏi có liên quan đến nội thất không
+    const isFurnitureRelated = (message) => {
+        const lowerMessage = message.toLowerCase();
+        return furnitureKeywords.some(keyword => lowerMessage.includes(keyword));
+    };
+
+    // Hàm xử lý gợi ý sản phẩm dựa trên câu hỏi
+    const getProductSuggestions = (message) => {
+        if (!products || !products.items) return [];
+
+        const lowerMessage = message.toLowerCase();
+        let filteredProducts = products.items;
+
+        // Lọc theo danh mục
+        if (lowerMessage.includes("bàn ăn")) {
+            filteredProducts = filteredProducts.filter(p => p.categoryName === "Bàn Ăn");
+        } else if (lowerMessage.includes("ghế ăn")) {
+            filteredProducts = filteredProducts.filter(p => p.categoryName === "Ghế Ăn");
+        } else if (lowerMessage.includes("sofa")) {
+            filteredProducts = filteredProducts.filter(p => p.categoryName === "Ghế Sofa");
+        } else if (lowerMessage.includes("giường")) {
+            filteredProducts = filteredProducts.filter(p => p.categoryName === "Giường");
+        }
+
+        // Lọc theo giá
+        if (lowerMessage.includes("dưới 5 triệu")) {
+            filteredProducts = filteredProducts.filter(p => 
+                p.productVariants.some(v => v.discountedPrice <= 5000000)
+            );
+        }
+
+        // Lọc theo phòng
+        if (lowerMessage.includes("phòng khách")) {
+            filteredProducts = filteredProducts.filter(p => 
+                p.specificationDescription.toLowerCase().includes("phòng khách")
+            );
+        }
+
+        // Lấy tối đa 4 sản phẩm làm gợi ý
+        return filteredProducts.slice(0, 4).map(p => ({
+            name: p.productName,
+            price: p.productVariants[0]?.discountedPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
+            image: p.sliders[0]?.imageUrl || ""
+        }));
+    };
+
+    // Hàm xử lý gửi tin nhắn
     const handleSendMessage = async () => {
         if (!inputMessage.trim() || isLoading) return;
 
         const message = inputMessage;
         setInputMessage("");
-        await sendMessage(message);
+
+        if (!isFurnitureRelated(message)) {
+            // Gửi phản hồi cho câu hỏi không liên quan
+            await sendMessage(message, {
+                response: "Xin lỗi, tôi chỉ có thể hỗ trợ về nội thất. Bạn muốn tìm hiểu về sản phẩm nào, ví dụ như bàn, ghế, hoặc sofa?"
+            });
+            return;
+        }
+
+        // Lấy gợi ý sản phẩm
+        const suggestions = getProductSuggestions(message);
+        let response = "Dưới đây là một số sản phẩm phù hợp:\n";
+        if (suggestions.length > 0) {
+            response += suggestions.map(s => `- ${s.name}: ${s.price}`).join("\n");
+        } else {
+            response = "Không tìm thấy sản phẩm phù hợp. Bạn có thể cung cấp thêm chi tiết, ví dụ như loại nội thất, giá cả, hoặc màu sắc?";
+        }
+
+        await sendMessage(message, { response });
     };
 
     const handleKeyPress = (e) => {
@@ -77,11 +149,16 @@ const ChatBotAi = () => {
         );
     };
 
-    // Suggestions for quick questions
-    const quickSuggestions = ["🪑 Bàn ghế ăn cho 4 người", "💻 Bàn làm việc nhỏ gọn", "🛋️ Sofa phòng khách hiện đại", "💰 Sản phẩm dưới 5 triệu"];
+    // Gợi ý nhanh động dựa trên sản phẩm từ API
+    const quickSuggestions = products && products.items
+        ? products.items.slice(0, 4).map(p => ({
+              name: p.productName,
+              price: p.productVariants[0]?.discountedPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+          }))
+        : [];
 
     const handleSuggestionClick = (suggestion) => {
-        setInputMessage(suggestion);
+        setInputMessage(suggestion.name);
     };
 
     return (
@@ -127,17 +204,17 @@ const ChatBotAi = () => {
                     <div className="flex-1 space-y-2 overflow-y-auto bg-gray-50/30 p-2">
                         {messages.map(renderMessage)}
 
-                        {/* Quick Suggestions (only show when no messages or just welcome message) */}
-                        {messages.length <= 1 && (
+                        {/* Quick Suggestions */}
+                        {messages.length <= 1 && quickSuggestions.length > 0 && (
                             <div className="space-y-1">
                                 <p className="mb-1 text-center text-xs text-gray-500">Gợi ý nhanh:</p>
-                                {quickSuggestions.slice(0, 4).map((suggestion, index) => (
+                                {quickSuggestions.map((suggestion, index) => (
                                     <button
                                         key={index}
                                         onClick={() => handleSuggestionClick(suggestion)}
                                         className="w-full rounded border border-gray-200 bg-white p-1.5 text-left text-xs transition-colors duration-200 hover:bg-blue-50"
                                     >
-                                        {suggestion}
+                                        {suggestion.name}: {suggestion.price}
                                     </button>
                                 ))}
                             </div>
