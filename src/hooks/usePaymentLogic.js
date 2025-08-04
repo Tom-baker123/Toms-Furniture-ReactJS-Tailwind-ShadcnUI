@@ -252,17 +252,12 @@ const usePaymentLogic = (contexts) => {
         if (!selectedPromotion) return 0;
         // Kiểm tra loại khuyến mãi
         if (selectedPromotion.promotionType?.promotionUnit === 0) {
-            // Giảm theo số tiền cố định
-            return Math.min(selectedPromotion.discountValue, selectedPromotion.maximumDiscountAmount || selectedPromotion.discountValue);
-        } else if (selectedPromotion.promotionType?.promotionUnit === 1) {
             // Giảm theo phần trăm
-            const { subtotal, shippingFee } = calculateTotal();
-            const total = subtotal + shippingFee;
-            const discount = (total * selectedPromotion.discountValue) / 100;
-            return Math.min(discount, selectedPromotion.maximumDiscountAmount || discount);
-        } else if (selectedPromotion.promotionType?.promotionUnit === 2) {
-            // Free shipping
-            return shippingFee;
+            return selectedPromotion.maximumDiscountAmount;
+        }
+        else if (selectedPromotion.promotionType?.promotionUnit === 1) {
+            // Giảm theo số tiền cố định
+            return selectedPromotion.discountValue, selectedPromotion.maximumDiscountAmount;
         }
         return 0;
     };

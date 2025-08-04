@@ -16,13 +16,13 @@ const ProductManagement = () => {
     const { openModal } = useAdminModal();
     // Hàm xử lý xóa sản phẩm
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this product?")) {
+        if (window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
             try {
                 await deleteProduct(id);
-                toast.success("Product deleted successfully!");
+                toast.success("Xóa sản phẩm thành công!");
                 navigate(0); // Reload trang để cập nhật danh sách
             } catch (error) {
-                toast.error(`Error deleting product: ${error.message}`);
+                toast.error(`Lỗi khi xóa sản phẩm: ${error.message}`);
             }
         }
     };
@@ -41,9 +41,9 @@ const ProductManagement = () => {
                     p.id === product.id ? { ...p, isActive: !p.isActive, updatedDate: updated.product?.updatedDate || new Date().toISOString() } : p,
                 ),
             );
-            toast.success("Status updated!");
+            toast.success("Cập nhật trạng thái thành công!");
         } catch (error) {
-            toast.error("Failed to update status");
+            toast.error("Cập nhật trạng thái thất bại");
         }
     };
 
@@ -51,18 +51,18 @@ const ProductManagement = () => {
         <div className="flex flex-col gap-y-4">
             {/* Tiêu đề và nút thêm sản phẩm */}
             <div className="flex justify-between">
-                <div className="title text-2xl font-bold text-slate-800">Product Management</div>
+                <div className="title text-2xl font-bold text-slate-800">Quản lý sản phẩm</div>
                 <button
                     className="button-admin-hover"
                     onClick={() => navigate("/admin/products/New_Product")}
                 >
-                    Add Product
+                    Thêm sản phẩm
                 </button>
             </div>
             {/* Bảng hiển thị danh sách sản phẩm */}
             <div className="card overflow-hidden rounded-sm bg-white shadow-xs">
                 <div className="card-header">
-                    <div className="card-title text-lg font-bold text-slate-800">All Products</div>
+                    <div className="card-title text-lg font-bold text-slate-800">Tất cả sản phẩm</div>
                 </div>
                 <div className="card-body p-0">
                     <div className="relative h-fit w-full shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
@@ -70,13 +70,13 @@ const ProductManagement = () => {
                             <thead className="table-header bg-gray-50">
                                 <tr className="table-row">
                                     <th className="table-head px-4 py-2 whitespace-nowrap">#</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Image</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Product Name</th>
-                                    <th className="table-head px-4 py-2 text-right whitespace-nowrap">Variants Count</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Status</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Created Date</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Updated Date</th>
-                                    <th className="table-head px-4 py-2 whitespace-nowrap">Actions</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">Ảnh</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">Tên sản phẩm</th>
+                                    <th className="table-head px-4 py-2 text-right whitespace-nowrap">Số biến thể</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">Trạng thái</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">Ngày tạo</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">Ngày cập nhật</th>
+                                    <th className="table-head px-4 py-2 whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="table-body">
@@ -108,7 +108,7 @@ const ProductManagement = () => {
                                             >
                                                 <Eye size={20} />
                                                 <span className="text-sm font-medium">
-                                                    {product.productVariants ? product.productVariants.length : 0} Variant
+                                                    {product.productVariants ? product.productVariants.length : 0} biến thể
                                                 </span>
                                             </button>
                                         </td>
@@ -116,7 +116,7 @@ const ProductManagement = () => {
                                             <button
                                                 className={`relative inline-flex h-6 w-12 items-center rounded-full transition ${product.isActive ? "bg-teal-500" : "bg-gray-300"}`}
                                                 onClick={() => handleToggleActive(product)}
-                                                title="Toggle status"
+                                                title="Chuyển trạng thái"
                                             >
                                                 <span
                                                     className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition ${product.isActive ? "translate-x-6" : "translate-x-1"}`}
@@ -125,8 +125,8 @@ const ProductManagement = () => {
                                                 <span className="absolute right-1 text-xs font-bold text-teal-700 select-none"></span>
                                             </button>
                                         </td>
-                                        <td className="table-cell px-4 py-2">{FormatDatetime(product.createdDate) || "N/A"}</td>
-                                        <td className="table-cell px-4 py-2">{FormatDatetime(product.updatedDate) || "N/A"}</td>
+                                        <td className="table-cell px-4 py-2">{FormatDatetime(product.createdDate) || "Không có dữ liệu"}</td>
+                                        <td className="table-cell px-4 py-2">{FormatDatetime(product.updatedDate) || "Không có dữ liệu"}</td>
                                         <td className="table-cell px-4 py-2">
                                             <div className="flex items-center gap-x-4">
                                                 <button

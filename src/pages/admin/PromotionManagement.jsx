@@ -113,20 +113,20 @@ const PromotionManagement = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <div className="flex justify-between">
-                <div className="title">Promotion Management</div>
+                <div className="title">Quản lý khuyến mãi</div>
                 <button
                     className="rounded-lg bg-blue-600 px-4 py-2 text-white"
                     onClick={() => navigate("/admin/promotions/new_promotion")}
                 >
-                    Add Promotion
+                    Thêm khuyến mãi
                 </button>
             </div>
             <div className="card">
                 <div className="card-header">
-                    <div className="card-title">All Promotions</div>
+                    <div className="card-title">Tất cả khuyến mãi</div>
                     {sortConfig.key && (
                         <div className="text-sm text-gray-500">
-                            Sorted by {sortConfig.key} ({sortConfig.direction === "asc" ? "ascending" : "descending"})
+                            Sắp xếp theo {sortConfig.key} ({sortConfig.direction === "asc" ? "tăng dần" : "giảm dần"})
                         </div>
                     )}
                 </div>
@@ -136,28 +136,31 @@ const PromotionManagement = () => {
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <SortableHeader sortKey="id">#</SortableHeader>
-                                    <SortableHeader sortKey="promotionCode">Promotion Code</SortableHeader>
-                                    <SortableHeader sortKey="discountValue">Discount Value</SortableHeader>
-                                    <SortableHeader sortKey="orderMinimum">Order Minimum</SortableHeader>
-                                    <SortableHeader sortKey="maximumDiscountAmount">Max Discount</SortableHeader>
-                                    <SortableHeader sortKey="startDate">Start Date</SortableHeader>
-                                    <SortableHeader sortKey="endDate">End Date</SortableHeader>
-                                    <SortableHeader sortKey="couponUsage">Usage Count</SortableHeader>
-                                    <SortableHeader sortKey="isActive">Status</SortableHeader>
-                                    <SortableHeader sortKey="createdDate">Created At</SortableHeader>
-                                    <SortableHeader sortKey="updatedDate">Updated At</SortableHeader>
-                                    <th className="table-head whitespace-nowrap">Actions</th>
+                                    <SortableHeader sortKey="promotionCode">Mã khuyến mãi</SortableHeader>
+                                    <SortableHeader sortKey="discountValue">Giá trị giảm</SortableHeader>
+                                    <SortableHeader sortKey="orderMinimum">Đơn tối thiểu</SortableHeader>
+                                    <SortableHeader sortKey="maximumDiscountAmount">Giảm tối đa</SortableHeader>
+                                    <SortableHeader sortKey="startDate">Ngày bắt đầu</SortableHeader>
+                                    <SortableHeader sortKey="endDate">Ngày kết thúc</SortableHeader>
+                                    <SortableHeader sortKey="couponUsage">Lượt sử dụng</SortableHeader>
+                                    <SortableHeader sortKey="isActive">Trạng thái</SortableHeader>
+                                    <SortableHeader sortKey="createdDate">Ngày tạo</SortableHeader>
+                                    <SortableHeader sortKey="updatedDate">Ngày cập nhật</SortableHeader>
+                                    <th className="table-head whitespace-nowrap">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody className="table-body">
-                                {sortedPromotions.map((promotion) => (
+                                {sortedPromotions.map((promotion, index) => (
                                     <tr
-                                        key={promotion.id}
+                                        key={index}
                                         className="table-row"
                                     >
-                                        <td className="table-cell">{promotion.id}</td>
+                                        <td className="table-cell">{index + 1}</td>
                                         <td className="table-cell">{promotion.promotionCode}</td>
-                                        <td className="table-cell">{promotion.discountValue}</td>
+                                        <td className="table-cell">
+                                            {promotion.discountValue}
+                                            {promotion?.promotionType?.id == 2 ? " VNĐ" : "%"}
+                                        </td>
                                         <td className="table-cell">{promotion.orderMinimum}</td>
                                         <td className="table-cell">{promotion.maximumDiscountAmount}</td>
                                         <td className="table-cell">{FormatDatetime(promotion.startDate)}</td>
