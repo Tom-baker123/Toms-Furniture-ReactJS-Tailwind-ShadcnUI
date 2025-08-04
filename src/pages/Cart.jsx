@@ -8,10 +8,12 @@ import { useCart } from "@/context/CartContext";
 import QuantityInput from "@/components/Home/QuantityInput";
 import toast from "react-hot-toast";
 import { formatVNDForDisplay } from "@/utils/currencyUtils";
+import { useNavigate } from "react-router-dom";
 
 const Cart = ({ itemCount = 0 }) => {
     // Local state cho số lượng từng item
     const [localQuantities, setLocalQuantities] = useState({});
+    const navigate = useNavigate();
     const [pendingUpdate, setPendingUpdate] = useState({});
     const { cart, updateCart, removeFromCart, addToCart, loading, cartTotal } = useCart
         ? useCart()
@@ -112,7 +114,7 @@ const Cart = ({ itemCount = 0 }) => {
                                                             : item.productVariant?.image) || "/img/cart-image/TurnTableMono.png"
                                                     }
                                                     alt={item.productName || "Sản phẩm"}
-                                                    className="mr-3 size-20 rounded-md object-contain sm:size-22 lg:size-30"
+                                                    className="mr-3 size-20 rounded-md bg-gray-100 object-contain sm:size-22 lg:size-30"
                                                 />
                                             </div>
 
@@ -232,6 +234,7 @@ const Cart = ({ itemCount = 0 }) => {
                                 bgColor="bg-black"
                                 hoverBgColor=" bg-white" // lớp trượt màu đen
                                 textColor="text-white"
+                                onClick={() => navigate("/checkout")}
                             >
                                 Thanh toán
                             </ButtonHovCT>

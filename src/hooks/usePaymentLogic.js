@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { getUserById } from "../api/api";
+import { getUserById, getAllPromotions } from "../api/api";
+import { createUserGuest } from "../api/service/PaymentService";
 
 import { formatDropdownValue, parseDropdownValue } from "../lib/addressDropdownUtils";
 
@@ -202,6 +203,10 @@ const usePaymentLogic = (contexts) => {
             errors.ward = "Vui lòng chọn phường/xã";
         }
 
+        if (!paymentMethod) {
+            errors.paymentMethod = "Vui lòng chọn phương thức thanh toán";
+        }
+
         setValidationErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -230,7 +235,7 @@ const usePaymentLogic = (contexts) => {
                 const { subtotal, shippingFee } = calculateTotal();
                 const total = subtotal + shippingFee;
                 // Gọi API lấy danh sách mã giảm giá hợp lệ
-                const res = await import("../api/api").then((m) => m.getAllPromotions(total));
+                const res = await getAllPromotions(total);
                 setPromotionList(res || []);
             } catch (err) {
                 setPromotionError("Không thể tải danh sách mã giảm giá.");
@@ -278,6 +283,15 @@ const usePaymentLogic = (contexts) => {
         if (window.__orderProcessing) return;
         window.__orderProcessing = true;
 
+        // Validate form for guest users
+        if (!authStatus?.isAuthenticated) {
+            if (!validateForm()) {
+                setOrderError("Vui lòng điền đầy đủ thông tin bắt buộc.");
+                window.__orderProcessing = false;
+                return;
+            }
+        }
+
         // Prepare orderDetails from cart
         const orderDetails = cart.map((item) => ({
             proVarId: item.productVariant?.id,
@@ -295,13 +309,34 @@ const usePaymentLogic = (contexts) => {
             orderDetails,
         };
 
-        // If guest, get guestId from localStorage
+        // If guest, create UserGuest first
         if (!authStatus?.isAuthenticated) {
-            const guestId = localStorage.getItem("userGuestId");
-            if (guestId && !isNaN(Number(guestId))) {
-                orderData.userGuestId = Number(guestId);
-            } else {
-                setOrderError("You need to login or enter guest information to place an order.");
+            try {
+                // Prepare guest data matching API structure
+                const guestData = {
+                    fullName: customerInfo.fullName,
+                    phoneNumber: customerInfo.phone,
+                    email: customerInfo.email,
+                    detailAddress: customerInfo.address,
+                    city: provinceName,
+                    district: districtName,
+                    ward: wardName,
+                };
+
+                console.log("Creating UserGuest with data:", guestData);
+                const guestResponse = await createUserGuest(guestData);
+
+                if (guestResponse?.isSuccess && guestResponse?.id) {
+                    orderData.userGuestId = guestResponse.id;
+                    // Optionally store guestId in localStorage for future reference
+                    localStorage.setItem("userGuestId", guestResponse.id.toString());
+                    console.log("UserGuest created successfully with ID:", guestResponse.id);
+                } else {
+                    throw new Error("Không thể tạo thông tin khách vãng lai.");
+                }
+            } catch (guestError) {
+                console.error("Error creating UserGuest:", guestError);
+                setOrderError(typeof guestError === "string" ? guestError : guestError?.message || "Không thể tạo thông tin khách vãng lai. Vui lòng thử lại.");
                 window.__orderProcessing = false;
                 return;
             }

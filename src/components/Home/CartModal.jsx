@@ -124,7 +124,7 @@ const CartModal = ({ open, onClose, children, ItemCount = 0 }) => {
             >
                 {/* Topbar của cart */}
                 <div className="bg-[#1D349A] px-[15px] py-3 text-center text-[15px] font-semibold text-white">
-                    ✌🏼 Free Express Shipping on orders $500!
+                    ✌🏼 Hãy lựa chọn chọn những sản phẩm bạn thích
                 </div>
 
                 {/* Danh sách cart */}

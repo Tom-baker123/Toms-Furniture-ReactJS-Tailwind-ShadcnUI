@@ -48,7 +48,7 @@ const OrderSummary = ({ subtotal, shippingFee, discountAmount, total, promotionP
                 onClick={onPlaceOrder}
                 className="mt-6 w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition-colors hover:bg-blue-700"
             >
-                Place Order Now
+                Đặt hàng
             </button>
         </div>
     );

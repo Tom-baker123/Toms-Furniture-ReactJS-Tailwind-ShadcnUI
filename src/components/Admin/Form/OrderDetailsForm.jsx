@@ -350,14 +350,16 @@ const OrderDetailsForm = () => {
                                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                                     >
                                         {orderStatuses && orderStatuses.length > 0 ? (
-                                            orderStatuses.map((status) => (
-                                                <option
-                                                    key={status.id}
-                                                    value={status.id}
-                                                >
-                                                    {status.orderStatusName}
-                                                </option>
-                                            ))
+                                            orderStatuses
+                                                .filter((status) => status.id !== 7 && status.id !== 6)
+                                                .map((status) => (
+                                                    <option
+                                                        key={status.id}
+                                                        value={status.id}
+                                                    >
+                                                        {status.orderStatusName}
+                                                    </option>
+                                                ))
                                         ) : (
                                             <option value="">Không có trạng thái</option>
                                         )}

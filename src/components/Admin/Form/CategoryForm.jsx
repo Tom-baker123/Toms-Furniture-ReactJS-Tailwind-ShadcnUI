@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { createCategory, updateCategory, getAllCategories } from "@/api/api";
+import { createCategory, updateCategory, getAllCategories, getAllRoomTypes } from "@/api/api";
 import { MoveLeft, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -13,6 +13,7 @@ const CategoryForm = () => {
     const isEditing = !!categoryData; // Kiểm tra xem có đang sửa hay không
     const [isLoading, setIsLoading] = useState(false); // Trạng thái loading khi gửi form
     const [allCategories, setAllCategories] = useState([]); // Danh sách tất cả danh mục để chọn parent
+    const [allRoomTypes, setAllRoomTypes] = useState([]); // Danh sách tất cả loại phòng
 
     // Khởi tạo form với React Hook Form
     const {
@@ -26,12 +27,14 @@ const CategoryForm = () => {
                   CategoryName: categoryData.categoryName || "",
                   Descriptions: categoryData.descriptions || "",
                   ParentId: categoryData.parentId || "",
+                  RoomTypeId: categoryData.roomTypeId || "",
                   IsActive: categoryData.isActive || true,
               }
             : {
                   CategoryName: "",
                   Descriptions: "",
                   ParentId: "",
+                  RoomTypeId: "",
                   IsActive: true,
               },
     });
@@ -40,18 +43,19 @@ const CategoryForm = () => {
     const [imagePreview, setImagePreview] = useState(categoryData?.imageUrl || null);
     const [imageFile, setImageFile] = useState(null);
 
-    // Lấy danh sách tất cả danh mục khi component mount
+    // Lấy danh sách tất cả danh mục và loại phòng khi component mount
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchData = async () => {
             try {
-                const categories = await getAllCategories();
+                const [categories, roomTypes] = await Promise.all([getAllCategories(), getAllRoomTypes()]);
                 setAllCategories(categories);
+                setAllRoomTypes(roomTypes);
             } catch (error) {
-                console.error("Error fetching categories:", error);
-                toast.error("Failed to load categories list");
+                console.error("Error fetching data:", error);
+                toast.error("Failed to load categories or room types list");
             }
         };
-        fetchCategories();
+        fetchData();
     }, []);
 
     // Cập nhật form khi dữ liệu danh mục thay đổi (trong trường hợp sửa)
@@ -61,6 +65,7 @@ const CategoryForm = () => {
                 CategoryName: categoryData.categoryName,
                 Descriptions: categoryData.descriptions,
                 ParentId: categoryData.parentId || "",
+                RoomTypeId: categoryData.roomTypeId || "",
                 IsActive: categoryData.isActive,
             });
             setImagePreview(categoryData.imageUrl);
@@ -89,10 +94,11 @@ const CategoryForm = () => {
 
         setIsLoading(true);
         try {
-            // Chuẩn bị dữ liệu để gửi, chuyển ParentId thành số hoặc null
+            // Chuẩn bị dữ liệu để gửi, chuyển ParentId và RoomTypeId thành số hoặc null
             const submitData = {
                 ...data,
                 ParentId: data.ParentId && data.ParentId !== "" ? parseInt(data.ParentId) : null,
+                RoomTypeId: data.RoomTypeId && data.RoomTypeId !== "" ? parseInt(data.RoomTypeId) : null,
             };
 
             if (isEditing) {
@@ -260,6 +266,35 @@ const CategoryForm = () => {
                                                         {category.categoryName}
                                                     </option>
                                                 ))}
+                                        </select>
+                                    )}
+                                />
+                            </label>
+                            {/* Loại phòng */}
+                            <label className="font-bold text-slate-500">
+                                <span className="flex items-center gap-1">
+                                    <p className="text-md">Room Type</p>
+                                    <span className="text-sm text-gray-400">(optional)</span>
+                                </span>
+                                <Controller
+                                    name="RoomTypeId"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <select
+                                            className="mt-2 w-full rounded-sm border px-1.5 py-2"
+                                            {...field}
+                                            value={field.value || ""}
+                                            onChange={(e) => field.onChange(e.target.value || null)}
+                                        >
+                                            <option value="">-- Select Room Type --</option>
+                                            {allRoomTypes.map((roomType) => (
+                                                <option
+                                                    key={roomType.id}
+                                                    value={roomType.id}
+                                                >
+                                                    {roomType.roomTypeName}
+                                                </option>
+                                            ))}
                                         </select>
                                     )}
                                 />
