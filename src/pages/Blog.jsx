@@ -44,10 +44,10 @@ const fallbackBlogPosts = [
     },
 ];
 
-const categories = ["All Posts", "Advice & Reviews", "Furniture Guide", "Inspiration", "Life Style"];
+const categories = ["Tất cả bài viết", "Lời khuyên & Đánh giá", "Hướng dẫn nội thất", "Cảm hứng", "Phong cách sống"];
 
 export default function Blog() {
-    const [activeCategory, setActiveCategory] = useState("All Posts");
+    const [activeCategory, setActiveCategory] = useState("Tất cả bài viết");
     const [blogPosts, setBlogPosts] = useState(fallbackBlogPosts);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

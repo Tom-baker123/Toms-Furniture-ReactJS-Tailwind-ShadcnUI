@@ -18,11 +18,11 @@ const ProfileSecurityTab = ({ showPassword, setShowPassword, handlePasswordSubmi
                 className="space-y-6"
             >
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">Current Password</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">Mật khẩu hiện tại</label>
                     <div className="relative">
                         <input
                             type={showPassword ? "text" : "password"}
-                            {...registerPassword("currentPassword", { required: "Current password is required" })}
+                            {...registerPassword("currentPassword", { required: "Mật khẩu hiện tại là bắt buộc" })}
                             className="w-full rounded-full border border-gray-300 px-4 py-3 pr-12 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                         />
                         <button
@@ -36,19 +36,19 @@ const ProfileSecurityTab = ({ showPassword, setShowPassword, handlePasswordSubmi
                     {passwordErrors.currentPassword && <p className="mt-1 text-sm text-red-500">{passwordErrors.currentPassword.message}</p>}
                 </div>
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">New Password</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">Mật khẩu mới</label>
                     <input
                         type="password"
-                        {...registerPassword("newPassword", { required: "New password is required" })}
+                        {...registerPassword("newPassword", { required: "Mật khẩu mới là bắt buộc" })}
                         className="w-full rounded-full border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                     />
                     {passwordErrors.newPassword && <p className="mt-1 text-sm text-red-500">{passwordErrors.newPassword.message}</p>}
                 </div>
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">Confirm New Password</label>
+                    <label className="mb-2 block text-sm font-medium text-gray-700">Xác nhận mật khẩu mới</label>
                     <input
                         type="password"
-                        {...registerPassword("confirmPassword", { required: "Please confirm your password" })}
+                        {...registerPassword("confirmPassword", { required: "Vui lòng xác nhận mật khẩu của bạn" })}
                         className="w-full rounded-full border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                     />
                     {passwordErrors.confirmPassword && <p className="mt-1 text-sm text-red-500">{passwordErrors.confirmPassword.message}</p>}
@@ -62,7 +62,7 @@ const ProfileSecurityTab = ({ showPassword, setShowPassword, handlePasswordSubmi
                         hoverTextColor="text-white"
                         border={false}
                     >
-                        {isLoading ? "Updating..." : "Update Password"}
+                        {isLoading ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
                     </ButtonHovCT>
                 </div>
             </form>

@@ -97,12 +97,12 @@ export default function BlogDetail() {
             <div className="container-custom">
                 <div className="py-12 text-center">
                     <h1 className="mb-4 text-2xl font-bold text-gray-900">Blog Post Not Found</h1>
-                    <p className="mb-8 text-gray-600">The blog post you're looking for doesn't exist or has been removed.</p>
+                    <p className="mb-8 text-gray-600">Bài viết blog bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
                     <Link
                         to="/blog"
                         className="inline-block rounded-full bg-black px-6 py-3 text-white transition-colors hover:bg-gray-800"
                     >
-                        Back to Blog
+                        Quay lại Blog
                     </Link>
                 </div>
             </div>
@@ -141,7 +141,7 @@ export default function BlogDetail() {
                             dangerouslySetInnerHTML={{ __html: blogPost.content }}
                         />
                     ) : (
-                        <p className="leading-relaxed text-gray-700">No content available for this blog post.</p>
+                        <p className="leading-relaxed text-gray-700">Không có nội dung cho bài viết blog này.</p>
                     )}
                 </div>
 
@@ -231,7 +231,7 @@ export default function BlogDetail() {
                     to="/blog"
                     className="inline-block rounded-full bg-black px-8 py-3 font-semibold text-white transition-colors hover:bg-gray-800"
                 >
-                    Back to All Posts
+                    Quay lại tất cả bài viết
                 </Link>
             </div>
         </div>

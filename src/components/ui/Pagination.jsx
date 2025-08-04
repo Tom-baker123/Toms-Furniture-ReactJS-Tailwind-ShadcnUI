@@ -115,7 +115,7 @@ const Pagination = ({
 
                 {/* Mobile: Show current page info */}
                 <div className="px-3 py-2 text-sm font-medium text-gray-700 sm:hidden">
-                    Page {currentPage} of {totalPages}
+                    Trang {currentPage} / {totalPages}
                 </div>
 
                 {/* Next Button */}

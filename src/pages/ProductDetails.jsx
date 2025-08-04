@@ -47,9 +47,41 @@ const ProductDetails = () => {
             const found = product.productVariants.find(
                 (v) => v.colorName === selectedColor && v.materialName === selectedMaterial && v.sizeName === selectedSize,
             );
-            if (found) setSelectedVariant(found);
+            if (found) {
+                setSelectedVariant(found);
+                // Reset quantity về 1 khi chuyển biến thể
+                setQuantity(1);
+            }
         }
     }, [selectedColor, selectedMaterial, selectedSize, product]);
+
+    // Tạo danh sách hình ảnh để hiển thị (kết hợp slider chung và hình ảnh biến thể)
+    const getDisplayImages = () => {
+        const sliderImages = product?.sliders?.map((s) => s.imageUrl) || [];
+        const variantImages = selectedVariant?.images?.map((img) => img.imageUrl) || [];
+
+        // Nếu biến thể có hình ảnh riêng, ưu tiên hiển thị hình ảnh biến thể trước
+        // Nếu không có hình ảnh biến thể, chỉ hiển thị slider chung
+        let combinedImages;
+        if (variantImages.length > 0) {
+            // Hiển thị hình ảnh biến thể trước, sau đó là slider chung
+            combinedImages = [...variantImages, ...sliderImages];
+        } else {
+            // Chỉ hiển thị slider chung nếu biến thể không có hình ảnh
+            combinedImages = sliderImages;
+        }
+
+        // Loại bỏ hình ảnh trùng lặp
+        const uniqueImages = [...new Set(combinedImages)];
+
+        // Debug log để kiểm tra
+        console.log("Selected Variant:", selectedVariant?.id, selectedVariant?.colorName, selectedVariant?.materialName);
+        console.log("Variant Images:", variantImages);
+        console.log("Slider Images:", sliderImages);
+        console.log("Final Images:", uniqueImages);
+
+        return uniqueImages;
+    };
 
     const handleQuantityChange = (type) => {
         if (!selectedVariant) return;
@@ -108,7 +140,7 @@ const ProductDetails = () => {
                     className="transition-all md:sticky md:top-[var(--sticky-top)] md:z-[1] md:self-start"
                     style={{ "--sticky-top": `${stickyTop}px` }}
                 >
-                    <ProductImageGallery images={product.sliders?.map((s) => s.imageUrl) || []} />
+                    <ProductImageGallery images={getDisplayImages()} />
                 </div>
 
                 {/* Right side - Product Information */}

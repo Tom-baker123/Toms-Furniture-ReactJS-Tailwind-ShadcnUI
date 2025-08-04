@@ -27,8 +27,8 @@ const ForgotPasswordForm = () => {
     return (
         <div className="my-5 flex flex-col">
             {/* Tiêu đề */}
-            <h2 className="text-center text-2xl font-bold lg:text-3xl">Forgot Password</h2>
-            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">Enter your email to receive an OTP for password reset.</p>
+            <h2 className="text-center text-2xl font-bold lg:text-3xl">Quên mật khẩu</h2>
+            <p className="text-md md:text-md mt-3 text-center font-semibold text-gray-500">Nhập email của bạn để nhận mã OTP đặt lại mật khẩu.</p>
 
             {/* Form quên mật khẩu */}
             <form
@@ -49,10 +49,10 @@ const ForgotPasswordForm = () => {
                         type="email"
                         placeholder="Email"
                         {...register("email", {
-                            required: "Email is required",
+                            required: "Email là bắt buộc",
                             pattern: {
                                 value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                message: "Invalid email format",
+                                message: "Định dạng email không hợp lệ",
                             },
                         })}
                     />
@@ -68,7 +68,7 @@ const ForgotPasswordForm = () => {
                     type="submit"
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Sending OTP..." : "Send OTP"}
+                    {isSubmitting ? "Đang gửi OTP..." : "Gửi OTP"}
                 </ButtonHovCT>
             </form>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { usePayment } from "../context/PaymentContext";
 import { useForm } from "react-hook-form";
@@ -78,14 +79,33 @@ const Profile = () => {
     };
 
     const handleSaveAddress = async (addressData) => {
-        if (editingAddress) {
-            await updateAddress({ ...editingAddress, ...addressData });
-        } else {
-            await addAddress(addressData);
+        try {
+            let result;
+            if (editingAddress) {
+                result = await updateAddress({ ...editingAddress, ...addressData });
+                if (result && result.success === false) {
+                    toast.error(result.message || "Cập nhật địa chỉ thất bại!");
+                    return;
+                } else {
+                    toast.success("Cập nhật địa chỉ thành công!");
+                }
+            } else {
+                result = await addAddress(addressData);
+                if (result && result.success === false) {
+                    toast.error(result.message || "Thêm địa chỉ thất bại!");
+                    return;
+                } else {
+                    toast.success("Thêm địa chỉ thành công!");
+                }
+            }
+            setEditingAddress(null);
+            setShowAddressModal(false);
+            fetchAddresses();
+        } catch (error) {
+            const errorMessage = error?.message || "Có lỗi xảy ra khi lưu địa chỉ!";
+            toast.error(errorMessage);
+            console.error("Error saving address:", error);
         }
-        setEditingAddress(null);
-        setShowAddressModal(false);
-        fetchAddresses();
     };
 
     const handleEditAddress = (address) => {
@@ -94,8 +114,21 @@ const Profile = () => {
     };
 
     const handleDeleteAddress = async (id) => {
-        await removeAddress(id);
-        fetchAddresses();
+        try {
+            const result = await removeAddress(id);
+            if (result && result.success === false) {
+                // Hiển thị thông báo lỗi cụ thể từ API
+                toast.error(result.message || "Xóa địa chỉ thất bại!");
+            } else {
+                toast.success("Xóa địa chỉ thành công!");
+                fetchAddresses();
+            }
+        } catch (error) {
+            // Xử lý lỗi từ network hoặc lỗi khác
+            const errorMessage = error?.message || "Có lỗi xảy ra khi xóa địa chỉ!";
+            toast.error(errorMessage);
+            console.error("Error deleting address:", error);
+        }
     };
 
     useEffect(() => {

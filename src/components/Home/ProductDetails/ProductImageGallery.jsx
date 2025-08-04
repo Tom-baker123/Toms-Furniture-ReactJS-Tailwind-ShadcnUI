@@ -1,18 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
 
-
 const ProductImageGallery = ({ images = [] }) => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    const [mainSwiper, setMainSwiper] = useState(null);
+
     // Nếu images rỗng hoặc không có ảnh hợp lệ, dùng ảnh mặc định
-    const validImages = Array.isArray(images) && images.length > 0
-        ? images.filter((img) => !!img && typeof img === "string" && img.trim() !== "")
-        : [];
+    const validImages =
+        Array.isArray(images) && images.length > 0 ? images.filter((img) => !!img && typeof img === "string" && img.trim() !== "") : [];
     const fallbackImage = "/img/NotFound/No Picture.png";
     const displayImages = validImages.length > 0 ? validImages : [fallbackImage];
+
+    // Reset về slide đầu tiên khi danh sách hình ảnh thay đổi
+    useEffect(() => {
+        if (mainSwiper) {
+            mainSwiper.slideTo(0, 0); // slideTo(index, speed)
+        }
+        if (thumbsSwiper) {
+            thumbsSwiper.slideTo(0, 0);
+        }
+    }, [images, mainSwiper, thumbsSwiper]);
 
     return (
         <div className="flex flex-col gap-4 md:flex-row">
@@ -48,6 +58,7 @@ const ProductImageGallery = ({ images = [] }) => {
 
             {/* Main Image */}
             <Swiper
+                onSwiper={setMainSwiper}
                 spaceBetween={10}
                 thumbs={{ swiper: thumbsSwiper }}
                 modules={[Thumbs]}

@@ -44,32 +44,71 @@ export const PaymentProvider = ({ children }) => {
 
     // Tạo mới địa chỉ: chỉ truyền city, district, ward là tên
     const addAddress = async (addressData) => {
-        const payload = {
-            ...addressData,
-            city: addressData.city,
-            district: addressData.district,
-            ward: addressData.ward,
-        };
-        const result = await fetchData(createOrderAddress, "addAddress", payload, (res) => res);
-        return result;
+        try {
+            setLoading(true);
+            setError(null);
+            const payload = {
+                ...addressData,
+                city: addressData.city,
+                district: addressData.district,
+                ward: addressData.ward,
+            };
+            const result = await createOrderAddress(payload);
+            if (result && result.success === false) {
+                return { success: false, message: result.message };
+            }
+            return result;
+        } catch (error) {
+            const errorMessage = error?.message || error || "Có lỗi xảy ra khi thêm địa chỉ";
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Cập nhật địa chỉ: chỉ truyền city, district, ward là tên
     const updateAddress = async (addressData) => {
-        const payload = {
-            ...addressData,
-            city: addressData.city,
-            district: addressData.district,
-            ward: addressData.ward,
-        };
-        const result = await fetchData(updateOrderAddress, "updateAddress", payload, (res) => res);
-        return result;
+        try {
+            setLoading(true);
+            setError(null);
+            const payload = {
+                ...addressData,
+                city: addressData.city,
+                district: addressData.district,
+                ward: addressData.ward,
+            };
+            const result = await updateOrderAddress(payload);
+            if (result && result.success === false) {
+                return { success: false, message: result.message };
+            }
+            return result;
+        } catch (error) {
+            const errorMessage = error?.message || error || "Có lỗi xảy ra khi cập nhật địa chỉ";
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Xóa địa chỉ
     const removeAddress = async (id) => {
-        const result = await fetchData(deleteOrderAddress, "removeAddress", id, (res) => res);
-        return result;
+        try {
+            setLoading(true);
+            setError(null);
+            const result = await deleteOrderAddress(id);
+            if (result && result.success === false) {
+                return { success: false, message: result.message };
+            }
+            return result;
+        } catch (error) {
+            const errorMessage = error?.message || error || "Có lỗi xảy ra khi xóa địa chỉ";
+            setError(errorMessage);
+            return { success: false, message: errorMessage };
+        } finally {
+            setLoading(false);
+        }
     };
 
     // ================== API ĐƠN HÀNG & THANH TOÁN ==================
