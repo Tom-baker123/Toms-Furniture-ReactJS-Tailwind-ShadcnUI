@@ -2,8 +2,9 @@ import React from "react";
 import { overviewData, topProducts } from "@/constants";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useTheme } from "@/context/ThemeContext";
+import { formatCurrency } from "@/utils/formatUtils";
 
-const AreaChartTemplate = () => {
+const AreaChartTemplate = ({ data = overviewData, dataKey = "total" }) => {
     const { theme } = useTheme();
     return (
         <>
@@ -12,8 +13,8 @@ const AreaChartTemplate = () => {
                 height={300}
             >
                 <AreaChart
-                    data={overviewData}
-                    margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                    data={data}
+                    margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
                 >
                     <defs>
                         <linearGradient
@@ -39,7 +40,7 @@ const AreaChartTemplate = () => {
                     {/* Tooltip hiển thị trong biểu đồ */}
                     <Tooltip
                         cursor={false}
-                        formatter={(value) => `$${value}`}
+                        formatter={(value) => formatCurrency(value)}
                     />
                     <XAxis
                         dataKey="name"
@@ -48,15 +49,15 @@ const AreaChartTemplate = () => {
                         tickMargin={6}
                     />
                     <YAxis
-                        dataKey="total"
                         strokeWidth={0}
                         stroke={theme === "light" ? "#475569" : "#94a3b8"}
-                        tickFormatter={(value) => `$${value}`}
-                        tickMargin={6}
+                        tickFormatter={(value) => formatCurrency(value)}
+                        tickMargin={10}
+                        width={100}
                     />
                     <Area
                         type="monotone"
-                        dataKey="total"
+                        dataKey={dataKey}
                         stroke="#2563eb"
                         fillOpacity={1}
                         fill="url(#colorTotal)"

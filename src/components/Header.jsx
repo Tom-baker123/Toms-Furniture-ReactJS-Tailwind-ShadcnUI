@@ -93,7 +93,7 @@ const Header = ({ onOpenCartModal }) => {
                                 <DropdownCT>
                                     <li className="cursor-pointer px-4 py-1.5 hover:bg-gray-100">
                                         <span className="text-sm font-semibold whitespace-nowrap">
-                                            👋Hello <span className="text-primary font-bold whitespace-nowrap">{authStatus.userName}</span>
+                                            👋Xin chào <span className="text-primary font-bold whitespace-nowrap">{authStatus.userName}</span>
                                         </span>
                                     </li>
                                     <hr className="border-gray-300" />
@@ -105,7 +105,7 @@ const Header = ({ onOpenCartModal }) => {
                                             to="/profile"
                                             className="hover:text-gray-600"
                                         >
-                                            Profile
+                                            Thông tin cá nhân {/* Profile */}
                                         </Link>
                                     </li>
                                     {authStatus.role === "Admin" && (
@@ -127,7 +127,7 @@ const Header = ({ onOpenCartModal }) => {
                                         className="cursor-pointer px-4 py-1 font-bold text-red-500 hover:bg-gray-100"
                                         onClick={handleLogout}
                                     >
-                                        <button className="hover:text-red-700">Logout</button>
+                                        <button className="hover:text-red-700">Đăng xuất</button>
                                     </li>
                                 </DropdownCT>
                             ) : (
