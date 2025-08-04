@@ -1,7 +1,7 @@
 import ProductImageGallery from "@/components/Home/ProductDetails/ProductImageGallery";
 import showHeader from "@/hooks/showHeader";
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Minus, Plus, Check, Truck, RotateCcw, MapPin, ChevronRight, Zap, X, Star } from "lucide-react";
 import { APIContext } from "@/context/APIContext";
 import ButtonHovCT from "@/components/tailwind-custom/ButtonHovCT";
@@ -21,6 +21,7 @@ const ProductDetails = () => {
     const [showOffer, setShowOffer] = useState(true);
     const [selectedVariant, setSelectedVariant] = useState(null);
     const { addToCart, loading: cartLoading } = useCart();
+    const navigate = useNavigate();
 
     // Fetch product by id (proid)
     useEffect(() => {
@@ -279,6 +280,11 @@ const ProductDetails = () => {
                         // hoverBgColor="bg-white" // lớp trượt màu trắng
                         textColor="!text-white"
                         hoverTextColor="text-white"
+                        onClick={() => {
+                            handleAddToCart();
+                            navigate("/cart");
+                        }}
+                        disabled={cartLoading || !selectedVariant}
                     >
                         Mua ngay
                     </ButtonHovCT>

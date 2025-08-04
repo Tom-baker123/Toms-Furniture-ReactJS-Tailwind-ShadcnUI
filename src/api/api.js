@@ -95,6 +95,11 @@ export const createCategory = async (categoryData, imageFile) => {
             formData.append("categoryVModel.ParentId", categoryData.ParentId.toString());
         }
 
+        // Thêm RoomTypeId nếu có
+        if (categoryData.RoomTypeId) {
+            formData.append("categoryVModel.RoomTypeId", categoryData.RoomTypeId.toString());
+        }
+
         // Chỉ append imageFile khi có file thật sự
         if (imageFile && imageFile.size > 0) {
             formData.append("imageFile", imageFile);
@@ -139,6 +144,11 @@ export const updateCategory = async (categoryData, imageFile) => {
         // Thêm ParentId nếu có
         if (categoryData.ParentId) {
             formData.append("categoryVModel.ParentId", categoryData.ParentId.toString());
+        }
+
+        // Thêm RoomTypeId nếu có
+        if (categoryData.RoomTypeId) {
+            formData.append("categoryVModel.RoomTypeId", categoryData.RoomTypeId.toString());
         }
 
         if (imageFile) {
@@ -194,6 +204,39 @@ export const deleteCategory = async (id) => {
         return await response.json();
     } catch (error) {
         console.error("Error deleting category:", error.message);
+        throw error;
+    }
+};
+
+// ------------------------------------------------------------------
+// [2.1] API lấy tất cả danh sách loại phòng (RoomType)
+// - Gọi API GET /api/RoomType để lấy toàn bộ danh sách loại phòng
+// - Trả về danh sách các loại phòng dưới dạng JSON
+export const getAllRoomTypes = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/RoomType`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include", // Gửi cookie xác thực
+        });
+
+        if (!response.ok) {
+            const contentType = response.headers.get("content-type");
+            let errorMessage = "Failed to fetch room types";
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                errorMessage = errorData.message || errorMessage;
+            } else {
+                errorMessage = await response.text();
+            }
+            throw new Error(errorMessage);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching room types: ${error.message}`);
         throw error;
     }
 };

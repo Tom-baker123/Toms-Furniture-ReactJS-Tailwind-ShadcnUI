@@ -80,3 +80,23 @@ export const getAllOrderStatuses = async () => {
 export const getOrderStatusById = async (id) => {
     return apiRequest(`${API_BASE_URL}/OrderStatus/${id}`);
 };
+
+// ==================== USER GUEST APIs ====================
+
+// [15.1] Tạo khách vãng lai mới
+export const createUserGuest = async (guestData) => {
+    return apiRequest(`${API_BASE_URL}/UserGuest`, {
+        method: 'POST',
+        body: guestData,
+    });
+};
+
+// [15.2] Lấy tất cả danh sách khách vãng lai (Admin)
+export const getAllUserGuests = async () => {
+    return apiRequest(`${API_BASE_URL}/UserGuest`);
+};
+
+// [15.3] Lấy thông tin khách vãng lai theo ID
+export const getUserGuestById = async (id) => {
+    return apiRequest(`${API_BASE_URL}/UserGuest/${id}`);
+};

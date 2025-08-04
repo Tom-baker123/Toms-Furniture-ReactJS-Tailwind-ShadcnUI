@@ -62,6 +62,7 @@ const PaymentFormSection = ({
             <SelectPaymentMethodForm
                 paymentMethod={paymentMethod}
                 setPaymentMethod={setPaymentMethod}
+                validationErrors={validationErrors}
             />
         </div>
     );

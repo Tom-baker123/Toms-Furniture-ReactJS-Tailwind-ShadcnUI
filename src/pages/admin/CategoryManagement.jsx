@@ -34,6 +34,7 @@ const CategoryManagement = () => {
                 CategoryName: category.categoryName,
                 Descriptions: category.descriptions || "",
                 ParentId: category.parentId || null,
+                RoomTypeId: category.roomTypeId || null,
                 IsActive: !category.isActive,
             });
             setCategories((prev) =>
@@ -80,6 +81,7 @@ const CategoryManagement = () => {
                                     <th className="table-head whitespace-nowrap">Hình ảnh</th>
                                     <th className="table-head whitespace-nowrap">Tên danh mục</th>
                                     <th className="table-head whitespace-nowrap">Danh mục cha</th>
+                                    <th className="table-head whitespace-nowrap">Loại phòng</th>
                                     <th className="table-head whitespace-nowrap">Mô tả</th>
                                     <th className="table-head whitespace-nowrap">Trạng thái</th>
                                     <th className="table-head whitespace-nowrap">Ngày tạo</th>
@@ -113,6 +115,15 @@ const CategoryManagement = () => {
                                                 }`}
                                             >
                                                 {getParentCategoryName(category.parentId)}
+                                            </span>
+                                        </td>
+                                        <td className="table-cell">
+                                            <span
+                                                className={`rounded-full px-2 py-1 text-xs ${
+                                                    category.roomTypeName ? "bg-purple-100 text-purple-800" : "bg-gray-100 text-gray-600"
+                                                }`}
+                                            >
+                                                {category.roomTypeName || "Chưa phân loại"}
                                             </span>
                                         </td>
                                         <td className="table-cell">{category.descriptions || "Không có mô tả"}</td>

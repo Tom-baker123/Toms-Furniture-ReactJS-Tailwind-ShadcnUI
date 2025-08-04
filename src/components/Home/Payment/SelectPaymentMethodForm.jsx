@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { usePaymentMethod } from "../../../context/PaymentMethodContext";
 
-const SelectPaymentMethodForm = ({ paymentMethod, setPaymentMethod }) => {
+const SelectPaymentMethodForm = ({ paymentMethod, setPaymentMethod, validationErrors = {} }) => {
     const { paymentMethods, fetchPaymentMethods, loading, error } = usePaymentMethod();
 
     useEffect(() => {
@@ -45,6 +45,7 @@ const SelectPaymentMethodForm = ({ paymentMethod, setPaymentMethod }) => {
                           </div>
                       ))
                     : null}
+                {validationErrors.paymentMethod && <span className="text-sm text-red-500">{validationErrors.paymentMethod}</span>}
             </div>
         </div>
     );
