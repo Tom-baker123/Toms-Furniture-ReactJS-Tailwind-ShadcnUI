@@ -67,8 +67,10 @@ const OrderDetailsForm = () => {
                 <div className="flex justify-between">
                     <div className="title text-2xl font-bold text-slate-800">Đơn Hàng #{order.id || "--"}</div>
                     <button
-                        className="flex cursor-pointer gap-x-2 rounded-md bg-gray-300 px-3 py-2.5 font-semibold transition-all hover:text-blue-700"
-                        onClick={() => {}}
+                        className="flex cursor-pointer gap-x-2 rounded-md bg-blue-500 px-3 py-2.5 font-semibold text-white transition-all hover:bg-blue-600"
+                        onClick={() => {
+                            window.print();
+                        }}
                     >
                         <Printer />
                         <span>In hóa đơn</span>
@@ -111,16 +113,28 @@ const OrderDetailsForm = () => {
                                                                     <div className="flex-shrink-0">
                                                                         <div className="flex h-12 w-12 items-center justify-center rounded-md border bg-gray-100">
                                                                             {item.productVariant?.images?.length > 0 ? (
-                                                                                <img
-                                                                                    className="h-10 w-10 rounded object-cover"
-                                                                                    src={item.productVariant.images[0]}
-                                                                                    alt={item.productVariant.colorName || "Sản phẩm"}
-                                                                                    loading="lazy"
-                                                                                    onError={(e) => {
-                                                                                        e.target.style.display = "none";
-                                                                                        e.target.nextSibling.style.display = "flex";
-                                                                                    }}
-                                                                                />
+                                                                                <>
+                                                                                    <img
+                                                                                        className="h-10 w-10 rounded object-cover"
+                                                                                        src={item.productVariant.images[0]}
+                                                                                        alt={item.productVariant.colorName || "Sản phẩm"}
+                                                                                        loading="lazy"
+                                                                                        onError={(e) => {
+                                                                                            e.target.style.display = "none";
+                                                                                            const fallback =
+                                                                                                e.target.parentElement.querySelector(".fallback-img");
+                                                                                            if (fallback) {
+                                                                                                fallback.style.display = "flex";
+                                                                                            }
+                                                                                        }}
+                                                                                    />
+                                                                                    <div
+                                                                                        className="fallback-img flex h-10 w-10 items-center justify-center rounded bg-gray-200 text-xs text-gray-400"
+                                                                                        style={{ display: "none" }}
+                                                                                    >
+                                                                                        IMG
+                                                                                    </div>
+                                                                                </>
                                                                             ) : (
                                                                                 <div className="flex h-10 w-10 items-center justify-center rounded bg-gray-200 text-xs text-gray-400">
                                                                                     IMG
@@ -184,16 +198,28 @@ const OrderDetailsForm = () => {
                                                         <div className="flex-shrink-0">
                                                             <div className="flex h-16 w-16 items-center justify-center rounded-md border bg-gray-100">
                                                                 {item.productVariant?.images?.length > 0 ? (
-                                                                    <img
-                                                                        className="h-14 w-14 rounded object-cover"
-                                                                        src={item.productVariant.images[0]}
-                                                                        alt={item.productVariant.colorName || "Sản phẩm"}
-                                                                        loading="lazy"
-                                                                        onError={(e) => {
-                                                                            e.target.style.display = "none";
-                                                                            e.target.nextSibling.style.display = "flex";
-                                                                        }}
-                                                                    />
+                                                                    <>
+                                                                        <img
+                                                                            className="h-14 w-14 rounded object-cover"
+                                                                            src={item.productVariant.images[0]}
+                                                                            alt={item.productVariant.colorName || "Sản phẩm"}
+                                                                            loading="lazy"
+                                                                            onError={(e) => {
+                                                                                e.target.style.display = "none";
+                                                                                const fallback =
+                                                                                    e.target.parentElement.querySelector(".fallback-img");
+                                                                                if (fallback) {
+                                                                                    fallback.style.display = "flex";
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <div
+                                                                            className="fallback-img flex h-14 w-14 items-center justify-center rounded bg-gray-200 text-xs text-gray-400"
+                                                                            style={{ display: "none" }}
+                                                                        >
+                                                                            IMG
+                                                                        </div>
+                                                                    </>
                                                                 ) : (
                                                                     <div className="flex h-14 w-14 items-center justify-center rounded bg-gray-200 text-xs text-gray-400">
                                                                         IMG

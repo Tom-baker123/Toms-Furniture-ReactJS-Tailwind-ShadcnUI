@@ -1,4 +1,6 @@
 import { getAllOrders, getOrderById } from "@/api/service/PaymentService";
+import { getAllProducts } from "@/api/service/ProductService";
+import { formatNumber } from "@/utils/formatUtils";
 import React, { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -56,8 +58,8 @@ const BarChartTemplate = () => {
 
     return (
         <div className="card">
-            <div className="mx-auto">
-                <h2 className="mb-4 text-2xl font-bold text-gray-800">Order Variant Quantity Chart</h2>
+            <div className="mx-auto w-full px-6">
+                <h2 className="mb-4 text-2xl font-bold text-gray-800">Biểu Đồ Số Lượng Biến Thể Đơn Hàng</h2>
 
                 {/* Dropdown for selecting orders */}
                 <div className="mb-6">
@@ -65,7 +67,7 @@ const BarChartTemplate = () => {
                         htmlFor="orderSelect"
                         className="mb-2 block text-sm font-medium text-gray-700"
                     >
-                        Select Order
+                        Chọn Đơn Hàng
                     </label>
                     <select
                         id="orderSelect"
@@ -78,21 +80,21 @@ const BarChartTemplate = () => {
                                 key={order.id}
                                 value={order.id}
                             >
-                                Order #{order.id} - {order.orderStatusName} ({new Date(order.createdDate).toLocaleDateString()})
+                                Đơn Hàng #{order.id} - {order.orderStatusName} ({new Date(order.createdDate).toLocaleDateString("vi-VN")})
                             </option>
                         ))}
                     </select>
                 </div>
 
                 {/* Bar Chart */}
-                <div className="rounded-lg bg-white p-4">
+                <div className="w-full rounded-lg bg-white">
                     <ResponsiveContainer
                         width="100%"
-                        height={400}
+                        height={500}
                     >
                         <BarChart
                             data={chartData}
-                            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                            margin={{ top: 30, right: 40, left: 40, bottom: 80 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis
@@ -100,11 +102,28 @@ const BarChartTemplate = () => {
                                 angle={-45}
                                 textAnchor="end"
                                 interval={0}
-                                height={100}
-                                tick={{ fontSize: 12 }}
+                                height={120}
+                                tick={{ fontSize: 11 }}
                             />
-                            <YAxis label={{ value: "Quantity", angle: -90, position: "insideLeft" }} />
-                            <Tooltip />
+                            <YAxis
+                                label={{
+                                    value: "Số Lượng",
+                                    angle: -90,
+                                    position: "insideLeft",
+                                    style: { textAnchor: "middle" },
+                                }}
+                                tickFormatter={(value) => formatNumber(value)}
+                                width={60}
+                            />
+                            <Tooltip
+                                formatter={(value) => [formatNumber(value), "Số Lượng Bán"]}
+                                labelStyle={{ color: "#374151" }}
+                                contentStyle={{
+                                    backgroundColor: "#f9fafb",
+                                    border: "1px solid #d1d5db",
+                                    borderRadius: "8px",
+                                }}
+                            />
                             <Legend
                                 verticalAlign="top"
                                 height={36}
@@ -112,7 +131,8 @@ const BarChartTemplate = () => {
                             <Bar
                                 dataKey="quantity"
                                 fill="#3b82f6"
-                                name="Quantity Sold"
+                                name="Số Lượng Bán"
+                                radius={[4, 4, 0, 0]}
                             />
                         </BarChart>
                     </ResponsiveContainer>
