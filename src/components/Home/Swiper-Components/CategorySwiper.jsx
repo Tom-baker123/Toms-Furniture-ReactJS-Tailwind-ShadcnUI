@@ -113,13 +113,13 @@ const CategorySwiper = () => {
                     >
                         <span className="flex h-full w-full shrink-0 items-start justify-center">
                             <Link
-                                to={`/products?category=${category.id}`}
+                                to={`/products?categoryId=${category.id}`}
                                 className="relative flex flex-col items-center justify-start text-center decoration-0"
                             >
                                 {/* Logo Category */}
                                 <div className="relative block w-20 max-w-full overflow-hidden rounded-full bg-transparent select-none max-md:w-15">
                                     <img
-                                        className="mx-auto block rounded-full object-cover max-sm:w-20 bg-gray-100"
+                                        className="mx-auto block rounded-full bg-gray-100 object-cover max-sm:w-20"
                                         src={category.imageUrl || `/img/category-menu/default.jpg`}
                                         alt={category.name}
                                         width={800}

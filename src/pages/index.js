@@ -11,6 +11,7 @@ export { default as Profile } from "./Profile";
 export { default as Cart } from "./Cart";
 export { default as Blog } from "./Blog";
 export { default as BlogDetail } from "./BlogDetail";
+export { default as CategoryDebugPage } from "./CategoryDebugPage";
 // [Home Page - END]-----------------------------------------
 // export { default as Terms } from "./Terms";
 

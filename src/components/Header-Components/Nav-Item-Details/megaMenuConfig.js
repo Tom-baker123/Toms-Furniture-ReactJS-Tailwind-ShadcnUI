@@ -444,48 +444,48 @@ export const navItem5Config = {
     // Nested menu data
     nestedMenuData: [
         {
-            title: "About us",
+            title: "Về chúng tôi",
             href: "/about",
             submenu: []
         },
+        // {
+        //     title: "Collections",
+        //     href: "/collections",
+        //     submenu: [
+        //         { label: "Collections List", href: "/collections" },
+        //         { label: "Left Banner", href: "/collections/left-banner" },
+        //         { label: "Right Banner", href: "/collections/right-banner" },
+        //         { label: "With Background", href: "/collections/with-background" },
+        //         { label: "With Image Cards", href: "/collections/with-image-cards" },
+        //         { label: "Without Banner", href: "/collections/without-banner" }
+        //     ]
+        // },
+        // {
+        //     title: "Product Gallery",
+        //     href: "/product-gallery",
+        //     submenu: [
+        //         { label: "Product Grid", href: "/product-gallery/grid" },
+        //         { label: "Product List", href: "/product-gallery/list" },
+        //         { label: "Product Detail", href: "/product-gallery/detail" }
+        //     ]
+        // },
+        // {
+        //     title: "Customer Care",
+        //     href: "/customer-care",
+        //     submenu: []
+        // },
+        // {
+        //     title: "FAQs",
+        //     href: "/faq",
+        //     submenu: []
+        // },
         {
-            title: "Collections",
-            href: "/collections",
-            submenu: [
-                { label: "Collections List", href: "/collections" },
-                { label: "Left Banner", href: "/collections/left-banner" },
-                { label: "Right Banner", href: "/collections/right-banner" },
-                { label: "With Background", href: "/collections/with-background" },
-                { label: "With Image Cards", href: "/collections/with-image-cards" },
-                { label: "Without Banner", href: "/collections/without-banner" }
-            ]
-        },
-        {
-            title: "Product Gallery",
-            href: "/product-gallery",
-            submenu: [
-                { label: "Product Grid", href: "/product-gallery/grid" },
-                { label: "Product List", href: "/product-gallery/list" },
-                { label: "Product Detail", href: "/product-gallery/detail" }
-            ]
-        },
-        {
-            title: "Customer Care",
-            href: "/customer-care",
-            submenu: []
-        },
-        {
-            title: "FAQs",
-            href: "/faq",
-            submenu: []
-        },
-        {
-            title: "Contact",
+            title: "Liên hệ",
             href: "/contact",
             submenu: []
         },
         {
-            title: "Find A Store",
+            title: "Tìm cửa hàng",
             href: "/find-store",
             submenu: []
         },
@@ -495,18 +495,18 @@ export const navItem5Config = {
             submenu: []
         }
     ],
-    recommendationPicture: {
-        imageUrl: "https://hyper-garace.myshopify.com/cdn/shop/files/collection-menu-banner.jpg?v=1734424636&width=1100",
-        imageAlt: "Company Information",
-        title: "Support",
-        subtitle: "We're Here to Help",
-        href: "/contact",
-        customStyles: {
-            containerClass: "nav-promotion-custom nav-promotion-custom-grid pt-[30px] pb-[60px] pl-[30px] border-l-[1px] border-gray-300",
-            imageClass: "rounded-md",
-            titleClass: "mb-4 text-center text-xl",
-            subtitleClass: "text-center text-3xl",
-            overlayClass: "content-overlay"
-        }
-    }
+    // recommendationPicture: {
+    //     imageUrl: "https://hyper-garace.myshopify.com/cdn/shop/files/collection-menu-banner.jpg?v=1734424636&width=1100",
+    //     imageAlt: "Company Information",
+    //     title: "Support",
+    //     subtitle: "We're Here to Help",
+    //     href: "/contact",
+    //     customStyles: {
+    //         containerClass: "nav-promotion-custom nav-promotion-custom-grid pt-[30px] pb-[60px] pl-[30px] border-l-[1px] border-gray-300",
+    //         imageClass: "rounded-md",
+    //         titleClass: "mb-4 text-center text-xl",
+    //         subtitleClass: "text-center text-3xl",
+    //         overlayClass: "content-overlay"
+    //     }
+    // }
 };

@@ -1,17 +1,33 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useHover } from "@/hooks/useHover";
 import MegaMenuColumn from "./MegaMenuColumn";
 import RecommendationPicture from "./RecommendationPicture";
 import { megaMenuConfig } from "./megaMenuConfig";
 import { getGridClass, filterValidColumns, getRecommendationWidth } from "./megaMenuUtils";
+import { APIContext } from "@/context/APIContext";
+import { createMegaMenuFromCategories } from "./categoryUtils";
 
 const NavItem1 = () => {
     const { isHovered, handleMouseEnter, handleMouseLeave, forceShow } = useHover(100);
 
+    // Lấy dữ liệu categories từ APIContext
+    const { categories, loading, error } = useContext(APIContext);
+
+    // Tạo mega menu config từ categories API hoặc fallback về config tĩnh
+    const currentMegaMenuConfig = useMemo(() => {
+        if (categories && categories.length > 0) {
+            return createMegaMenuFromCategories(categories);
+        }
+        return megaMenuConfig; // Fallback về config tĩnh nếu chưa có data
+    }, [categories]);
+
     // Lọc các cột có dữ liệu và tính toán grid class
-    const validColumns = filterValidColumns(megaMenuConfig.columns);
+    const validColumns = filterValidColumns(currentMegaMenuConfig.columns);
     const columnCount = validColumns.length;
+
+    // Nếu đang loading hoặc có lỗi, vẫn hiển thị menu với config tĩnh
+    const shouldShowMenu = !loading && !error && validColumns.length > 0;
 
     return (
         <>
@@ -66,16 +82,26 @@ const NavItem1 = () => {
                         <div className="custom-scrollbar mx-auto max-w-screen overflow-auto scroll-smooth px-4 transition-all 2xl:max-w-7xl">
                             <div className="flex flex-wrap">
                                 <div className={`grid ${getGridClass(columnCount)} flex-1 gap-0`}>
-                                    {validColumns.map((columnData, index) => (
-                                        <MegaMenuColumn
-                                            key={index}
-                                            menuItems={columnData}
-                                        />
-                                    ))}
+                                    {shouldShowMenu ? (
+                                        validColumns.map((columnData, index) => (
+                                            <MegaMenuColumn
+                                                key={index}
+                                                menuItems={columnData}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="col-span-full flex items-center justify-center py-8">
+                                            {loading && <div className="text-gray-500">Đang tải danh mục...</div>}
+                                            {error && <div className="text-red-500">Không thể tải danh mục</div>}
+                                            {!loading && !error && validColumns.length === 0 && (
+                                                <div className="text-gray-500">Không có danh mục nào</div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                                 {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
                                 <RecommendationPicture
-                                    {...megaMenuConfig.recommendationPicture}
+                                    {...currentMegaMenuConfig.recommendationPicture}
                                     className={getRecommendationWidth(columnCount)}
                                 />
                                 {/* -[RECOMMENDATION PICTURE]--------------------------------------*/}
