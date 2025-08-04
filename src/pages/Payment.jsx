@@ -73,7 +73,7 @@ const Payment = () => {
     
     return (
         <div className="container-custom lg:px-10 lg:py-5">
-            <h1 className="mb-6 text-2xl font-bold">Check Out Page</h1>
+            <h1 className="mb-6 text-2xl font-bold">Trang Thanh Toán</h1>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Phần thông tin đặt hàng */}

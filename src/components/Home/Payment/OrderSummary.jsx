@@ -24,7 +24,7 @@ const OrderSummary = ({ subtotal, shippingFee, discountAmount, total, promotionP
                 {promotionProps.selectedPromotion && discountAmount > 0 && (
                     <div className="flex justify-between">
                         <span className="text-gray-600">Giảm giá</span>
-                        <span className="font-medium text-green-600">- {discountAmount.toLocaleString()}$</span>
+                        <span className="font-medium text-green-600">- {discountAmount} đ</span>
                     </div>
                 )}
 

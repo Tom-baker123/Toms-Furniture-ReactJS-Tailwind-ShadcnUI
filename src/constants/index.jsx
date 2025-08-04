@@ -182,16 +182,16 @@ export const navbarLinks = [
     },
 
     // Trang thiết lập
-    {
-        title: "Thiết lập",
-        links: [
-            {
-                label: "Thiết lập",
-                icon: Settings,
-                path: "/admin/settings",
-            },
-        ],
-    },
+    // {
+    //     title: "Thiết lập",
+    //     links: [
+    //         {
+    //             label: "Thiết lập",
+    //             icon: Settings,
+    //             path: "/admin/settings",
+    //         },
+    //     ],
+    // },
 ];
 
 export const overviewData = [
