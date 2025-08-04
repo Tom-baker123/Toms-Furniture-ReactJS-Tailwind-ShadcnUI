@@ -12,6 +12,7 @@ import {
 } from "@/api/api";
 import { getProductById } from "@/api/service/ProductService";
 import { getAllProducts } from "@/api/service/ProductService";
+import { getAllRoomTypes, getRoomTypeById } from "@/api/service/RoomTypeService";
 import useApiFetch from "@/hooks/useApiFetch";
 
 // Tạo Context chung cho ứng dụng
@@ -31,6 +32,8 @@ export const APIProvider = ({ children }) => {
         countries: undefined,
         brands: undefined,
         suppliers: undefined,
+        roomTypes: undefined,
+        roomType: undefined,
         loading: false,
         error: undefined,
     });
@@ -57,6 +60,8 @@ export const APIProvider = ({ children }) => {
     const fetchCountries = () => fetchData(getAllCountries, "countries");
     const fetchBrands = () => fetchData(getAllBrands, "brands");
     const fetchSuppliers = () => fetchData(getAllSuppliers, "suppliers");
+    const fetchRoomTypes = () => fetchData(getAllRoomTypes, "roomTypes");
+    const fetchRoomTypeById = (id) => fetchData(getRoomTypeById, "roomType", id);
 
     // Gọi API khi component mount
     // Chỉ gọi fetchProducts một lần khi mount
@@ -74,6 +79,7 @@ export const APIProvider = ({ children }) => {
             fetchCountries();
             fetchBrands();
             fetchSuppliers();
+            fetchRoomTypes();
             setDidInit(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,10 +104,14 @@ export const APIProvider = ({ children }) => {
                 countries: state.countries,
                 brands: state.brands,
                 suppliers: state.suppliers,
+                roomTypes: state.roomTypes,
+                roomType: state.roomType,
                 loading: state.loading,
                 error: state.error,
                 refetch,
+                fetchCategories, // Thêm hàm fetchCategories vào context
                 fetchProductById, // Thêm hàm fetchProductById vào context
+                fetchRoomTypeById, // Thêm hàm fetchRoomTypeById vào context
             }}
         >
             {children}

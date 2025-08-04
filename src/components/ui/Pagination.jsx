@@ -47,7 +47,7 @@ const Pagination = ({
             {/* Thông tin hiển thị */}
             {showInfo && (
                 <div className="text-sm text-gray-600">
-                    Showing {startItem} to {endItem} of {totalItems} products
+                    Hiển thị {startItem} - {endItem} trong {totalItems} sản phẩm
                 </div>
             )}
 
@@ -65,7 +65,7 @@ const Pagination = ({
                     )}
                 >
                     <ChevronLeft className="h-4 w-4" />
-                    <span className="hidden sm:inline">Previous</span>
+                    <span className="hidden sm:inline">Lùi lại</span>
                 </button>
 
                 {/* Page Numbers - Hidden on mobile for very small screens */}
@@ -129,7 +129,7 @@ const Pagination = ({
                             : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50",
                     )}
                 >
-                    <span className="hidden sm:inline">Next</span>
+                    <span className="hidden sm:inline">Tiếp theo</span>
                     <ChevronRight className="h-4 w-4" />
                 </button>
             </div>

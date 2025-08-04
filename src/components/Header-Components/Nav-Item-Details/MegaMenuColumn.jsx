@@ -20,7 +20,7 @@ const MegaMenuColumn = ({ menuItems = [], className = "" }) => {
                     >
                         {section.title}
                     </a>
-                    <ul className="font-medium mt-3.5 text-gray-500">
+                    <ul className="mt-3.5 font-medium text-gray-500">
                         {section.items.map((item, itemIndex) => (
                             <li
                                 key={itemIndex}
@@ -28,9 +28,10 @@ const MegaMenuColumn = ({ menuItems = [], className = "" }) => {
                             >
                                 <a
                                     href={item.href}
-                                    className="mega-menu__link block"
+                                    className={`mega-menu__link block ${item.isViewAll ? "font-semibold text-gray-800 hover:text-blue-600" : ""}`}
                                 >
                                     <span className="reversed-link__text">{item.label}</span>
+                                    {item.roomTypeName && <span className="ml-2 text-xs text-purple-500">({item.roomTypeName})</span>}
                                 </a>
                             </li>
                         ))}

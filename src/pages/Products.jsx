@@ -19,23 +19,50 @@ const Products = () => {
     const navigate = useNavigate();
     const { products, loading, error, refetch } = useContext(APIContext);
 
-    // Lấy category param từ query string
+    // Lấy categoryId param từ query string
     const location = useLocation();
+    const { categories } = useContext(APIContext);
+
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        const categoryParam = params.get("category");
-        console.log("categoryParam from query:", categoryParam);
-        if (categoryParam) {
-            // Chuyển đổi categoryParam thành số để so sánh với categoryId
-            const categoryId = parseInt(categoryParam);
+        const categoryIdParam = params.get("categoryId");
+        console.log("categoryIdParam from query:", categoryIdParam);
+
+        if (categoryIdParam && categories) {
+            // Chuyển đổi categoryIdParam thành số để so sánh với categoryId
+            const categoryId = parseInt(categoryIdParam);
             if (!isNaN(categoryId)) {
-                setFilters((prev) => ({
-                    ...prev,
-                    categoryIds: [categoryId],
-                }));
+                // Tìm category được chọn
+                const selectedCategory = categories.find((cat) => cat.id === categoryId);
+
+                if (selectedCategory) {
+                    let categoryIdsToFilter = [categoryId];
+
+                    // Nếu là parent category (parentId = null), thêm cả các child categories
+                    if (selectedCategory.parentId === null) {
+                        const childCategories = categories.filter((cat) => cat.parentId === categoryId);
+                        const childCategoryIds = childCategories.map((cat) => cat.id);
+                        categoryIdsToFilter = [...categoryIdsToFilter, ...childCategoryIds];
+                        console.log("Parent category selected, including children:", categoryIdsToFilter);
+                    }
+
+                    setFilters((prev) => ({
+                        ...prev,
+                        categoryIds: categoryIdsToFilter,
+                    }));
+                }
             }
+        } else {
+            // Nếu không có categoryId param, reset categoryIds filter
+            setFilters((prev) => ({
+                ...prev,
+                categoryIds: [],
+            }));
         }
-    }, [location.search]);
+
+        // Reset về trang 1 khi URL thay đổi
+        setCurrentPage(1);
+    }, [location.search, categories]);
 
     // State cho pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -315,15 +342,15 @@ const Products = () => {
                         <div className="flex h-full flex-col-reverse items-center gap-6 max-md:justify-between md:flex-row md:gap-3">
                             <ProductCategoryToolbar />
                             {/* Hiển thị tổng số sản phẩm từ API */}
-                            <span className="text-md font-semibold text-gray-500">{totalItems} products</span>
+                            <span className="text-md font-semibold text-gray-500">{totalItems} sản phẩm</span>
 
-                            {/* Page Size Input - Hidden on mobile, shown on tablet+ */}
+                            {/* Page Size Input - Ẩn trên mobile, hiển thị trên tablet+ */}
                             <div className="hidden items-center gap-2 sm:flex">
                                 <label
                                     className="text-sm font-medium text-gray-700"
                                     htmlFor="pageSizeInput"
                                 >
-                                    Show:
+                                    Hiển thị:
                                 </label>
                                 <input
                                     id="pageSizeInput"
@@ -340,16 +367,16 @@ const Products = () => {
 
                         {/* Right Toolbar */}
                         <div className="flex items-end gap-4 max-md:flex-col md:items-center lg:gap-8">
-                            {/* Nút Compare */}
-                            <label className="inline-flex cursor-pointer items-center gap-3">
-                                <span className="text-md ms-3 !font-bold text-gray-900">Compare: </span>
+                            {/* Nút So sánh */}
+                            {/* <label className="inline-flex cursor-pointer items-center gap-3">
+                                <span className="text-md ms-3 !font-bold text-gray-900">So sánh: </span>
                                 <input
                                     type="checkbox"
                                     value=""
                                     className="peer sr-only"
                                 />
                                 <div className="peer relative h-8 w-14.5 rounded-full bg-gray-200 transition-colors duration-100 peer-checked:bg-black peer-focus:outline-none after:absolute after:start-[5px] after:top-[4px] after:h-6 after:w-6 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full dark:border-gray-600 dark:bg-gray-700 dark:peer-checked:bg-white"></div>
-                            </label>
+                            </label> */}
 
                             {/* Combobox Để sắp xếp sản phẩm */}
                             <form className="hidden items-center gap-3 font-semibold lg:flex">
@@ -357,7 +384,7 @@ const Products = () => {
                                     htmlFor="sortBy"
                                     className="text-md font-bold whitespace-nowrap"
                                 >
-                                    Sort By:
+                                    Sắp xếp theo:
                                 </label>
                                 <div className="relative my-2 inline-block text-left">
                                     <select
@@ -366,14 +393,14 @@ const Products = () => {
                                         defaultValue="best-selling"
                                         onChange={handleSortChange}
                                     >
-                                        <option value="manual">Featured</option>
-                                        <option value="best-selling">Best selling</option>
-                                        <option value="title-ascending">Alphabetically, A-Z</option>
-                                        <option value="title-descending">Alphabetically, Z-A</option>
-                                        <option value="price-ascending">Price, low to high</option>
-                                        <option value="price-descending">Price, high to low</option>
-                                        <option value="created-ascending">Date, old to new</option>
-                                        <option value="created-descending">Date, new to old</option>
+                                        <option value="manual">Nổi bật</option>
+                                        <option value="best-selling">Bán chạy nhất</option>
+                                        <option value="title-ascending">Tên A-Z</option>
+                                        <option value="title-descending">Tên Z-A</option>
+                                        <option value="price-ascending">Giá thấp đến cao</option>
+                                        <option value="price-descending">Giá cao đến thấp</option>
+                                        <option value="created-ascending">Cũ đến mới</option>
+                                        <option value="created-descending">Mới đến cũ</option>
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-0 mr-3 h-5 w-5 -translate-y-1/2 transform" />
                                 </div>
@@ -381,7 +408,7 @@ const Products = () => {
 
                             {/* Hiển thị dưới dạng */}
                             <div className="flex items-end gap-2 font-semibold md:items-center">
-                                <p className="text-md font-bold max-md:hidden">View as: </p>
+                                <p className="text-md font-bold max-md:hidden">Hiển thị: </p>
                                 {/* Layout Button 1 */}
                                 <ButtonHovCT
                                     className={"!border-black !px-2.5 !py-2.5"}
@@ -412,7 +439,7 @@ const Products = () => {
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[15rem_1fr]">
                         {/* [4.1] Filter */}
                         <div className={cn(`sticky self-start transition-[top] max-lg:hidden`, showHead ? `top-[230px]` : `top-[90px]`)}>
-                            {/* Bộ lọc Availability */}
+                            {/* Bộ lọc Tình trạng hàng */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Availability"
@@ -420,7 +447,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Price */}
+                            {/* Bộ lọc Giá */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Price"
@@ -428,7 +455,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Category */}
+                            {/* Bộ lọc Danh mục */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Category"
@@ -436,7 +463,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Brand */}
+                            {/* Bộ lọc Thương hiệu */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Brand"
@@ -444,7 +471,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Country */}
+                            {/* Bộ lọc Xuất xứ */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Country"
@@ -452,7 +479,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Color */}
+                            {/* Bộ lọc Màu sắc */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Color"
@@ -460,7 +487,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Size */}
+                            {/* Bộ lọc Kích thước */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Size"
@@ -468,7 +495,7 @@ const Products = () => {
                                 products={products?.items || []}
                                 currentFilters={filters}
                             />
-                            {/* Bộ lọc Material */}
+                            {/* Bộ lọc Chất liệu */}
                             <FilterComponents
                                 showHead={showHead}
                                 title="Material"
@@ -485,19 +512,19 @@ const Products = () => {
                                 {/* Hiển thị trạng thái loading */}
                                 {loading && (
                                     <div className="col-span-full flex items-center justify-center py-8">
-                                        <p className="text-gray-500">Loading products...</p>
+                                        <p className="text-gray-500">Đang tải sản phẩm...</p>
                                     </div>
                                 )}
                                 {/* Hiển thị lỗi nếu có */}
                                 {error && (
                                     <div className="col-span-full flex items-center justify-center py-8">
-                                        <p className="text-red-500">Error: {error}</p>
+                                        <p className="text-red-500">Lỗi: {error}</p>
                                     </div>
                                 )}
                                 {/* Hiển thị thông báo khi không có sản phẩm */}
                                 {!loading && !error && currentPageProducts?.length === 0 && (
                                     <div className="col-span-full flex items-center justify-center py-8">
-                                        <p className="text-gray-500">No products found matching your criteria.</p>
+                                        <p className="text-gray-500">Không tìm thấy sản phẩm phù hợp với tiêu chí của bạn.</p>
                                     </div>
                                 )}
                                 {/* Hiển thị danh sách sản phẩm đã phân trang */}
@@ -520,23 +547,23 @@ const Products = () => {
                                                 {/* Hiển thị promotion nếu có giảm giá */}
                                                 {product.productVariants.some((pv) => pv.discountedPrice < pv.originalPrice) && (
                                                     <div className="absolute top-2 left-2 rounded bg-red-500 px-2 py-1 text-xs font-bold text-white">
-                                                        Sale
+                                                        Khuyến mãi
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Product Info */}
+                                            {/* Thông tin sản phẩm */}
                                             <div className="space-y-1">
-                                                {/* Category */}
+                                                {/* Danh mục */}
                                                 <p className="text-xs font-semibold tracking-wider text-gray-600 uppercase">{product.categoryName}</p>
-                                                {/* Product Name */}
+                                                {/* Tên sản phẩm */}
                                                 <Link
                                                     to={`/products/${product.id}`}
                                                     className="line-clamp-2 text-lg font-bold text-ellipsis whitespace-nowrap text-gray-900"
                                                 >
                                                     {product.productName}
                                                 </Link>
-                                                {/* Price */}
+                                                {/* Giá */}
                                                 <p className="font-bold text-slate-500">
                                                     {Math.min(
                                                         ...product.productVariants
@@ -545,7 +572,7 @@ const Products = () => {
                                                     ).toLocaleString()}{" "}
                                                     đ
                                                 </p>
-                                                {/* Color Options */}
+                                                {/* Tùy chọn màu sắc */}
                                                 <div className="mt-2 flex items-center gap-2">
                                                     {[...new Set(product.productVariants.map((pv) => pv.colorName))].map((color, idx) => (
                                                         <Link
@@ -566,14 +593,14 @@ const Products = () => {
                             {/* [4.2.2] Pagination */}
                             {totalItems > 0 && (
                                 <div className="mt-3 flex flex-col items-center gap-4">
-                                    {/* Pagination Component */}
+                                    {/* Thành phần phân trang */}
                                     <Pagination
                                         currentPage={currentPage}
                                         totalPages={totalPages}
                                         onPageChange={handlePageChange}
                                         totalItems={totalItems}
                                         itemsPerPage={pageSize}
-                                        showPages={3} // Reduced for mobile
+                                        showPages={3} // Giảm cho mobile
                                         className="w-full"
                                     />
                                 </div>

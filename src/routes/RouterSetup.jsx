@@ -13,6 +13,7 @@ import {
     Cart,
     Blog,
     BlogDetail,
+    CategoryDebugPage,
     // Admin Page
     AnalyticsReport,
     BrandManagement,
@@ -130,6 +131,7 @@ const router = createBrowserRouter([
             { path: "cart", element: <Cart /> },
             { path: "blog", element: <Blog /> },
             { path: "blog/:id", element: <BlogDetail /> },
+            { path: "category-debug", element: <CategoryDebugPage /> },
             { path: "checkout", element: <Payment /> },
             { path: "checkout/paymentcallbackvnpay", element: <PaymentCallbackVnpay /> },
             {
