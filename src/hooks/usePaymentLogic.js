@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { getUserById, getAllPromotions } from "../api/api";
 import { createUserGuest } from "../api/service/PaymentService";
+import { createOrderAddress } from "../api/service/OrderAddressService";
 
 import { formatDropdownValue, parseDropdownValue } from "../lib/addressDropdownUtils";
 
@@ -62,6 +63,14 @@ const usePaymentLogic = (contexts) => {
         note: "",
     });
 
+    // Thông tin người nhận cho user đã đăng nhập (khi chưa có địa chỉ)
+    const [userAddressForm, setUserAddressForm] = useState({
+        recipient: "",
+        phoneNumber: "",
+        addressDetailRecipient: "",
+        isDefaultAddress: true,
+    });
+
     // Phương thức thanh toán
     const [paymentMethod, setPaymentMethod] = useState("");
 
@@ -102,6 +111,78 @@ const usePaymentLogic = (contexts) => {
             fetchAddresses(authStatus.userId);
         }
     }, [authStatus]);
+
+    // Tự động tạo địa chỉ cho user đã đăng nhập khi chưa có địa chỉ và đã điền đầy đủ thông tin
+    useEffect(() => {
+        const shouldAutoCreateAddress =
+            authStatus?.isAuthenticated &&
+            addresses &&
+            addresses.length === 0 && // Chưa có địa chỉ nào
+            userAddressForm.recipient.trim() &&
+            userAddressForm.phoneNumber.trim() &&
+            userAddressForm.addressDetailRecipient.trim() &&
+            selectedProvince &&
+            selectedDistrict &&
+            selectedWard &&
+            provinceName &&
+            districtName &&
+            wardName;
+
+        const autoCreateAddress = async () => {
+            if (!shouldAutoCreateAddress || loading) return;
+
+            try {
+                const { id: provinceId } = parseDropdownValue(selectedProvince);
+                const { id: districtId } = parseDropdownValue(selectedDistrict);
+                const { id: wardId } = parseDropdownValue(selectedWard);
+
+                const addressData = {
+                    userId: authStatus.userId,
+                    recipient: userAddressForm.recipient,
+                    phoneNumber: userAddressForm.phoneNumber,
+                    addressDetailRecipient: userAddressForm.addressDetailRecipient,
+                    city: provinceName,
+                    district: districtName,
+                    ward: wardName,
+                    cityCode: provinceId,
+                    districtCode: districtId,
+                    wardCode: wardId,
+                    isDefaultAddress: true,
+                };
+
+                console.log("Auto-creating address for user:", addressData);
+                const result = await createOrderAddress(addressData);
+
+                if (result && result.success !== false) {
+                    console.log("Address auto-created successfully");
+                    // Refresh addresses để cập nhật UI
+                    fetchAddresses(authStatus.userId);
+                } else {
+                    console.warn("Auto-create address failed:", result?.message);
+                }
+            } catch (error) {
+                console.error("Error auto-creating address:", error);
+            }
+        };
+
+        // Debounce để tránh tạo địa chỉ nhiều lần
+        const timeoutId = setTimeout(autoCreateAddress, 1000);
+        return () => clearTimeout(timeoutId);
+    }, [
+        authStatus?.isAuthenticated,
+        authStatus?.userId,
+        addresses?.length,
+        userAddressForm.recipient,
+        userAddressForm.phoneNumber,
+        userAddressForm.addressDetailRecipient,
+        selectedProvince,
+        selectedDistrict,
+        selectedWard,
+        provinceName,
+        districtName,
+        wardName,
+        loading
+    ]);
 
     // Lưu địa chỉ cho user đã đăng nhập
     const handleSaveAddress = async (formData) => {
@@ -167,28 +248,63 @@ const usePaymentLogic = (contexts) => {
         }
     };
 
+    // Xử lý thay đổi form user đã đăng nhập (khi chưa có địa chỉ)
+    const handleUserAddressFormChange = (formData) => {
+        setUserAddressForm(formData);
+
+        // Xóa lỗi validation khi người dùng nhập lại
+        Object.keys(formData).forEach(key => {
+            if (validationErrors[key]) {
+                setValidationErrors((prev) => ({
+                    ...prev,
+                    [key]: "",
+                }));
+            }
+        });
+    };
+
     // Validate form
     const validateForm = () => {
         const errors = {};
 
-        if (!customerInfo.fullName.trim()) {
-            errors.fullName = "Vui lòng nhập họ và tên";
-        }
+        // Validate cho guest user
+        if (!authStatus?.isAuthenticated) {
+            if (!customerInfo.fullName.trim()) {
+                errors.fullName = "Vui lòng nhập họ và tên";
+            }
 
-        if (!customerInfo.phone.trim()) {
-            errors.phone = "Vui lòng nhập số điện thoại";
-        } else if (!/^[0-9]{10,11}$/.test(customerInfo.phone)) {
-            errors.phone = "Số điện thoại không hợp lệ";
-        }
+            if (!customerInfo.phone.trim()) {
+                errors.phone = "Vui lòng nhập số điện thoại";
+            } else if (!/^[0-9]{10,11}$/.test(customerInfo.phone)) {
+                errors.phone = "Số điện thoại không hợp lệ";
+            }
 
-        if (!customerInfo.email.trim()) {
-            errors.email = "Vui lòng nhập email";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerInfo.email)) {
-            errors.email = "Email không hợp lệ";
-        }
+            if (!customerInfo.email.trim()) {
+                errors.email = "Vui lòng nhập email";
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerInfo.email)) {
+                errors.email = "Email không hợp lệ";
+            }
 
-        if (!customerInfo.address.trim()) {
-            errors.address = "Vui lòng nhập địa chỉ cụ thể";
+            if (!customerInfo.address.trim()) {
+                errors.address = "Vui lòng nhập địa chỉ cụ thể";
+            }
+        } else {
+            // Validate cho user đã đăng nhập khi chưa có địa chỉ
+            if (addresses && addresses.length === 0) {
+                if (!userAddressForm.recipient.trim()) {
+                    errors.recipient = "Vui lòng nhập họ và tên";
+                }
+
+                if (!userAddressForm.phoneNumber.trim()) {
+                    errors.phoneNumber = "Vui lòng nhập số điện thoại";
+                } else if (!/^[0-9]{10,11}$/.test(userAddressForm.phoneNumber)) {
+                    errors.phoneNumber = "Số điện thoại không hợp lệ";
+                }
+
+                if (!userAddressForm.addressDetailRecipient.trim()) {
+                    errors.addressDetailRecipient = "Vui lòng nhập địa chỉ cụ thể";
+                }
+            }
         }
 
         if (!selectedProvince) {
@@ -283,8 +399,8 @@ const usePaymentLogic = (contexts) => {
         if (window.__orderProcessing) return;
         window.__orderProcessing = true;
 
-        // Validate form for guest users
-        if (!authStatus?.isAuthenticated) {
+        // Validate form cho guest users hoặc user đã đăng nhập nhưng chưa có địa chỉ
+        if (!authStatus?.isAuthenticated || (addresses && addresses.length === 0)) {
             if (!validateForm()) {
                 setOrderError("Vui lòng điền đầy đủ thông tin bắt buộc.");
                 window.__orderProcessing = false;
@@ -387,6 +503,7 @@ const usePaymentLogic = (contexts) => {
         districtName,
         wardName,
         customerInfo,
+        userAddressForm,
         paymentMethod,
         setPaymentMethod,
         validationErrors,
@@ -421,6 +538,7 @@ const usePaymentLogic = (contexts) => {
         handleDistrictChange,
         handleWardChange,
         handleCustomerInfoChange,
+        handleUserAddressFormChange,
         handleImageError,
         handlePlaceOrder,
         validateForm,

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import NavigationHelper from "@/utils/navigationHelper";
 
 const NestedMenuColumn = ({ menuData, width = "w-80" }) => {
     const [activeMenu, setActiveMenu] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
+    const { handleNavigation, isActive } = NavigationHelper();
 
     const handleMenuHover = (item, index) => {
         if (item.submenu && item.submenu.length > 0) {
@@ -40,6 +43,7 @@ const NestedMenuColumn = ({ menuData, width = "w-80" }) => {
                                 className={`flex cursor-pointer items-center justify-between px-4 py-2 transition-colors duration-200 ${
                                     hoveredItem === index ? "bg-gray-50" : ""
                                 }`}
+                                onClick={(e) => handleNavigation(item.href, e)}
                             >
                                 <span className="text-sm font-medium text-gray-700">{item.title}</span>
                                 {item.submenu && item.submenu.length > 0 && (
@@ -74,12 +78,42 @@ const NestedMenuColumn = ({ menuData, width = "w-80" }) => {
                                 key={subIndex}
                                 className="mb-1"
                             >
-                                <a
-                                    href={subItem.href}
-                                    className="block rounded px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900"
-                                >
-                                    {subItem.label}
-                                </a>
+                                {/* Sử dụng Link cho internal routes hoặc a tag cho external links */}
+                                {subItem.href && (subItem.href.startsWith("http://") || subItem.href.startsWith("https://")) ? (
+                                    <a
+                                        href={subItem.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block rounded px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900"
+                                    >
+                                        {subItem.label}
+                                        <svg
+                                            className="ml-1 inline h-3 w-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                    </a>
+                                ) : subItem.href && subItem.href !== "#" ? (
+                                    <Link
+                                        to={subItem.href}
+                                        className="block rounded px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900"
+                                    >
+                                        {subItem.label}
+                                    </Link>
+                                ) : (
+                                    <div
+                                        className="block cursor-pointer rounded px-3 py-2 text-sm text-gray-600 transition-colors duration-200 hover:bg-gray-50 hover:text-gray-900"
+                                        onClick={(e) => handleNavigation(subItem.href, e)}
+                                    >
+                                        {subItem.label}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

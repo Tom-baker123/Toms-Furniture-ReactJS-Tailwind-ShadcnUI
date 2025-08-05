@@ -76,6 +76,13 @@ export const updateOrderStatus = async (orderId, newStatusId) => {
     });
 };
 
+// Hủy đơn hàng
+export const cancelOrder = async (orderId) => {
+    return apiRequest(`${API_BASE_URL}/Order/cancel/${orderId}`, {
+        method: 'PUT',
+    });
+};
+
 
 // [14.1] API lấy tất cả danh sách trạng thái đơn hàng
 export const getAllOrderStatuses = async () => {

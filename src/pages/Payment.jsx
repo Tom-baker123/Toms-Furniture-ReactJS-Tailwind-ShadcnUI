@@ -29,6 +29,7 @@ const Payment = () => {
         selectedDistrict,
         selectedWard,
         customerInfo,
+        userAddressForm,
         paymentMethod,
         setPaymentMethod,
         validationErrors,
@@ -52,6 +53,7 @@ const Payment = () => {
         handleDistrictChange,
         handleWardChange,
         handleCustomerInfoChange,
+        handleUserAddressFormChange,
         handleImageError,
         handlePlaceOrder,
         // Promotion props
@@ -70,7 +72,7 @@ const Payment = () => {
         promotionLoading,
         promotionError,
     };
-    
+
     return (
         <div className="container-custom lg:px-10 lg:py-5">
             <h1 className="mb-6 text-2xl font-bold">Trang Thanh Toán</h1>
@@ -82,10 +84,12 @@ const Payment = () => {
                     user={user}
                     addresses={addresses}
                     customerInfo={customerInfo}
+                    userAddressForm={userAddressForm}
                     validationErrors={validationErrors}
                     loading={loading}
                     handleSaveAddress={handleSaveAddress}
                     handleCustomerInfoChange={handleCustomerInfoChange}
+                    handleUserAddressFormChange={handleUserAddressFormChange}
                     provinces={provinces}
                     districts={districts}
                     wards={wards}

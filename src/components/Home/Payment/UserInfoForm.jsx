@@ -10,20 +10,19 @@ const UserInfoForm = ({ user, address, onSave, validationErrors = {}, loading = 
     });
 
     useEffect(() => {
-        setForm((prev) => ({
-            ...prev,
+        const newForm = {
             recipient: user?.userName || "",
             phoneNumber: user?.phoneNumber || "",
             addressDetailRecipient: user?.userAddress || address?.addressDetailRecipient || "",
-        }));
-    }, [user, address]);
+            isDefaultAddress: address?.isDefaultAddress ?? true,
+        };
+        setForm(newForm);
 
-    // Gọi onFormChange khi form được khởi tạo hoặc cập nhật
-    useEffect(() => {
+        // Gọi onFormChange ngay khi component mount hoặc props thay đổi
         if (onFormChange) {
-            onFormChange(form);
+            onFormChange(newForm);
         }
-    }, [form, onFormChange]);
+    }, [user, address, onFormChange]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -55,6 +54,14 @@ const UserInfoForm = ({ user, address, onSave, validationErrors = {}, loading = 
     return (
         <div className="rounded-lg border bg-white p-6">
             <h2 className="mb-4 text-lg font-semibold">Thông tin giao hàng</h2>
+            {!disabled && (
+                <div className="mb-4 rounded-md bg-blue-50 p-3">
+                    <p className="text-sm text-blue-700">
+                        💡 Khi bạn điền đầy đủ thông tin và chọn địa chỉ giao hàng, hệ thống sẽ tự động lưu địa chỉ này để sử dụng cho các lần đặt
+                        hàng sau.
+                    </p>
+                </div>
+            )}
             <div className="space-y-4">
                 <div>
                     <label className="mb-1 block text-sm font-medium">Họ và tên *</label>

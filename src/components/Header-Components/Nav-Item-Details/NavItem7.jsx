@@ -4,9 +4,15 @@ const NavItem7 = () => {
     return (
         <>
             <li className="relative inline-flex items-center text-red-500">
-                <details className="group lg:pb-4" open>
+                <details
+                    className="group lg:pb-4"
+                    open
+                >
                     <summary className="list-none appearance-none px-4 marker:hidden">
-                        <a href="/" className="inline-block w-full py-1">
+                        <a
+                            href="/products"
+                            className="inline-block w-full py-1"
+                        >
                             <p className="group underline-hover-text flex flex-wrap items-center gap-2">On Sale</p>
                         </a>
                         {/* Star Twinkle */}
@@ -34,8 +40,6 @@ const NavItem7 = () => {
                             </span>
                         </div>
                     </summary>
-
-                    
                 </details>
             </li>
         </>

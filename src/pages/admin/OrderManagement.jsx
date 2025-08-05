@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import FormatDatetime from "@/hooks/FormatDatetime";
 import { Pen, Pencil, Trash } from "lucide-react";
+import { useAPIOrder } from "@/context/APIOrderContext";
 
 const OrderManagement = () => {
     const navigate = useNavigate();
     const orders = useLoaderData() || [];
+    const { handleCancelOrder, loading } = useAPIOrder();
+    const [cancellingOrderId, setCancellingOrderId] = useState(null);
+
+    // Xử lý hủy đơn hàng
+    const handleCancelClick = async (orderId) => {
+        if (window.confirm("Bạn có chắc chắn muốn hủy đơn hàng này không?")) {
+            try {
+                setCancellingOrderId(orderId);
+                await handleCancelOrder(orderId);
+                alert("Hủy đơn hàng thành công!");
+                // Reload lại trang để cập nhật dữ liệu
+                window.location.reload();
+            } catch (error) {
+                alert("Lỗi khi hủy đơn hàng: " + (error.message || "Vui lòng thử lại"));
+            } finally {
+                setCancellingOrderId(null);
+            }
+        }
+    };
 
     return (
         <div className="flex flex-col gap-y-4">
@@ -59,9 +79,9 @@ const OrderManagement = () => {
                                             )}
                                         </td>
                                         <td className="table-cell px-4 py-2">
-                                            {order.orderStatusName ? (
+                                            {order?.orderStatusName ? (
                                                 <div className="w-fit rounded-full bg-blue-100 px-5 py-1 text-sm text-blue-700">
-                                                    {order.orderStatusName}
+                                                    {order?.orderStatusName}
                                                 </div>
                                             ) : (
                                                 <div className="w-fit rounded-full bg-gray-100 px-5 py-1 text-sm text-gray-700">N/A</div>
@@ -79,13 +99,16 @@ const OrderManagement = () => {
                                                     Xem
                                                 </button>
                                                 {/* Thêm các nút actions nếu cần */}
-                                                <button
-                                                    className="flex cursor-pointer items-center gap-x-1 pr-1 whitespace-nowrap text-red-500 hover:text-blue-700"
-                                                    onClick={() => navigate("/admin/order/edit_order/" + order.id)}
-                                                >
-                                                    <Trash size={16} />
-                                                    Hủy đơn
-                                                </button>
+                                                {order.orderStaId === 1 && (
+                                                    <button
+                                                        className="flex cursor-pointer items-center gap-x-1 pr-1 whitespace-nowrap text-red-500 hover:text-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                        onClick={() => handleCancelClick(order.id)}
+                                                        disabled={cancellingOrderId === order.id}
+                                                    >
+                                                        <Trash size={16} />
+                                                        {cancellingOrderId === order.id ? "Đang hủy..." : "Hủy đơn"}
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

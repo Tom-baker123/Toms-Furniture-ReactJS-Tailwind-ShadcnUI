@@ -9,10 +9,12 @@ const PaymentFormSection = ({
     user,
     addresses,
     customerInfo,
+    userAddressForm,
     validationErrors,
     loading,
     handleSaveAddress,
     handleCustomerInfoChange,
+    handleUserAddressFormChange,
     provinces,
     districts,
     wards,
@@ -33,6 +35,7 @@ const PaymentFormSection = ({
                     user={user}
                     address={addresses && addresses.length > 0 ? addresses[0] : {}}
                     onSave={handleSaveAddress}
+                    onFormChange={handleUserAddressFormChange}
                     validationErrors={validationErrors}
                     loading={loading}
                     disabled={addresses && addresses.length > 0}
