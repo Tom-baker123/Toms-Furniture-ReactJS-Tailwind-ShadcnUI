@@ -6,6 +6,7 @@ import {
     updateOrderStatus,
     getAllOrderStatuses,
     getOrderStatusById,
+    cancelOrder,
 } from "../api/service/PaymentService";
 import useApiFetch from "../hooks/useApiFetch";
 
@@ -85,6 +86,25 @@ export const APIOrderProvider = ({ children }) => {
         return result;
     };
 
+    // Hủy đơn hàng
+    const handleCancelOrder = async (orderId) => {
+        const result = await fetchData(cancelOrder, "cancelOrder", orderId, (res) => res);
+        if (result && orders.length > 0) {
+            // Cập nhật trạng thái đơn hàng trong danh sách sau khi hủy thành công
+            setOrders(
+                orders.map((order) =>
+                    order.id === orderId
+                        ? {
+                              ...order,
+                              isActive: false, // Đặt isActive = false khi hủy đơn
+                          }
+                        : order,
+                ),
+            );
+        }
+        return result;
+    };
+
     return (
         <APIOrderContext.Provider
             value={{
@@ -102,6 +122,7 @@ export const APIOrderProvider = ({ children }) => {
                 fetchAllOrderStatuses,
                 fetchOrderStatusById,
                 handleUpdateOrderStatus,
+                handleCancelOrder,
             }}
         >
             {children}

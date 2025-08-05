@@ -43,11 +43,13 @@ const HeroSwiper = ({ transitionTime }) => {
                     // 👈 Khi swiper khởi tạo
                     setTimeout(() => {
                         // Delay để refs kịp gán
-                        swiper.params.navigation.prevEl = prevRef.current;
-                        swiper.params.navigation.nextEl = nextRef.current;
-                        swiper.navigation.destroy(); // Reset navigation cũ
-                        swiper.navigation.init(); // Khởi tạo lại navigation
-                        swiper.navigation.update(); // Update state mới
+                        if (swiper.params?.navigation && swiper.navigation) {
+                            swiper.params.navigation.prevEl = prevRef.current;
+                            swiper.params.navigation.nextEl = nextRef.current;
+                            swiper.navigation.destroy(); // Reset navigation cũ
+                            swiper.navigation.init(); // Khởi tạo lại navigation
+                            swiper.navigation.update(); // Update state mới
+                        }
                     });
                 }}
             >
@@ -58,12 +60,12 @@ const HeroSwiper = ({ transitionTime }) => {
                             <div className="relative h-full w-full overflow-hidden rounded-md">
                                 <div>
                                     <img
-                                        className="zoom-in-slow hidden w-full min-md:block"
+                                        className="zoom-in-slow hidden w-full !bg-gray-100 min-md:block"
                                         src={`/img/hero-swiper/${t.url_desk}`}
                                         alt={t.id}
                                     />
                                     <img
-                                        className="zoom-in-slow block w-full min-md:hidden"
+                                        className="zoom-in-slow block w-full !bg-gray-100 min-md:hidden"
                                         src={`/img/hero-swiper/${t.url_mobile}`}
                                         alt={t.id}
                                     />

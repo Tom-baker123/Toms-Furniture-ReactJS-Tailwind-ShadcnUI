@@ -70,7 +70,6 @@ export const APIProvider = ({ children }) => {
         if (!didInit) {
             fetchCategories();
             fetchStoreInformation();
-            // fetchProducts({ pageNumber: 1, pageSize: 8 }); // Thêm pagination mặc định
             fetchProducts();
             fetchColors();
             fetchUnits();

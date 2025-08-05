@@ -124,14 +124,14 @@ const StoreInformationForm = () => {
 
             if (isEditing) {
                 await updateStoreInformation(submitData, data.logoFile);
-                toast.success("Store information updated successfully!");
+                toast.success("Cập nhật thông tin cửa hàng thành công!");
             } else {
                 await createStoreInformation(submitData, data.logoFile);
-                toast.success("Store information created successfully!");
+                toast.success("Tạo thông tin cửa hàng thành công!");
             }
             navigate("/admin/store_information");
         } catch (error) {
-            toast.error(`Error: ${error.message}`);
+            toast.error(`Lỗi: ${error.message}`);
         } finally {
             setIsLoading(false);
         }
@@ -148,7 +148,7 @@ const StoreInformationForm = () => {
                     {/* Phần upload logo */}
                     <div className="col-span-12 h-fit w-full overflow-hidden rounded-sm bg-white shadow-xs md:col-span-4">
                         <div className="p-4 text-lg font-bold text-slate-800">
-                            Store Logo <span className="text-lg text-gray-500">(optional)</span>
+                            Logo Cửa Hàng <span className="text-lg text-gray-500">(tùy chọn)</span>
                         </div>
                         <hr />
                         <div className="flex flex-col gap-5 px-4 py-4">
@@ -166,7 +166,7 @@ const StoreInformationForm = () => {
                                         ) : (
                                             <>
                                                 <ImageIcon className="mb-2 h-8 w-8 text-gray-400" />
-                                                <span className="text-sm text-gray-500">Select Image</span>
+                                                <span className="text-sm text-gray-500">Chọn Hình Ảnh</span>
                                             </>
                                         )}
                                         <input
@@ -182,13 +182,13 @@ const StoreInformationForm = () => {
                     </div>
                     {/* Phần thông tin cửa hàng */}
                     <div className="col-span-12 h-fit w-full overflow-hidden rounded-sm bg-white shadow-xs md:col-span-8">
-                        <div className="p-4 text-lg font-bold text-slate-800">Store Information</div>
+                        <div className="p-4 text-lg font-bold text-slate-800">Thông Tin Cửa Hàng</div>
                         <hr />
                         <div className="grid grid-cols-1 gap-5 px-4 py-4 md:grid-cols-2">
                             {/* Tên cửa hàng */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Store Name</p>
+                                    <p className="text-md">Tên Cửa Hàng</p>
                                 </span>
                                 <Controller
                                     name="StoreName"
@@ -196,14 +196,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 100,
-                                            message: "Store name must be less than 100 characters",
+                                            message: "Tên cửa hàng phải ít hơn 100 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.StoreName ? "border-red-500" : ""}`}
-                                            placeholder="Enter store name"
+                                            placeholder="Nhập tên cửa hàng"
                                             {...field}
                                         />
                                     )}
@@ -213,7 +213,7 @@ const StoreInformationForm = () => {
                             {/* Địa chỉ */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Address</p>
+                                    <p className="text-md">Địa Chỉ</p>
                                 </span>
                                 <Controller
                                     name="StoreAddress"
@@ -221,14 +221,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 255,
-                                            message: "Address must be less than 255 characters",
+                                            message: "Địa chỉ phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.StoreAddress ? "border-red-500" : ""}`}
-                                            placeholder="Enter store address"
+                                            placeholder="Nhập địa chỉ cửa hàng"
                                             {...field}
                                         />
                                     )}
@@ -238,7 +238,7 @@ const StoreInformationForm = () => {
                             {/* Số điện thoại */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Phone Number</p>
+                                    <p className="text-md">Số Điện Thoại</p>
                                 </span>
                                 <Controller
                                     name="PhoneNumber"
@@ -246,14 +246,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 20,
-                                            message: "Phone number must be less than 20 characters",
+                                            message: "Số điện thoại phải ít hơn 20 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.PhoneNumber ? "border-red-500" : ""}`}
-                                            placeholder="Enter phone number"
+                                            placeholder="Nhập số điện thoại"
                                             {...field}
                                         />
                                     )}
@@ -271,18 +271,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                                            message: "Invalid email format",
+                                            message: "Định dạng email không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "Email must be less than 255 characters",
+                                            message: "Email phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="email"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.Email ? "border-red-500" : ""}`}
-                                            placeholder="Enter email"
+                                            placeholder="Nhập email"
                                             {...field}
                                         />
                                     )}
@@ -300,18 +300,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/,
-                                            message: "Invalid website URL format",
+                                            message: "Định dạng URL website không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "Website URL must be less than 255 characters",
+                                            message: "URL website phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.LinkWebsite ? "border-red-500" : ""}`}
-                                            placeholder="Enter website URL"
+                                            placeholder="Nhập URL website"
                                             {...field}
                                         />
                                     )}
@@ -321,21 +321,23 @@ const StoreInformationForm = () => {
                             {/* Vĩ độ */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Latitude</p>
+                                    <p className="text-md">Vĩ Độ</p>
                                 </span>
                                 <Controller
                                     name="Latitude"
                                     control={control}
                                     rules={{
                                         validate: (value) =>
-                                            value === "" || (parseFloat(value) >= -90 && parseFloat(value) <= 90) || "Latitude must be between -90 and 90",
+                                            value === "" ||
+                                            (parseFloat(value) >= -90 && parseFloat(value) <= 90) ||
+                                            "Vĩ độ phải nằm trong khoảng -90 đến 90",
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="number"
                                             step="any"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.Latitude ? "border-red-500" : ""}`}
-                                            placeholder="Enter latitude"
+                                            placeholder="Nhập vĩ độ"
                                             {...field}
                                             value={field.value}
                                         />
@@ -346,21 +348,23 @@ const StoreInformationForm = () => {
                             {/* Kinh độ */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Longitude</p>
+                                    <p className="text-md">Kinh Độ</p>
                                 </span>
                                 <Controller
                                     name="Longitude"
                                     control={control}
                                     rules={{
                                         validate: (value) =>
-                                            value === "" || (parseFloat(value) >= -180 && parseFloat(value) <= 180) || "Longitude must be between -180 and 180",
+                                            value === "" ||
+                                            (parseFloat(value) >= -180 && parseFloat(value) <= 180) ||
+                                            "Kinh độ phải nằm trong khoảng -180 đến 180",
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="number"
                                             step="any"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.Longitude ? "border-red-500" : ""}`}
-                                            placeholder="Enter longitude"
+                                            placeholder="Nhập kinh độ"
                                             {...field}
                                             value={field.value}
                                         />
@@ -371,7 +375,7 @@ const StoreInformationForm = () => {
                             {/* Chủ sở hữu */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Owner Name</p>
+                                    <p className="text-md">Tên Chủ Sở Hữu</p>
                                 </span>
                                 <Controller
                                     name="OwnerName"
@@ -379,14 +383,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 100,
-                                            message: "Owner name must be less than 100 characters",
+                                            message: "Tên chủ sở hữu phải ít hơn 100 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.OwnerName ? "border-red-500" : ""}`}
-                                            placeholder="Enter owner name"
+                                            placeholder="Nhập tên chủ sở hữu"
                                             {...field}
                                         />
                                     )}
@@ -396,24 +400,24 @@ const StoreInformationForm = () => {
                             {/* Loại hình kinh doanh */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Business Type</p>
+                                    <p className="text-md">Loại Hình Kinh Doanh</p>
                                     <span className="text-red-500">*</span>
                                 </span>
                                 <Controller
                                     name="BusinessType"
                                     control={control}
                                     rules={{
-                                        required: "Business type is required",
+                                        required: "Loại hình kinh doanh là bắt buộc",
                                         maxLength: {
                                             value: 100,
-                                            message: "Business type must be less than 100 characters",
+                                            message: "Loại hình kinh doanh phải ít hơn 100 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.BusinessType ? "border-red-500" : ""}`}
-                                            placeholder="Enter business type"
+                                            placeholder="Nhập loại hình kinh doanh"
                                             {...field}
                                         />
                                     )}
@@ -423,7 +427,7 @@ const StoreInformationForm = () => {
                             {/* Giờ hoạt động */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Operating Hours</p>
+                                    <p className="text-md">Giờ Hoạt Động</p>
                                 </span>
                                 <Controller
                                     name="OperatingHours"
@@ -431,14 +435,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 100,
-                                            message: "Operating hours must be less than 100 characters",
+                                            message: "Giờ hoạt động phải ít hơn 100 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.OperatingHours ? "border-red-500" : ""}`}
-                                            placeholder="Enter operating hours"
+                                            placeholder="Nhập giờ hoạt động"
                                             {...field}
                                         />
                                     )}
@@ -448,7 +452,7 @@ const StoreInformationForm = () => {
                             {/* Mô tả cửa hàng */}
                             <label className="col-span-1 font-bold text-slate-500 md:col-span-2">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Store Description</p>
+                                    <p className="text-md">Mô Tả Cửa Hàng</p>
                                 </span>
                                 <Controller
                                     name="StoreDescription"
@@ -456,13 +460,13 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 1000,
-                                            message: "Description must be less than 1000 characters",
+                                            message: "Mô tả phải ít hơn 1000 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <textarea
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.StoreDescription ? "border-red-500" : ""}`}
-                                            placeholder="Enter store description"
+                                            placeholder="Nhập mô tả cửa hàng"
                                             rows="4"
                                             {...field}
                                         />
@@ -473,7 +477,7 @@ const StoreInformationForm = () => {
                             {/* Ngày thành lập */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Establishment Date</p>
+                                    <p className="text-md">Ngày Thành Lập</p>
                                 </span>
                                 <Controller
                                     name="EstablishmentDate"
@@ -492,7 +496,7 @@ const StoreInformationForm = () => {
                             {/* Mã số thuế */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Tax ID</p>
+                                    <p className="text-md">Mã Số Thuế</p>
                                 </span>
                                 <Controller
                                     name="TaxId"
@@ -500,14 +504,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 50,
-                                            message: "Tax ID must be less than 50 characters",
+                                            message: "Mã số thuế phải ít hơn 50 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.TaxId ? "border-red-500" : ""}`}
-                                            placeholder="Enter tax ID"
+                                            placeholder="Nhập mã số thuế"
                                             {...field}
                                         />
                                     )}
@@ -517,7 +521,7 @@ const StoreInformationForm = () => {
                             {/* Mã chi nhánh */}
                             <label className="font-bold text-slate-500">
                                 <span className="flex items-center gap-1">
-                                    <p className="text-md">Branch Code</p>
+                                    <p className="text-md">Mã Chi Nhánh</p>
                                 </span>
                                 <Controller
                                     name="BranchCode"
@@ -525,14 +529,14 @@ const StoreInformationForm = () => {
                                     rules={{
                                         maxLength: {
                                             value: 50,
-                                            message: "Branch code must be less than 50 characters",
+                                            message: "Mã chi nhánh phải ít hơn 50 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.BranchCode ? "border-red-500" : ""}`}
-                                            placeholder="Enter branch code"
+                                            placeholder="Nhập mã chi nhánh"
                                             {...field}
                                         />
                                     )}
@@ -550,18 +554,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/,
-                                            message: "Invalid Facebook URL format",
+                                            message: "Định dạng URL Facebook không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "Facebook URL must be less than 255 characters",
+                                            message: "URL Facebook phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.LinkSocialFacebook ? "border-red-500" : ""}`}
-                                            placeholder="Enter Facebook URL"
+                                            placeholder="Nhập URL Facebook"
                                             {...field}
                                         />
                                     )}
@@ -579,18 +583,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/,
-                                            message: "Invalid Twitter URL format",
+                                            message: "Định dạng URL Twitter không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "Twitter URL must be less than 255 characters",
+                                            message: "URL Twitter phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.LinkSocialTwitter ? "border-red-500" : ""}`}
-                                            placeholder="Enter Twitter URL"
+                                            placeholder="Nhập URL Twitter"
                                             {...field}
                                         />
                                     )}
@@ -608,18 +612,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/,
-                                            message: "Invalid Instagram URL format",
+                                            message: "Định dạng URL Instagram không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "Instagram URL must be less than 255 characters",
+                                            message: "URL Instagram phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.LinkSocialInstagram ? "border-red-500" : ""}`}
-                                            placeholder="Enter Instagram URL"
+                                            placeholder="Nhập URL Instagram"
                                             {...field}
                                         />
                                     )}
@@ -637,18 +641,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/,
-                                            message: "Invalid TikTok URL format",
+                                            message: "Định dạng URL TikTok không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "TikTok URL must be less than 255 characters",
+                                            message: "URL TikTok phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.LinkSocialTiktok ? "border-red-500" : ""}`}
-                                            placeholder="Enter TikTok URL"
+                                            placeholder="Nhập URL TikTok"
                                             {...field}
                                         />
                                     )}
@@ -666,18 +670,18 @@ const StoreInformationForm = () => {
                                     rules={{
                                         pattern: {
                                             value: /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?$/,
-                                            message: "Invalid YouTube URL format",
+                                            message: "Định dạng URL YouTube không hợp lệ",
                                         },
                                         maxLength: {
                                             value: 255,
-                                            message: "YouTube URL must be less than 255 characters",
+                                            message: "URL YouTube phải ít hơn 255 ký tự",
                                         },
                                     }}
                                     render={({ field }) => (
                                         <input
                                             type="text"
                                             className={`mt-2 w-full rounded-sm border px-1.5 py-2 ${errors.LinkSocialYoutube ? "border-red-500" : ""}`}
-                                            placeholder="Enter YouTube URL"
+                                            placeholder="Nhập URL YouTube"
                                             {...field}
                                         />
                                     )}
@@ -688,7 +692,7 @@ const StoreInformationForm = () => {
                             {isEditing && (
                                 <label className="font-bold text-slate-500">
                                     <span className="flex items-center gap-1">
-                                        <p className="text-md">Status</p>
+                                        <p className="text-md">Trạng Thái</p>
                                     </span>
                                     <Controller
                                         name="IsActive"
@@ -698,8 +702,8 @@ const StoreInformationForm = () => {
                                                 className="mt-2 w-full rounded-sm border px-1.5 py-2"
                                                 {...field}
                                             >
-                                                <option value={true}>Active</option>
-                                                <option value={false}>Inactive</option>
+                                                <option value={true}>Hoạt động</option>
+                                                <option value={false}>Không hoạt động</option>
                                             </select>
                                         )}
                                     />
@@ -711,7 +715,7 @@ const StoreInformationForm = () => {
                 {/* Tiêu đề và nút submit */}
                 <div className="flex justify-between">
                     <div className="title text-2xl font-bold text-slate-800">
-                        {isEditing ? "Update Store Information" : "Add Store Information"}
+                        {isEditing ? "Cập Nhật Thông Tin Cửa Hàng" : "Thêm Thông Tin Cửa Hàng"}
                     </div>
                     <button
                         type="submit"
@@ -720,7 +724,7 @@ const StoreInformationForm = () => {
                             isSubmitting || isLoading ? "opacity-50" : ""
                         }`}
                     >
-                        {isSubmitting || isLoading ? "Processing..." : isEditing ? "Update" : "Create"}
+                        {isSubmitting || isLoading ? "Đang xử lý..." : isEditing ? "Cập nhật" : "Tạo mới"}
                     </button>
                 </div>
             </form>

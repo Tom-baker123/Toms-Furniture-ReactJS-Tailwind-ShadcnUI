@@ -1,10 +1,42 @@
-import React, { useState } from "react";
-import { NewArrivalsTabs as Tabs } from "@/assets/FakeData";
+import React, { useState, useContext, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import PaginationSwiper from "./PaginationSwiper";
+import { APIContext } from "@/context/APIContext";
+import { transformProductsToSwiperData, getHotItemsFromProducts } from "@/assets/FakeData";
 
 const NewArrivalsSwiper = () => {
     const [activeTab, setActiveTab] = useState("NewArrivals"); // HotItems
+    const { products, loading } = useContext(APIContext);
+
+    // Transform products for different tabs
+    const tabsData = useMemo(() => {
+        // Only show loading if we haven't loaded any products yet
+        const showLoading = loading && (!products || products.length === 0);
+
+        const newArrivalsData = transformProductsToSwiperData(products, 8);
+        const hotItemsData = getHotItemsFromProducts(products, 8);
+
+        return {
+            NewArrivals: {
+                label: "New Arrivals",
+                content: (
+                    <PaginationSwiper
+                        Picture={newArrivalsData}
+                        loading={showLoading}
+                    />
+                ),
+            },
+            HotItems: {
+                label: "Hot Items",
+                content: (
+                    <PaginationSwiper
+                        Picture={hotItemsData}
+                        loading={showLoading}
+                    />
+                ),
+            },
+        };
+    }, [products, loading]);
 
     return (
         <section className="container-custom pt-6 md:pt-8">
@@ -17,7 +49,7 @@ const NewArrivalsSwiper = () => {
                 <div className="flex flex-1 items-end pt-3 md:justify-end md:pt-0">
                     <div className="flex gap-x-6 font-semibold text-gray-500 md:gap-x-8">
                         {/* Object.entries() là một function có trong JS, để chuyển object thành mảng [key, value]. */}
-                        {Object.entries(Tabs).map(([key, tab]) => (
+                        {Object.entries(tabsData).map(([key, tab]) => (
                             <button
                                 key={key}
                                 onClick={() => setActiveTab(key)}
@@ -34,7 +66,7 @@ const NewArrivalsSwiper = () => {
             </div>
 
             {/* 2. Section Content */}
-            <div className="">{Tabs[activeTab].content}</div>
+            <div className="">{tabsData[activeTab].content}</div>
         </section>
     );
 };

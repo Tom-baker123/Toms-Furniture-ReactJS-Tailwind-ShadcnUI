@@ -1,4 +1,5 @@
 import PaginationSwiper from "@/components/Home/Swiper-Components/PaginationSwiper";
+import { formatVND } from "@/utils/currencyUtils";
 
 // [1.2. CATEGORY LIST]----------------------------------------------------------------------------------------------------------
 export const categoryList = [
@@ -276,6 +277,108 @@ export const NewArrivalsTabs = {
         content: <PaginationSwiper Picture={HotItemsPicture} />,
     },
 };
+
+// [1.7. PRODUCT DATA UTILS]----------------------------------------------------------------------------------------------------
+/**
+ * Transform API product data to component format
+ * @param {Array} products - Products from API
+ * @param {number} maxItems - Maximum number of items to return
+ * @returns {Array} Transformed products for component
+ */
+export const transformProductsToSwiperData = (products = [], maxItems = 8) => {
+    if (!Array.isArray(products) || products.length === 0) {
+        return NewArrivalsPicture; // Fallback to fake data
+    }
+
+    // Add a banner as first item - don't include in product count
+    const bannerItem = { id: "banner", ImageURL: "collection-tabs-banner-1.png" };
+
+    // Transform products
+    const transformedProducts = products
+        .slice(0, maxItems - 1) // Leave space for banner
+        .map((product) => {
+            // Get the first variant for price and image
+            const firstVariant = product.productVariants?.[0];
+            const mainImage = firstVariant?.images?.find((img) => img.attribute === "main");
+
+            return {
+                id: product.id.toString(),
+                ImageURL: mainImage?.imageUrl || "/img/NewArrivals/bottlegrinder.png",
+                info: [
+                    {
+                        type: product.categoryName?.toUpperCase() || "PRODUCT",
+                        proName: product.productName || "Unknown Product",
+                        price: firstVariant?.discountedPrice
+                            ? `${formatVND(firstVariant.discountedPrice)}`
+                            : firstVariant?.originalPrice
+                              ? `${formatVND(firstVariant.originalPrice)}`
+                              : "Liên hệ",
+                    },
+                ],
+                slug: product.slug,
+                productId: product.id,
+            };
+        });
+
+    return [bannerItem, ...transformedProducts];
+};
+
+/**
+ * Get hot items (products with high discount percentage)
+ * @param {Array} products - Products from API
+ * @param {number} maxItems - Maximum number of items to return
+ * @returns {Array} Hot items for component
+ */
+export const getHotItemsFromProducts = (products = [], maxItems = 8) => {
+    if (!Array.isArray(products) || products.length === 0) {
+        return HotItemsPicture; // Fallback to fake data
+    }
+
+    // Add a banner as first item with different image
+    const bannerItem = { id: "banner", ImageURL: "HotItems/collection-tabs-banner-2.jpg" };
+
+    // Calculate discount percentage and filter hot items
+    const hotProducts = products
+        .map((product) => {
+            const firstVariant = product.productVariants?.[0];
+            if (!firstVariant) return null;
+
+            const discountPercent =
+                firstVariant.originalPrice && firstVariant.discountedPrice
+                    ? ((firstVariant.originalPrice - firstVariant.discountedPrice) / firstVariant.originalPrice) * 100
+                    : 0;
+
+            return { ...product, discountPercent };
+        })
+        .filter((product) => product && product.discountPercent > 0)
+        .sort((a, b) => b.discountPercent - a.discountPercent)
+        .slice(0, maxItems - 1)
+        .map((product) => {
+            const firstVariant = product.productVariants?.[0];
+            const mainImage = firstVariant?.images?.find((img) => img.attribute === "main");
+
+            return {
+                id: product.id.toString(),
+                ImageURL: mainImage?.imageUrl || "/img/NewArrivals/bottlegrinder.png",
+                info: [
+                    {
+                        type: product.categoryName?.toUpperCase() || "PRODUCT",
+                        proName: product.productName || "Unknown Product",
+                        price: firstVariant?.discountedPrice
+                            ? `${formatVND(firstVariant.discountedPrice)}`
+                            : firstVariant?.originalPrice
+                              ? `${formatVND(firstVariant.originalPrice)}`
+                              : "Liên hệ",
+                    },
+                ],
+                slug: product.slug,
+                productId: product.id,
+            };
+        });
+
+    return [bannerItem, ...hotProducts];
+};
+
 // [1.6. NEW ARRIVALS - END]----------------------------------------------------------------------------------------------------
 
 // |

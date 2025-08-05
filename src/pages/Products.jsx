@@ -25,10 +25,19 @@ const Products = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        const categoryIdParam = params.get("categoryId");
+        const categoryIdParam = params.get("categoryId") || params.get("category"); // Hỗ trợ cả categoryId và category
+        const searchParam = params.get("search"); // Thêm xử lý tham số search
         console.log("categoryIdParam from query:", categoryIdParam);
+        console.log("searchParam from query:", searchParam);
 
-        if (categoryIdParam && categories) {
+        // Xử lý tham số search
+        if (searchParam) {
+            setFilters((prev) => ({
+                ...prev,
+                searchTerm: decodeURIComponent(searchParam),
+                categoryIds: [], // Reset categoryIds khi có search
+            }));
+        } else if (categoryIdParam && categories) {
             // Chuyển đổi categoryIdParam thành số để so sánh với categoryId
             const categoryId = parseInt(categoryIdParam);
             if (!isNaN(categoryId)) {
@@ -53,10 +62,11 @@ const Products = () => {
                 }
             }
         } else {
-            // Nếu không có categoryId param, reset categoryIds filter
+            // Nếu không có categoryId param và không có search param, reset cả hai
             setFilters((prev) => ({
                 ...prev,
                 categoryIds: [],
+                searchTerm: "",
             }));
         }
 
@@ -83,6 +93,7 @@ const Products = () => {
         inStock: null,
         sortBy: "",
         sortOrder: "",
+        searchTerm: "", // Thêm searchTerm cho tìm kiếm
     });
 
     // Hàm lọc và sắp xếp sản phẩm phía client
@@ -94,7 +105,47 @@ const Products = () => {
         console.log("Current filters:", filters); // Debug log
         console.log("Total products before filter:", filteredProducts.length); // Debug log
 
-        // Áp dụng các bộ lọc
+        // Áp dụng tìm kiếm trước tiên
+        if (filters.searchTerm && filters.searchTerm.trim()) {
+            const searchTermLower = filters.searchTerm.toLowerCase().trim();
+            filteredProducts = filteredProducts.filter((product) => {
+                // Tìm kiếm trong tên sản phẩm
+                if (product.productName && product.productName.toLowerCase().includes(searchTermLower)) {
+                    return true;
+                }
+
+                // Tìm kiếm trong tên thương hiệu
+                if (product.brandName && product.brandName.toLowerCase().includes(searchTermLower)) {
+                    return true;
+                }
+
+                // Tìm kiếm trong tên danh mục
+                if (product.categoryName && product.categoryName.toLowerCase().includes(searchTermLower)) {
+                    return true;
+                }
+
+                // Tìm kiếm trong mô tả sản phẩm
+                if (product.specificationDescription && product.specificationDescription.toLowerCase().includes(searchTermLower)) {
+                    return true;
+                }
+
+                // Tìm kiếm trong các thuộc tính của variant
+                return (
+                    product.productVariants &&
+                    product.productVariants.some((variant) => {
+                        return (
+                            (variant.colorName && variant.colorName.toLowerCase().includes(searchTermLower)) ||
+                            (variant.sizeName && variant.sizeName.toLowerCase().includes(searchTermLower)) ||
+                            (variant.materialName && variant.materialName.toLowerCase().includes(searchTermLower)) ||
+                            (variant.unitName && variant.unitName.toLowerCase().includes(searchTermLower))
+                        );
+                    })
+                );
+            });
+            console.log("Products after search filter:", filteredProducts.length); // Debug log
+        }
+
+        // Áp dụng các bộ lọc khác
         if (filters.categoryNames.length > 0) {
             filteredProducts = filteredProducts.filter((product) => filters.categoryNames.includes(product.categoryName));
         }
@@ -342,7 +393,11 @@ const Products = () => {
                         <div className="flex h-full flex-col-reverse items-center gap-6 max-md:justify-between md:flex-row md:gap-3">
                             <ProductCategoryToolbar />
                             {/* Hiển thị tổng số sản phẩm từ API */}
-                            <span className="text-md font-semibold text-gray-500">{totalItems} sản phẩm</span>
+                            <div className="flex flex-col items-center gap-1">
+                                <span className="text-md font-semibold text-gray-500">{totalItems} sản phẩm</span>
+                                {/* Hiển thị thông báo tìm kiếm */}
+                                {filters.searchTerm && <span className="text-sm text-blue-600">Kết quả tìm kiếm cho: "{filters.searchTerm}"</span>}
+                            </div>
 
                             {/* Page Size Input - Ẩn trên mobile, hiển thị trên tablet+ */}
                             <div className="hidden items-center gap-2 sm:flex">
@@ -523,8 +578,19 @@ const Products = () => {
                                 )}
                                 {/* Hiển thị thông báo khi không có sản phẩm */}
                                 {!loading && !error && currentPageProducts?.length === 0 && (
-                                    <div className="col-span-full flex items-center justify-center py-8">
-                                        <p className="text-gray-500">Không tìm thấy sản phẩm phù hợp với tiêu chí của bạn.</p>
+                                    <div className="col-span-full flex flex-col items-center justify-center py-8">
+                                        {filters.searchTerm ? (
+                                            <>
+                                                <p className="text-center text-gray-500">
+                                                    Không tìm thấy sản phẩm nào phù hợp với từ khóa "{filters.searchTerm}"
+                                                </p>
+                                                <p className="mt-2 text-sm text-gray-400">
+                                                    Hãy thử tìm kiếm với từ khóa khác hoặc kiểm tra lại chính tả
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <p className="text-gray-500">Không tìm thấy sản phẩm phù hợp với tiêu chí của bạn.</p>
+                                        )}
                                     </div>
                                 )}
                                 {/* Hiển thị danh sách sản phẩm đã phân trang */}

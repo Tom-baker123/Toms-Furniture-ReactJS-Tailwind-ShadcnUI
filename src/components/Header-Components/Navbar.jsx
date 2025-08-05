@@ -19,10 +19,10 @@ const Navbar = () => {
                 <NavItem2 />
 
                 {/* Table & Desk */}
-                <NavItem3 />
+                {/* <NavItem3 /> */}
 
                 {/* Chairs & Stools */}
-                <NavItem4 />
+                {/* <NavItem4 /> */}
 
                 {/* Pages */}
                 <NavItem5 />
