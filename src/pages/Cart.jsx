@@ -78,7 +78,7 @@ const Cart = ({ itemCount = 0 }) => {
             <section className="grid grid-cols-12">
                 <div className="col-span-12 w-full pr-5 md:col-span-8">
                     <table
-                        className="flex-1 border-collapse max-lg:w-full"
+                        className="flex-1 border-collapse w-full"
                         role="table"
                     >
                         <thead className="">
@@ -114,7 +114,7 @@ const Cart = ({ itemCount = 0 }) => {
                                                             : item.productVariant?.image) || "/img/cart-image/TurnTableMono.png"
                                                     }
                                                     alt={item.productName || "Sản phẩm"}
-                                                    className="mr-3 size-20 rounded-md bg-gray-100 object-contain sm:size-22 lg:size-30"
+                                                    className="mr-3 aspect-square size-20 rounded-md bg-gray-100 object-contain sm:size-22 lg:size-30"
                                                 />
                                             </div>
 
